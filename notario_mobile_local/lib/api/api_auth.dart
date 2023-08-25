@@ -1,6 +1,5 @@
 import 'dart:convert' as convert;
-import 'dart:convert';
-import 'package:http/http.dart';
+import 'dart:convert';import 'package:http/http.dart';
 import 'package:notario_mobile/models/utilisateur_login.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
@@ -20,7 +19,6 @@ class ApiAuth {
           body: convert.json.encode(data));
       return (response);
     } catch (e) {
-      print("enter");
       throw e;
     }
   }
@@ -39,8 +37,6 @@ class ApiAuth {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: convert.json.encode(data));
-      print(utilisateurRegister.LastName);
-      print(utilisateurRegister.email);
       return await (response);
     } catch (e) {
       throw (e.toString());

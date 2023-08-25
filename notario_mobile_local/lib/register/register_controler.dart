@@ -2,8 +2,8 @@ import 'package:notario_mobile/api/api_auth.dart';
 import 'package:http/src/response.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
 
-class RegisterControler {
-  RegisterControler({
+class RegisterController {
+  RegisterController({
     this.LastName = '',
     this.age = '',
     this.email = '',
@@ -63,7 +63,6 @@ class RegisterControler {
               password_confirm: password_confirm,
               phone: phone));
     } catch (e) {
-      print('test');
       throw e;
     }
   }

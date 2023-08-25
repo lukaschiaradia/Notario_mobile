@@ -12,7 +12,7 @@ import '../api/api.dart';
 import '../main_page/document_page.dart';
 
 class PasswordPage extends StatelessWidget {
-  final registerControler = RegisterControler(apiAuth: ApiAuth());
+  final registerController = RegisterController(apiAuth: ApiAuth());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
