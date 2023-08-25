@@ -4,12 +4,12 @@ import 'package:notario_mobile/models/utilisateur_register.dart';
 
 class RegisterControler {
   RegisterControler({
-    required this.LastName,
-    required this.age,
-    required this.email,
-    required this.firstName,
-    required this.password,
-    required this.password_confirm,
+    this.LastName = '',
+    this.age = '',
+    this.email = '',
+    this.firstName = '',
+    this.password = '',
+    this.password_confirm = '',
     this.phone,
     required this.apiAuth,
   });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
+import 'package:notario_mobile/register/register_controler.dart';
 import 'package:notario_mobile/utils/constants/status_code.dart';
 import 'dart:async';
 import '../main_page/delayed_animation.dart';
@@ -11,6 +12,7 @@ import '../api/api.dart';
 import '../main_page/document_page.dart';
 
 class PasswordPage extends StatelessWidget {
+  final registerControler = RegisterControler(apiAuth: ApiAuth());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
