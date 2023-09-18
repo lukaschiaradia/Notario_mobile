@@ -7,6 +7,13 @@ import 'name_page.dart';
 import 'password_page.dart';
 import '../api/api.dart';
 
+
+void main() {
+  runApp(MaterialApp(
+    home: MailPage(),
+  ));
+}
+
 class MailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -29,66 +36,89 @@ class MailPage extends StatelessWidget {
         child: Column(
           children: [
             DelayedAnimation(
-                delay: 200,
-                child: Container(
-                  height: 100,
-                  margin: EdgeInsets.only(
-                    top: 40,
-                    bottom: 0,
-                  ),
-                  child: Text(
-                    "Entrez votre adresse mail",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize:25,
-                    )
+              delay: 200,
+              child: Container(
+                height: 100,
+                margin: EdgeInsets.only(
+                  top: 40,
+                  bottom: 0,
+                ),
+                child: Text(
+                  "Entrez votre adresse mail",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 25,
                   ),
                 ),
+              ),
             ),
-            SizedBox(height: 35),
             EmailForm(),
-            SizedBox(height: 35),
             DelayedAnimation(
-                delay: 300,
-                child: Container(
-                  height: 50,
-                  margin: EdgeInsets.only(
-                    top: 0,
-                    bottom: 100,
-                  ),
-                  child: Image.asset(
-                    "images/progression3.png",
-                  ),
+              delay: 300,
+              child: Container(
+                height: 50,
+                margin: EdgeInsets.only(
+                  top: 0,
+                  bottom: 100,
                 ),
+                child: Image.asset(
+                  "images/progression3.png",
+                ),
+              ),
             ),
             DelayedAnimation(
-                delay: 500,
-                child: Container(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: blue_color,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 20,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
+              delay: 500,
+              child: Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 20,
                     ),
-                    child: Text("Continuer", textScaleFactor: 1.5,),
-                    onPressed: () {
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                  ),
+                  child: Text("Continuer", textScaleFactor: 1.5),
+                  onPressed: () {
+                    if (isValidEmail(email)) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PasswordPage()),
+                        MaterialPageRoute(
+                            builder: (context) => PasswordPage()),
                       );
-                    },
-                  ),
-                )
+                    } else {
+                      showAlert(context);
+                    }
+                  },
+                ),
               ),
+            ),
           ],
         ),
-      )
+      ),
+    );
+  }
+
+  void showAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Erreur"),
+          content: Text("L'adresse e-mail n'est pas valide."),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -110,22 +140,32 @@ class _EmailFormState extends State<EmailForm> {
       child: Column(
         children: [
           DelayedAnimation(
-              delay: 300,
-              child: Container(
-                margin: EdgeInsets.only(
-                  top: 0,
-                  bottom: 250,
+            delay: 300,
+            child: Container(
+              margin: EdgeInsets.only(
+                top: 0,
+                bottom: 200,
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Email',
                 ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                  ),
-                  onChanged: (value) => email = value,
-                ),
+                onChanged: (value) => email = value,
               ),
             ),
+          ),
         ],
       ),
     );
   }
+}
+
+
+bool isValidEmail(String email) {
+  // Utilisez une expression régulière pour valider l'adresse e-mail.
+  // Cette expression régulière peut varier en fonction de vos besoins.
+  final emailRegExp = RegExp(
+    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+  );
+  return emailRegExp.hasMatch(email);
 }

@@ -4,12 +4,13 @@ import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
 import 'package:notario_mobile/register/register_controler.dart';
 import 'package:notario_mobile/utils/constants/status_code.dart';
+import 'package:notario_mobile/welcome_page.dart';
 import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
 import 'name_page.dart';
 import '../api/api.dart';
-import '../main_page/document_page.dart';
+
 
 class PasswordPage extends StatelessWidget {
   final registerController = RegisterController(apiAuth: ApiAuth());
@@ -98,7 +99,7 @@ class PasswordPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => DocumentPage()),
+                                  builder: (context) => WelcomePage()),
                             );
                           } else {
                             print("Erreur");

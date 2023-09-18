@@ -27,14 +27,14 @@ class WelcomePage extends StatelessWidget {
                     top: 0,
                     bottom: 40,
                   ),
-                  height: 170,
+                  height: 150,
                   child: Image.asset('images/notario.png'),
                 ),
               ),
               DelayedAnimation(
-                delay: 300,
+                delay: 220,
                 child: Container(
-                  height: 400,
+                  height: 300,
                   child: Image.asset('images/man.png', scale: 1.5),
                 ),
               ),

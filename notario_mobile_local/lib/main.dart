@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'main_page/delayed_animation.dart';
 import 'welcome_page.dart';
+import 'main_page/homePage.dart';
 import 'register/name_page.dart';
 import 'register/mail_page.dart';
-import 'api/api.dart';
-import 'register/age_page.dart';
 import 'main_page/document_page.dart';
 import 'main_page/profil_page.dart';
 import 'main_page/faq_page.dart';
@@ -31,6 +30,7 @@ class MyApp extends StatelessWidget {
       title: 'Notario',
       debugShowCheckedModeBanner: false,
       home: WelcomePage(),
+      //Profil
     );
   }
 }

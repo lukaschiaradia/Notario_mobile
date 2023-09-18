@@ -10,20 +10,25 @@ import '../api/api.dart';
 var profil_phone = '';
 var profil_firstName = '';
 var profil_lastName = '';
-int profil_age = 0;
+int profil_age = 10;
 var profil_email = '';
 
 void get_user_infos() {
-  profil_phone = json_info['user']['phone'];
-  profil_firstName = json_info['user']['first_name'];
-  profil_lastName = json_info['user']['last_name'];
-  profil_age = json_info['user']['age'];
-  profil_email = json_info['user']['email'];
+  profil_phone = "06466581"; // json_info['user']['phone'];
+  profil_firstName = "eric"; //json_info['user']['first_name'];
+  profil_lastName = "fred"; //json_info['user']['last_name'];
+  profil_age = 12; //json_info['user']['age'];
+  profil_email = "fre et erdic .com"; //json_info['user']['email'];
 }
 
-class Profil extends StatelessWidget {
+class Profil extends StatefulWidget {
   const Profil({super.key});
 
+  @override
+  State<Profil> createState() => _ProfilState();
+}
+
+class _ProfilState extends State<Profil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,18 +39,19 @@ class Profil extends StatelessWidget {
               child: null,
             ),
             ListTile(
-              title: Text('text'),
-              contentPadding: const EdgeInsets.only(left: 50.0),
+              title: Text('text test Document'),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => DocumentPage()));
               },
             ),
             ListTile(
-              title: Text('text'),
-            ),
+                title: Text('Modifier mes infos'),
+                onTap: () {
+                  _showEditDialog(context);
+                }),
             ListTile(
-              title: Text('text'),
+              title: Text('Suprimer mon compte'),
             ),
           ],
         ),
@@ -138,4 +144,76 @@ class ProfilPageState extends State<ProfilPage> {
   Widget build(BuildContext context) {
     return Scaffold();
   }
+}
+
+void _showEditDialog(BuildContext context) {
+  String editedFirstName = profil_firstName;
+  String editedLastName = profil_lastName;
+  String editedEmail = profil_email;
+  int editedAge = profil_age;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Modifier mes informations'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextFormField(
+                initialValue: profil_firstName,
+                decoration: InputDecoration(labelText: 'Prénom'),
+                onChanged: (value) {
+                  editedFirstName = value;
+                },
+              ),
+              TextFormField(
+                initialValue: profil_lastName,
+                decoration: InputDecoration(labelText: 'Nom'),
+                onChanged: (value) {
+                  editedLastName = value;
+                },
+              ),
+              TextFormField(
+                initialValue: profil_email,
+                decoration: InputDecoration(labelText: 'Email'),
+                onChanged: (value) {
+                  editedEmail = value;
+                },
+              ),
+              TextFormField(
+                initialValue: profil_age.toString(),
+                decoration: InputDecoration(labelText: 'Âge'),
+                onChanged: (value) {
+                  editedAge = int.tryParse(value) ?? profil_age;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Annuler'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Enregistrer'),
+            onPressed: () {
+              profil_firstName = editedFirstName;
+              profil_lastName = editedLastName;
+              profil_email = editedEmail;
+              profil_age = editedAge;
+              print(profil_age);
+              print(profil_email + profil_firstName);
+
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

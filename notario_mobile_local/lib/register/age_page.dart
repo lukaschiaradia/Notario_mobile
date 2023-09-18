@@ -44,9 +44,7 @@ class AgePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 30),
             AgeForm(),
-            SizedBox(height: 30),
             DelayedAnimation(
               delay: 300,
               child: Container(
@@ -63,7 +61,7 @@ class AgePage extends StatelessWidget {
             DelayedAnimation(
               delay: 500,
               child: Container(
-                width: double.infinity,
+                width: 300,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: blue_color,
@@ -75,10 +73,56 @@ class AgePage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MailPage()),
-                    );
+                    // Vérifiez si le champ "Âge" est vide.
+                    if (age == null || age!.isEmpty) {
+                      // Affichez une boîte de dialogue (alerte) si le champ est vide.
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Champ vide"),
+                            content: Text("Veuillez entrer votre âge."),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text("OK"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      int? ageValue = int.tryParse(age!);
+                      if (ageValue != null &&
+                          ageValue >= 18 &&
+                          ageValue <= 100) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MailPage()),
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Âge invalide"),
+                              content: Text(
+                                  "Veuillez entrer un âge valide entre 18 et 100."),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text("OK"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
                   },
                   child: Text(
                     "Continuer",
@@ -106,7 +150,7 @@ class _AgeFormState extends State<AgeForm> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(
-      horizontal: 30,
+        horizontal: 30,
       ),
       child: Column(
         children: [
@@ -115,7 +159,7 @@ class _AgeFormState extends State<AgeForm> {
             child: Container(
               margin: EdgeInsets.only(
                 top: 0,
-                bottom: 250,
+                bottom: 200,
               ),
               child: TextField(
                 decoration: InputDecoration(
