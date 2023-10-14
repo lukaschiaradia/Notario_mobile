@@ -46,7 +46,8 @@ Future<dynamic> api_get_planning({required String token}) async {
 }
 
 Future<dynamic> api_get_questions() async {
-  var endPoint = Uri.http(ip, '/faq/');
+  var endPoint = Uri.http('127.0.0.1:8000', '/faq/');
+  //var endPoint = Uri.http(ip, '/faq/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',

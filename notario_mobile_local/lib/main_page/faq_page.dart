@@ -9,25 +9,56 @@ import 'package:file_picker/file_picker.dart';
 import 'profil_page.dart';
 import 'bottomNavBar.dart';
 import '../api/api.dart';
-import 'chat_box.dart';
+import 'chat_box.dart'; 
 
-List<dynamic> create_faq_list(List faqlist) {
-  List<dynamic> faq_List = [];
-  for (int x = 0; x < faqlist.length; x++) {
-    faq_List = [
-      ...faq_List,
-      {
-        'title': faqlist[x]['title'],
-        'description': faqlist[x]['description'],
-      }
-    ];
+Future<List<dynamic>> get_faq_list() async {
+  var questionsAndAnswers = await api_get_questions();
+  try {
+    return questionsAndAnswers.map((item) {
+      return {
+        'question': item['title'],
+        'answer': item['description'],
+      };
+    }).toList();
+  } catch (e) {
+    print('Erreur lors de la récupération des questions et réponses : $e');
+    return [];
   }
-
-  return faq_List;
 }
 
 class FaqPage extends StatelessWidget {
-  final List faqList = create_faq_list(faq_list);
+  final TextEditingController searchTextController = TextEditingController();
+  final List<dynamic> questionsAndAnswers = [];
+  final List<dynamic> questionsAndAnswersToShow = [];
+
+  FaqPage() {
+    _loadQuestionsAndAnswers();
+  }
+
+  Future<void> _loadQuestionsAndAnswers() async {
+    try {
+      questionsAndAnswers.addAll(await get_faq_list());
+    } catch (e) {
+      print('Erreur lors du chargement des questions et réponses : $e');
+    }
+    questionsAndAnswersToShow ..addAll(questionsAndAnswers);
+  }
+
+  void searchQuestionsByInput(String input) {
+    questionsAndAnswersToShow.clear();
+    if (input.isEmpty) {
+      questionsAndAnswersToShow.addAll(questionsAndAnswers);
+      return;
+    }
+    for (var item in questionsAndAnswers) {
+      String question = item['question'];
+      String answer = item['answer'];
+      if (question.toLowerCase().contains(input.toLowerCase()) ||
+          answer.toLowerCase().contains(input.toLowerCase())) {
+        questionsAndAnswersToShow.add(item);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +66,17 @@ class FaqPage extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Color(0Xff6949FF)),
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        title: Text(
+          'NOTARIO',
+          style: TextStyle(
+            color: Color(0Xff6949FF),
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         elevation: 0,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -56,7 +96,7 @@ class FaqPage extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
                           child: Text(
-                            'Foire aux Questions',
+                            'Questions / Réponses',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
@@ -68,17 +108,18 @@ class FaqPage extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.fromLTRB(25, 25, 0, 0),
                           child: Text(
-                            'Recherchez des articles pour trouver votre réponse',
+                            'Recherchez ici les réponses aux questions fréquentes des utilisateurs',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 25,
+                              fontSize: 20,
                             ),
                           ),
                         ),
-                        Container(
-                          padding: EdgeInsets.all(30),
+                        Container (
+                          padding: EdgeInsets.all(25),
                           child: TextField(
+                            controller: searchTextController,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -87,228 +128,41 @@ class FaqPage extends StatelessWidget {
                                       BorderRadius.all(Radius.circular(45)),
                                   borderSide: BorderSide.none),
                               hintText:
-                                  "Ex: Comment dire à mon père gougniafier",
-                              suffixIcon: Icon(Icons.search),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(20),
-                          child: Text('Questions fréquentes',
-                              style: TextStyle(
-                                  fontSize: 30,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Stack(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            ExpansionTile(
-                              tilePadding: EdgeInsets.all(10),
-                              title: Text(
-                                'Succession',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              children: [
-                                Column(
-                                  children: [
-                                    ExpansionTile(
-                                      backgroundColor: Colors.black12,
-                                      tilePadding:
-                                          EdgeInsets.fromLTRB(30, 10, 0, 0),
-                                      title: Text(
-                                        "- Qu'est-ce que l'usufruit ?",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.black26,
-                                          padding: EdgeInsets.all(20),
-                                          width: double.infinity,
-                                          child: Text(
-                                            "L'usufruit est le droit d'occuper un bien sans en être propriétaire.",
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    ExpansionTile(
-                                      backgroundColor: Colors.black12,
-                                      tilePadding:
-                                          EdgeInsets.fromLTRB(30, 10, 0, 0),
-                                      title: Text(
-                                        "- Qu'est-ce que la nue-propriété ?",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.black26,
-                                          padding: EdgeInsets.all(20),
-                                          width: double.infinity,
-                                          child: Text(
-                                            "La nue-propriété est un droit qui permet de disposer d'une chose mobilière ou immobilière.",
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            ExpansionTile(
-                              tilePadding: EdgeInsets.all(10),
-                              title: Text(
-                                'Vente',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              children: [
-                                Column(
-                                  children: [
-                                    ExpansionTile(
-                                      backgroundColor: Colors.black12,
-                                      tilePadding:
-                                          EdgeInsets.fromLTRB(30, 10, 0, 0),
-                                      title: Text(
-                                        "- Comment se déroule la signature du compromis de vente ?",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.black26,
-                                          padding: EdgeInsets.all(20),
-                                          width: double.infinity,
-                                          child: Text(
-                                            "Le compromis de vente est le premier document qui atteste juridiquement de l'accord de transaction immobilière entre l'acheteur et le vendeur d'un bien immobilier.",
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    ExpansionTile(
-                                      backgroundColor: Colors.black12,
-                                      tilePadding:
-                                          EdgeInsets.fromLTRB(30, 10, 0, 0),
-                                      title: Text(
-                                        "- Combien coûte un compromis de vente ?",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.black26,
-                                          padding: EdgeInsets.all(20),
-                                          width: double.infinity,
-                                          child: Text(
-                                            "Le compromis de vente est rédigé par un cabinet notarial selon les indications qui lui ont été fournies par les parties prenantes à la transaction immobilière.\nCe travail qui permet de s'assurer de la conformité juridique et légale des termes du document est rémunéré.\nSon tarif est d'environ 300 € qui sont payés par l'acheteur en même temps que les frais de notaire.",
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            ExpansionTile(
-                              tilePadding: EdgeInsets.all(10),
-                              title: Text(
-                                'Support Technique',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              children: [
-                                Column(
-                                  children: [
-                                    ExpansionTile(
-                                      backgroundColor: Colors.black12,
-                                      tilePadding:
-                                          EdgeInsets.fromLTRB(30, 10, 0, 0),
-                                      title: Text(
-                                        "- Comment créer un compte notario ?",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.black26,
-                                          padding: EdgeInsets.all(20),
-                                          width: double.infinity,
-                                          child: Text(
-                                            "Cliquez sur l'icone profil et rentrez vos informations personnelles.",
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    ExpansionTile(
-                                      backgroundColor: Colors.black12,
-                                      tilePadding:
-                                          EdgeInsets.fromLTRB(30, 10, 0, 0),
-                                      title: Text(
-                                        "- Comment me connecter à mon compte ?",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.black26,
-                                          padding: EdgeInsets.all(20),
-                                          width: double.infinity,
-                                          child: Text(
-                                            "Cliquez sur l'icone profil, puis sur 'sign-in' et rentrez vos identifiants de connexion.",
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        right: 16,
-                        bottom: 0,
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                child: Icon(Icons.chat),
-                                onPressed: () {
-                                  chats_list = Future(() => api_get_chats());
-                                  chats_list.then((value) {
-                                    chats_list = value;
-                                    chat_List = create_chat_list(chats_list);
-                                    chat_id = Future(() => api_get_chat(chat_List[0]['chat_id']));
-                                    chat_id.then((value) {
-                                      receiver_id = chat_List[0]['id_receiver'];
-                                      chat_with_messages = value;
-                                      all_messages = create_messages_list(chat_with_messages);
-                                      print("Création de la liste des messages == OK");
-                                      print(all_messages);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => ChatBox()),
-                                      );
-                                    });
-                                  });
+                                  "Ex: Mot de passe oublié",
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  searchQuestionsByInput(
+                                      searchTextController.text);
+                                  FocusScope.of(context).unfocus();
                                 },
-                              )
-                            ],
+                                child: Icon(Icons.search),
+                              ),
+                            ),
                           ),
-                        ),
-                      )
-                    ],
+                        ),            
+                         if (questionsAndAnswersToShow.isEmpty)
+                          Text(
+                            'Aucun résultat',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),      
+
+                      ],
+                    ),
                   ),
+
+                  if (questionsAndAnswersToShow.isNotEmpty)
+                    Container(
+                      padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
+                      child: DisplayQuestionsAndAnswers(
+                          questionsAndAnswers: questionsAndAnswersToShow)
+                    )
+
+
                 ],
-              ),
+              ),   
             ],
           ),
         ),
@@ -318,32 +172,68 @@ class FaqPage extends StatelessWidget {
   }
 }
 
-class faqCard extends StatelessWidget {
-  final Map faqData;
-  faqCard(this.faqData);
+class DisplayQuestionsAndAnswers extends StatefulWidget {
+  final List<dynamic> questionsAndAnswers;
+
+  DisplayQuestionsAndAnswers({required this.questionsAndAnswers});
+
+  @override
+  _DisplayQuestionsAndAnswersState createState() =>
+      _DisplayQuestionsAndAnswersState();
+}
+
+class _DisplayQuestionsAndAnswersState
+  extends State<DisplayQuestionsAndAnswers> {
+  late List<bool> isExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    isExpanded = List.filled(widget.questionsAndAnswers.length, false);
+    print(widget.questionsAndAnswers.length);
+    print(widget.questionsAndAnswers);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ExpansionTile(
-          backgroundColor: Colors.black12,
-          tilePadding: EdgeInsets.fromLTRB(30, 10, 0, 0),
-          title: Text(
-            faqData['title'],
-            style: TextStyle(color: Colors.black),
-          ),
-          children: [
-            Container(
-              color: Colors.black26,
-              padding: EdgeInsets.all(20),
-              width: double.infinity,
-              child: Text(
-                faqData['description'],
+    return Container(
+      padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: widget.questionsAndAnswers.length,
+        itemBuilder: (context, index) {
+          final question = widget.questionsAndAnswers[index];
+          final title = question['question'];
+          final description = question['answer'];
+
+          return Card(
+            elevation: 2,
+            margin: EdgeInsets.only(bottom: 16),
+            child: ListTile(
+              title: Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              subtitle: Text(
+                isExpanded[index] ? description : '',
+                maxLines: isExpanded[index] ? null : 1,
+              ),
+              onTap: () {
+                setState(() {
+                    isExpanded[index] = !isExpanded[index];
+                });
+              },
             ),
-          ],
-        ),
-      ],
+          );
+        },
+      ),
     );
   }
 }
+
+
+
+
+
+
+
