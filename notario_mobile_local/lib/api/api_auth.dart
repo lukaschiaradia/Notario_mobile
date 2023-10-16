@@ -1,5 +1,6 @@
 import 'dart:convert' as convert;
-import 'dart:convert';import 'package:http/http.dart';
+import 'dart:convert';
+import 'package:http/http.dart';
 import 'package:notario_mobile/models/utilisateur_login.dart';
 import 'package:notario_mobile/models/utilisateur_modif.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
@@ -44,13 +45,13 @@ class ApiAuth {
     }
   }
 
-  /*Future<Response> apiUpdate({
+  Future<Response> apiUpdate({
     required UtilisateurModif accountsModif,
   }) async {
-    var endPoint = Uri.http(ip, accountsModif);
+    var endPoint = Uri.http(ip, accountsModifs);
     Map data = accountsModif.toData();
     try {
-      var response = await Client().post(endPoint,
+      var response = await Client().put(endPoint,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -59,5 +60,5 @@ class ApiAuth {
     } catch (e) {
       throw (e.toString());
     }
-  }*/
+  }
 }

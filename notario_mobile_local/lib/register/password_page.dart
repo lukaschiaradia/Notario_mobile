@@ -11,7 +11,6 @@ import '../main.dart';
 import 'name_page.dart';
 import '../api/api.dart';
 
-
 class PasswordPage extends StatelessWidget {
   final registerController = RegisterController(apiAuth: ApiAuth());
   @override
@@ -93,13 +92,32 @@ class PasswordPage extends StatelessWidget {
                             firstName: firstName,
                             password: password,
                             password_confirm: password_confirm,
+                            token: token,
                           ));
 
                           if (value.statusCode == successCode) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => WelcomePage()),
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Confirmez votre e-mail'),
+                                  content: Text(
+                                      'Un e-mail de confirmation a été envoyé. Veuillez confirmer votre e-mail pour vous connecter.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  WelcomePage()),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
                             );
                           } else {
                             print("Erreur");

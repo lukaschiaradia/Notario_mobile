@@ -1,3 +1,4 @@
+import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/api/api_auth.dart';
 import 'package:http/src/response.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
@@ -10,11 +11,13 @@ class RegisterController {
     this.firstName = '',
     this.password = '',
     this.password_confirm = '',
+    this.token = '',
     this.phone,
     required this.apiAuth,
   });
 
   final ApiAuth apiAuth;
+  String token = '"9b3dd17e-8d72-4ea1-91e2-d285e1584a3c-8392a8e8-4b89-4f1b-8356-8ab9a2f9d4f2"';
   String email;
   String password;
   String password_confirm;
@@ -61,7 +64,8 @@ class RegisterController {
               firstName: firstName,
               password: password,
               password_confirm: password_confirm,
-              phone: phone));
+              phone: phone,
+              token: token));
     } catch (e) {
       throw e;
     }

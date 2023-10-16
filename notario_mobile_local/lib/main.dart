@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
       title: 'Notario',
       debugShowCheckedModeBanner: false,
       home: WelcomePage(),
-      //Profil
+
+      //home: HomePage(),
     );
   }
 }

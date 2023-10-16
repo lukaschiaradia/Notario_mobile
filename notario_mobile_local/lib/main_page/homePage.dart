@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notario_mobile/main_page/profil_page.dart';
 import 'document_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -45,7 +46,8 @@ class HomePage extends StatelessWidget {
               },
             ),
             SizedBox(height: 20),
-            Container(
+             InkWell(
+              child:Container(
               width: 300,
               height: 65,
               decoration: BoxDecoration(
@@ -60,6 +62,13 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
+             onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Profil()),
+                );
+              },
+             ),
             SizedBox(height: 20),
             Container(
               width: 300,

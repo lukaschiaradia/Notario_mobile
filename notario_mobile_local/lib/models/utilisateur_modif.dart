@@ -5,6 +5,7 @@ class UtilisateurModif {
     required this.email,
     required this.firstName,
     required this.password,
+    required this.phone,
   });
 
   String email;
@@ -12,13 +13,16 @@ class UtilisateurModif {
   String firstName;
   String LastName;
   String age;
+  String phone;
 
   Map<String, dynamic> toData() {
     return {
+
       'email': email,
-      'password': password,
-      'firstName': firstName,
-      'LastName': LastName,
+      'password': 'password123',
+      'first_name': firstName,
+      'last_name': LastName,
+      'phone':'+33656656555',
       'age': age,
     };
   }

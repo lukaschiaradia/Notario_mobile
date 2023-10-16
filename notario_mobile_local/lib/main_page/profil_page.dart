@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:notario_mobile/api/api_auth.dart';
+import 'package:notario_mobile/models/utilisateur_modif.dart';
 import '../welcome_page.dart';
 import 'bottomNavBar.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +41,7 @@ class _ProfilState extends State<Profil> {
               child: null,
             ),
             ListTile(
-              title: Text('text test Document'),
+              title: Text('Document'),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => DocumentPage()));
@@ -51,8 +53,10 @@ class _ProfilState extends State<Profil> {
                   _showEditDialog(context);
                 }),
             ListTile(
-              title: Text('Suprimer mon compte'),
-            ),
+                title: Text('Suprimer mon compte'),
+                onTap: () {
+                  _showDeleteDialog(context);
+                }),
           ],
         ),
       ),
@@ -201,15 +205,47 @@ void _showEditDialog(BuildContext context) {
           ),
           TextButton(
             child: Text('Enregistrer'),
-            onPressed: () {
-              profil_firstName = editedFirstName;
-              profil_lastName = editedLastName;
-              profil_email = editedEmail;
-              profil_age = editedAge;
-              print(profil_age);
-              print(profil_email + profil_firstName);
+            onPressed: () async {
+              var value = await ApiAuth().apiUpdate(
+                              accountsModif: UtilisateurModif(
+                            LastName: LastName,
+                            age: age,
+                            email: email,
+                            firstName: firstName,
+                            password: password,
+                            phone: '+33654545454',
+                            
+                          ));
 
               Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showDeleteDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Supprimer mon compte'),
+        content: SingleChildScrollView(),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Annuler'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Supprimer mon compte'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.push(context,
+                    MaterialPageRoute(builder: (context) =>  WelcomePage()));
             },
           ),
         ],
