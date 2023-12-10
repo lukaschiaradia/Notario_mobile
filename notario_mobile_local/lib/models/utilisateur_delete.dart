@@ -1,15 +1,16 @@
+import '../utils/constants/contants_url.dart';
+
 class UtilisateurDelete {
   UtilisateurDelete({
-
-    required this.tokenMobile,
+  required this.idClient,
   });
 
-  String tokenMobile;
+  String idClient;
 
 
   Map<String, dynamic> toData() {
     return {
-      'token': tokenMobile,
+      'token': idClient,
     };
   }
 }

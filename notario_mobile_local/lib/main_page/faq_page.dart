@@ -48,13 +48,13 @@ class FaqPage extends StatelessWidget {
               Column(
                 children: [
                   Container(
-                    height: 300,
+                    height: 140,
                     width: double.infinity,
                     color: blue_color,
                     child: Column(
                       children: [
                         Container(
-                          padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                          padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                           child: Text(
                             'Foire aux Questions',
                             textAlign: TextAlign.center,
@@ -76,22 +76,6 @@ class FaqPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Container(
-                          padding: EdgeInsets.all(30),
-                          child: TextField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(45)),
-                                  borderSide: BorderSide.none),
-                              hintText:
-                                  "Ex: Comment dire à mon père gougniafier",
-                              suffixIcon: Icon(Icons.search),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -107,6 +91,119 @@ class FaqPage extends StatelessWidget {
                                   fontWeight: FontWeight.bold)),
                         ),
                       ],
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(
+                              8.0), // Ajoute de l'espace entre les carrés
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(12.0), // Coins arrondis
+                            child: Container(
+                              width: 100, // Largeur du carré
+                              height: 100, // Hauteur du carré
+                              color: Colors.red,
+                              child: Center(
+                                child: Text(
+                                  'Info Carré 1',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              color: Colors.blue,
+                              child: Center(
+                                child: Text(
+                                  'Info Carré 2',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              color: Colors.green,
+                              child: Center(
+                                child: Text(
+                                  'Info Carré 3',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              color: Colors.yellow,
+                              child: Center(
+                                child: Text(
+                                  'Info Carré 4',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Ajoutez plus de carrés ici si nécessaire
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(16.0),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 2.0),
+                            child: Text(
+                              'Recherchez votre question',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(30),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(45)),
+                            borderSide: BorderSide.none),
+                        hintText: "Ex: Comment dire à mon père gougniafier",
+                        suffixIcon: Icon(Icons.search),
+                      ),
                     ),
                   ),
                   Stack(
@@ -286,16 +383,20 @@ class FaqPage extends StatelessWidget {
                                   chats_list.then((value) {
                                     chats_list = value;
                                     chat_List = create_chat_list(chats_list);
-                                    chat_id = Future(() => api_get_chat(chat_List[0]['chat_id']));
+                                    chat_id = Future(() =>
+                                        api_get_chat(chat_List[0]['chat_id']));
                                     chat_id.then((value) {
                                       receiver_id = chat_List[0]['id_receiver'];
                                       chat_with_messages = value;
-                                      all_messages = create_messages_list(chat_with_messages);
-                                      print("Création de la liste des messages == OK");
+                                      all_messages = create_messages_list(
+                                          chat_with_messages);
+                                      print(
+                                          "Création de la liste des messages == OK");
                                       print(all_messages);
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => ChatBox()),
+                                        MaterialPageRoute(
+                                            builder: (context) => ChatBox()),
                                       );
                                     });
                                   });

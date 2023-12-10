@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/models/utilisateur_modif.dart';
+import 'package:notario_mobile/utils/constants/contants_url.dart';
 import '../welcome_page.dart';
 import 'bottomNavBar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../models/utilisateur_delete.dart';
 import 'document_page.dart';
 import '../api/api.dart';
 
@@ -207,15 +207,14 @@ void _showEditDialog(BuildContext context) {
             child: Text('Enregistrer'),
             onPressed: () async {
               var value = await ApiAuth().apiUpdate(
-                              accountsModif: UtilisateurModif(
-                            LastName: LastName,
-                            age: age,
-                            email: email,
-                            firstName: firstName,
-                            password: password,
-                            phone: '+33654545454',
-                            
-                          ));
+                  accountsModif: UtilisateurModif(
+                LastName: LastName,
+                age: age,
+                email: email,
+                firstName: firstName,
+                password: password,
+                phone: '+33654545454',
+              ));
 
               Navigator.of(context).pop();
             },
@@ -240,14 +239,26 @@ void _showDeleteDialog(BuildContext context) {
               Navigator.of(context).pop();
             },
           ),
-          TextButton(
-            child: Text('Supprimer mon compte'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>  WelcomePage()));
-            },
-          ),
+         TextButton(
+  child: Text('Supprimer mon compte'),
+  onPressed: () async {
+    UtilisateurDelete utilisateurASupprimer = UtilisateurDelete(idClient: TokenUser);
+    try {
+      await apiDelete(accountsDeleteId: utilisateurASupprimer);
+      print("Suppression réussie");
+      print(TokenUser);
+      Navigator.of(context).pop();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => WelcomePage()),
+      );
+    } catch (e) {
+      print("Erreur lors de la suppression du compte : $e");
+      // Gérer les erreurs ou afficher un message d'erreur
+    }
+  },
+),
+
         ],
       );
     },
