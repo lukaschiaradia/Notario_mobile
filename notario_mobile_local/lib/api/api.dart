@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:notario_mobile/login/connexion_page.dart';
 import 'package:http/http.dart';
+import '../utils/constants/contants_url.dart';
 
 var user_id = 0;
 var receiver_id = 0;
-const ip = '10.0.2.2:8000';
 
 var firstName = '';
 var LastName = '';
