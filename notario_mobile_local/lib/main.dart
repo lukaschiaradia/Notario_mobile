@@ -7,6 +7,7 @@ import 'register/name_page.dart';
 import 'main_page/document_page.dart';
 import 'main_page/profil_page.dart';
 import 'main_page/message_page.dart';
+import 'main_page/faq_page.dart';
 
 const blue_color = Color(0xFF6949FF);
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Notario',
       debugShowCheckedModeBanner: false,
-      home: WelcomePage(),
+      home: FaqPage()
 
       //home: HomePage(),
     );
