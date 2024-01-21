@@ -24,6 +24,7 @@ dynamic chat_List = [];
 dynamic chat_id = [];
 dynamic chat_with_messages = [];
 dynamic all_messages = [];
+dynamic files_list = [];
 
 Future<dynamic> api_get_planning({required String token}) async {
   var endPoint = Uri.http(ip, '/planning/');
@@ -149,6 +150,24 @@ Future<num> api_add_message(
     print(json_map);
     print(response.statusCode);
     return await (response.statusCode);
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_get_files({required String token}) async {
+  var endPoint = Uri.http(ip, '/files/list/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token,
+    });
+
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+    files_list = json_map['files'];
+    return files_list;
   } catch (e) {
     throw (e.toString());
   }
