@@ -16,7 +16,6 @@ var password_confirm = '';
 
 var age = '';
 var token = '';
-var json_info = {};
 dynamic rdv_list = [];
 dynamic faq_list = [];
 dynamic chats_list = [];
