@@ -61,6 +61,10 @@ class WelcomePage extends StatelessWidget {
                     child: Text(
                       "S'inscrire",
                       textScaleFactor: 1.5,
+                      style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      ),
                     ),
                   ),
                 ),

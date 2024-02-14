@@ -12,26 +12,31 @@ import '../api/api.dart';
 var profil_phone = '';
 var profil_firstName = '';
 var profil_lastName = '';
-int profil_age = 10;
+int profil_age = 0;
 var profil_email = '';
 
-void get_user_infos() {
-  profil_phone = "06466581"; // json_info['user']['phone'];
-  profil_firstName = "eric"; //json_info['user']['first_name'];
-  profil_lastName = "fred"; //json_info['user']['last_name'];
-  profil_age = 12; //json_info['user']['age'];
-  profil_email = "fre et erdic .com"; //json_info['user']['email'];
+void get_user_infos() async {
+  var user = await getUserInfo();
+  profil_phone = user['user']['phone'];
+  profil_firstName = user['user']['first_name'];
+  profil_lastName = user['user']['last_name'];
+  profil_age = user['user']['age'];
+  profil_email = user['user']['email'];
 }
 
 class Profil extends StatefulWidget {
   const Profil({super.key});
-
+  
   @override
   State<Profil> createState() => _ProfilState();
 }
 
 class _ProfilState extends State<Profil> {
   @override
+  void initState() {
+    super.initState();
+    get_user_infos();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: Drawer(

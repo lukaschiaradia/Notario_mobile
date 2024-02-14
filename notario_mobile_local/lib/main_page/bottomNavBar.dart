@@ -5,6 +5,7 @@ import 'document_page.dart';
 import 'planning_page.dart';
 import 'faq_page.dart';
 import '../api/api.dart';
+import '../api/api_auth.dart';
 
 int _currentIndex = 0;
 
@@ -85,7 +86,6 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
               );
             });
           } else if (index == 3) {
-            get_user_infos();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Profil()),

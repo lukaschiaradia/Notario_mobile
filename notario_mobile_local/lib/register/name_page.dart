@@ -74,6 +74,9 @@ class NamePage extends StatelessWidget {
                       child: Text(
                         "Continuer",
                         textScaleFactor: 1.5,
+                        style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        ),
                       ),
                       onPressed: () {
                         // Vérifiez si les champs "Nom" et "Prénom" sont vides.
