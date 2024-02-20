@@ -7,7 +7,6 @@ import 'name_page.dart';
 import 'password_page.dart';
 import '../api/api.dart';
 
-
 void main() {
   runApp(MaterialApp(
     home: MailPage(),
@@ -44,7 +43,7 @@ class MailPage extends StatelessWidget {
                   bottom: 0,
                 ),
                 child: Text(
-                  "Entrez votre adresse mail",
+                  "Entrez votre adresse mail et votre numero de telephone",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black,
@@ -54,6 +53,10 @@ class MailPage extends StatelessWidget {
               ),
             ),
             EmailForm(),
+            SizedBox(
+              height: 20,
+            ),
+            PhoneForm(),
             DelayedAnimation(
               delay: 300,
               child: Container(
@@ -73,7 +76,7 @@ class MailPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: blue_color,
                     padding: EdgeInsets.symmetric(
                       vertical: 20,
                     ),
@@ -81,13 +84,16 @@ class MailPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
-                  child: Text("Continuer", textScaleFactor: 1.5),
+                  child: Text("Continuer",
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                      ),
+                      textScaleFactor: 1.5),
                   onPressed: () {
                     if (isValidEmail(email)) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => PasswordPage()),
+                        MaterialPageRoute(builder: (context) => PasswordPage()),
                       );
                     } else {
                       showAlert(context);
@@ -144,7 +150,7 @@ class _EmailFormState extends State<EmailForm> {
             child: Container(
               margin: EdgeInsets.only(
                 top: 0,
-                bottom: 200,
+                bottom: 20,
               ),
               child: TextField(
                 decoration: InputDecoration(
@@ -160,6 +166,42 @@ class _EmailFormState extends State<EmailForm> {
   }
 }
 
+class PhoneForm extends StatefulWidget {
+  const PhoneForm();
+
+  @override
+  _PhoneFormState createState() => _PhoneFormState();
+}
+
+class _PhoneFormState extends State<PhoneForm> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: 30,
+      ),
+      child: Column(
+        children: [
+          DelayedAnimation(
+            delay: 300,
+            child: Container(
+              margin: EdgeInsets.only(
+                top: 0,
+                bottom: 20,
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                ),
+                onChanged: (value) => phone = value,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 bool isValidEmail(String email) {
   // Utilisez une expression régulière pour valider l'adresse e-mail.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
 import 'name_page.dart';
@@ -126,6 +127,9 @@ class AgePage extends StatelessWidget {
                   },
                   child: Text(
                     "Continuer",
+                    style: GoogleFonts.poppins(
+                        color: Colors.white,
+                    ),
                     textScaleFactor: 1.5,
                   ),
                 ),

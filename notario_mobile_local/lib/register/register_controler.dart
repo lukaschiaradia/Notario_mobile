@@ -12,7 +12,7 @@ class RegisterController {
     this.password = '',
     this.password_confirm = '',
     this.token = '',
-    this.phone,
+    this.phone = '',
     required this.apiAuth,
   });
 
@@ -21,7 +21,7 @@ class RegisterController {
   String email;
   String password;
   String password_confirm;
-  String? phone;
+  String phone;
   String firstName;
   String LastName;
   String age;
@@ -51,7 +51,7 @@ class RegisterController {
   }
 
   void changePhone(String newPhone) {
-    age = newPhone;
+    phone = newPhone;
   }
 
   Future<Response> register() async {

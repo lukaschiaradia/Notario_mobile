@@ -67,10 +67,11 @@ class ConnexionPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(50),
                         ),
                       ),
-                      child: Text(
-                        "Connexion",
-                        textScaleFactor: 1.5,
+                      child: Text("Continuer",
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
                       ),
+                      textScaleFactor: 1.5),
                       onPressed: () async {
                         var value = await connectionControler.connection();
                         print(value);

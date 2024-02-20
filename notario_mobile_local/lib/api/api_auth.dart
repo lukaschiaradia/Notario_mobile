@@ -78,6 +78,30 @@ class ApiAuth {
 
 Future<Map<String, dynamic>> getUserInfo() async {
   print(TokenUser);
+  var endPoint = Uri.http(ip, '/accounts/user/');
+
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-CSRF-Token': TokenUser,
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+
+    if (response.statusCode == 200) {
+      String utf8Response = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> userInfo = convert.json.decode(utf8Response);
+      print(userInfo);
+      return userInfo;
+    } else {
+      print(
+          'Erreur lors de la récupération des informations de l\'utilisateur : ${response.statusCode}');
+      return {};
+    }
+  } catch (e) {
+    throw e;
+  }
+}
+ /* print(TokenUser);
   var endPoint = Uri.http(ip,
       '/accounts/user/');
 
@@ -101,7 +125,7 @@ Future<Map<String, dynamic>> getUserInfo() async {
     throw e;
   }
 }
-
+*/
 //call api pour le delete
 Future<Response> apiDelete({
   required UtilisateurDelete accountsDeleteId,
