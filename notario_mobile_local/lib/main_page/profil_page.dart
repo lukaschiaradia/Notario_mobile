@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notario_mobile/api/api_auth.dart';
+import 'package:notario_mobile/login/connexion_page.dart';
 import 'package:notario_mobile/models/utilisateur_modif.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import '../welcome_page.dart';
@@ -57,6 +58,14 @@ class _ProfilState extends State<Profil> {
                 onTap: () {
                   _showEditDialog(context);
                 }),
+            ListTile(
+                title: Text('Déconnexion'),
+                onTap: () {
+                  TokenUser = '';
+                  Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ConnexionPage()));
+                },
+              ),
             ListTile(
                 title: Text('Suprimer mon compte'),
                 onTap: () {
