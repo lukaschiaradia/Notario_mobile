@@ -13,7 +13,7 @@ import 'package:notario_mobile/utils/constants/contants_url.dart';
 var json_info = {};
 
 class ApiAuth {
-  const ApiAuth();
+  const ApiAuth(); 
 
   Future<Response> apiLogin(
       {required UtilisateurLogin utilisateurLogin}) async {
@@ -118,6 +118,25 @@ Future<Response> apiDelete({
     );
     print(accountsDeleteId.idClient);
     return response;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> apiForgotPassword({required String email}) async {
+  var endPoint = Uri.http(ip, 'accounts/forgotten/');
+  try {
+    var response = await Client().post(
+      endPoint,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{'email': email}),
+    );
+
+    var jsonResponse = jsonDecode(response.body);
+    print(jsonResponse);
+    return jsonResponse;
   } catch (e) {
     throw (e.toString());
   }

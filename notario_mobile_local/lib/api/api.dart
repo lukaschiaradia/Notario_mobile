@@ -9,6 +9,7 @@ var user_id = 0;
 var receiver_id = 0;
 
 var firstName = '';
+var phone = '';
 var LastName = '';
 var email = '';
 var password = '';
@@ -169,5 +170,35 @@ Future<dynamic> api_get_files({required String token}) async {
     return files_list;
   } catch (e) {
     throw (e.toString());
+  }
+}
+
+Future<Map<String, dynamic>> api_get_notary() async {
+  var endPoint = Uri.http(ip, '/clients/get-notary/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    if (response.statusCode == 200) {
+      var json_response = response.body;
+      var decode = utf8.decode(json_response.runes.toList());
+      var json_map = json.decode(decode);
+      print("here is the status code");
+      print(response.statusCode);
+      print(json_map);
+      return json_map;
+    } else if (response.statusCode == 404) {
+      print('You do not have a notary: ${response.statusCode}');
+    //showNoNotaryPopup(context);
+      throw Exception('You do not have a notary');
+    } else {
+      print(
+          'Error while retrieving notary information: ${response.statusCode}');
+      throw Exception('Failed to load notary information');
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+    throw e;
   }
 }
