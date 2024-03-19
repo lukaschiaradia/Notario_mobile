@@ -8,6 +8,7 @@ import 'bottomNavBar.dart';
 import '../models/utilisateur_delete.dart';
 import 'info_notaire.dart';
 import '../api/api.dart';
+import '../login/connexion_page.dart';
 
 var profil_phone = '';
 var profil_firstName = '';
@@ -33,10 +34,8 @@ void get_notary_infos() async {
 }
 
 class Profil extends StatefulWidget {
-  const Profil({super.key});
-
   @override
-  State<Profil> createState() => _ProfilState();
+  _ProfilState createState() => _ProfilState();
 }
 
 class _ProfilState extends State<Profil> {
@@ -47,6 +46,7 @@ class _ProfilState extends State<Profil> {
     get_notary_infos();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: Drawer(
@@ -68,88 +68,164 @@ class _ProfilState extends State<Profil> {
                   _showEditDialog(context);
                 }),
             ListTile(
-                title: Text('Suprimer mon compte'),
+                title: Text('Déconnexion'),
+                onTap: () {
+                  TokenUser = '';
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => ConnexionPage()));
+                },
+              ),
+            ListTile(
+                title: Text('Supprimer mon compte'),
                 onTap: () {
                   _showDeleteDialog(context);
                 }),
           ],
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFF351EA4), // Utilisation de la couleur primary-color
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        iconTheme: IconThemeData(color: Color(0Xff6949FF)),
-        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white), // Changement de la couleur de l'icône en blanc
+        backgroundColor: Color(0xFF351EA4), // Utilisation de la couleur primary-color pour la barre d'application
         elevation: 0,
         title: Padding(
           padding: const EdgeInsets.only(left: 10.0),
-          child: Text('Mon Profil',
-              style: TextStyle(
-                  color: Color(0Xff6949FF),
-                  fontSize: 30,
-                  decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.bold)),
+          child: Text(
+            'Mon Profil',
+            style: TextStyle(
+              color: Colors.white, // Changement de la couleur du texte en blanc
+              fontSize: 30,
+              decoration: TextDecoration.underline,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
       body: SingleChildScrollView(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  // Dégradé de couleurs
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF351EA4),
+                    Color(0xFF1A1B25),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(10), // Bord arrondi pour le conteneur
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(height: 20),
                   CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage('images/shrek.jpeg'),
+                    radius: 80,
+                    backgroundImage: AssetImage('images/bg.jpeg'),
                   ),
-                  Text(profil_lastName + ' ' + profil_firstName,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  Text(profil_age.toString() + ' ans',
-                      style: TextStyle(color: Colors.black, fontSize: 20)),
-                  DefaultTextStyle(
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 50),
-                            Text('Email'),
-                            Text(profil_email,
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 45),
-                            Text('Téléphone'),
-                            Text(profil_phone,
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 45),
-                            Text('Mon notaire'),
-                            Text('$profil_firstName_notary $profil_lastName_notary',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 45),
-                            Text('Notario ID'),
-                            Text('965794584358369',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ],
+                  SizedBox(height: 20),
+                  Text(
+                    'Beau Tristan',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    '22 ans',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        ProfileInfoItem(
+                          title: '                  Email',
+                          value: 'beautristan33@gmail.com',
                         ),
-                      ))
+                        Divider(),
+                        ProfileInfoItem(
+                          title: 'Téléphone',
+                          value: '06 12 34 56 78',
+                        ),
+                        Divider(),
+                        ProfileInfoItem(
+                          title: 'Mon notaire',
+                          value: 'Bobby Brown',
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
       bottomNavigationBar: ButtonNavBar(),
     );
   }
 }
+
+class ProfileInfoItem extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const ProfileInfoItem({
+    Key? key,
+    required this.title,
+    required this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 5),
+              Text(
+                value,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+
+
 
 class ProfilPage extends StatefulWidget {
   const ProfilPage();
