@@ -73,7 +73,7 @@ class FileItemWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PdfViewerPage(fileData.url),
+            builder: (context) => PdfViewerPage(fileData.url, fileData.name),
           ),
         );
       },
@@ -114,21 +114,64 @@ class FileItemWidget extends StatelessWidget {
 }
 
 class PdfViewerPage extends StatelessWidget {
-  final String pdfPath;
+  final String pdfUrl;
+  final String name;
 
-  PdfViewerPage(this.pdfPath);
+  PdfViewerPage(this.pdfUrl, this.name);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('PDF Viewer'),
+        title: Text(name),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.download),
+            onPressed: () {
+              _downloadPDF(context, 'http://' + pdfUrl, name);
+            },
+          ),
+        ],
       ),
-      body: PDFView(
-        filePath: pdfPath,
+      body: Center(
+        child: CircularProgressIndicator(), // Placeholder pendant le téléchargement
       ),
     );
   }
+
+void _downloadPDF(BuildContext context, String pdfUrl, String name) async {
+  final url = Uri.parse(pdfUrl);
+  if (!url.isAbsolute || (url.scheme != 'http' && url.scheme != 'https')) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('URL invalide'),
+      ),
+    );
+    return;
+  }
+
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final appDirectory = await getApplicationDocumentsDirectory();
+    final pdfDirectory = Directory('${appDirectory.path}/PDFs');
+    await pdfDirectory.create(recursive: true);
+    final file = File('${pdfDirectory.path}/$name.pdf');
+    print(file);
+    await file.writeAsBytes(response.bodyBytes);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('PDF téléchargé avec succès'),
+      ),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Impossible de télécharger le PDF'),
+      ),
+    );
+  }
+}
 }
 
 

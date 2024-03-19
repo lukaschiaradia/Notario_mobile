@@ -3,7 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  native_pdf_renderer
   syncfusion_pdfviewer_windows
   url_launcher_windows
 )
