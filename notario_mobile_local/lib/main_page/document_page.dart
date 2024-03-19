@@ -18,6 +18,9 @@ import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+
 
 
 class FileData {
@@ -67,11 +70,16 @@ class FileItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        openFile('http://' + fileData.url);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewerPage(fileData.url),
+          ),
+        );
       },
       child: Container(
-        width: 150.0, // Ajustez la largeur en fonction de vos besoins
-        height: 200.0, // Ajustez la hauteur en fonction de vos besoins
+        width: 150.0,
+        height: 200.0,
         margin: EdgeInsets.all(8.0),
         padding: EdgeInsets.all(8.0),
         child: Column(
@@ -81,11 +89,11 @@ class FileItemWidget extends StatelessWidget {
             Expanded(
               child: Image.asset(
                 'images/pdf1.png',
-                fit: BoxFit.contain, // Ajuste la taille de l'image pour qu'elle s'adapte au conteneur
+                fit: BoxFit.contain,
               ),
             ),
             SizedBox(
-              height: 20.0, // Espace entre l'image et le texte
+              height: 20.0,
               child: Center(
                 child: Text(
                   fileData.name,
@@ -105,26 +113,24 @@ class FileItemWidget extends StatelessWidget {
   }
 }
 
-  Future<void> openFile(String fileUrl) async {
-    try {
-      final response = await http.get(Uri.parse(fileUrl));
+class PdfViewerPage extends StatelessWidget {
+  final String pdfPath;
 
-      if (response.statusCode == 200) {
-        final Directory appDocDir = await getApplicationDocumentsDirectory();
-        final String appDocPath = appDocDir.path;
-        final String filePath = '$appDocPath/${fileUrl.split('/').last}';
+  PdfViewerPage(this.pdfPath);
 
-        final File file = File(filePath);
-        await file.writeAsBytes(response.bodyBytes);
-
-        await OpenFile.open(filePath);
-      } else {
-        print('Failed to download file. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error opening file: $e');
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('PDF Viewer'),
+      ),
+      body: PDFView(
+        filePath: pdfPath,
+      ),
+    );
   }
+}
+
 
 
 class FileListWidget extends StatelessWidget {
