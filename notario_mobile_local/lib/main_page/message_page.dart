@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:notario_mobile/api/api.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -13,6 +13,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void _sendMessage() {
     if (_textController.text.isNotEmpty) {
+      api_add_message(message: "test", receiver: 2);
       setState(() {
         messages.add(_textController.text);
         _textController.clear();

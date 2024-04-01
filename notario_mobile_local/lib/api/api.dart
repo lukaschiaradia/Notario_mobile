@@ -39,6 +39,7 @@ Future<dynamic> api_get_planning() async {
     var json_map = json.decode(decode);
 
     print(response.statusCode);
+    print(response.body);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -184,8 +185,6 @@ Future<Map<String, dynamic>> api_get_notary() async {
       var json_response = response.body;
       var decode = utf8.decode(json_response.runes.toList());
       var json_map = json.decode(decode);
-      print("here is the status code");
-      print(response.statusCode);
       print(json_map);
       return json_map;
     } else if (response.statusCode == 404) {
@@ -223,4 +222,3 @@ void showNoNotaryPopup(BuildContext context) {
     },
   );
 }
-  

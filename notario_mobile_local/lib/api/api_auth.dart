@@ -67,6 +67,8 @@ class ApiAuth {
       var response = await Client().put(endPoint,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
+            'X-CSRF-Token': TokenUser,
+            'Authorization': 'Bearer ' + TokenUser,
           },
           body: convert.json.encode(data));
       return await (response);
@@ -101,31 +103,7 @@ Future<Map<String, dynamic>> getUserInfo() async {
     throw e;
   }
 }
- /* print(TokenUser);
-  var endPoint = Uri.http(ip,
-      '/accounts/user/');
 
-  try {
-    var response = await Client().get(endPoint, headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-        'X-CSRF-Token': TokenUser,
-        'Authorization': 'Bearer ' + TokenUser,
-    });
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> userInfo = convert.json.decode(response.body);
-      print(userInfo);
-      return userInfo;
-    } else {
-      print(
-          'Erreur lors de la récupération des informations de l\'utilisateur : ${response.statusCode}');
-      return {};
-    }
-  } catch (e) {
-    throw e;
-  }
-}
-*/
 //call api pour le delete
 Future<Response> apiDelete({
   required UtilisateurDelete accountsDeleteId,
@@ -146,3 +124,23 @@ Future<Response> apiDelete({
     throw (e.toString());
   }
 }
+
+/* call api pour demander un rendez-vous au notaire
+Future<Response> apiRdv({
+  required UtilisateurRdv accountsRdv,
+}) async {
+  var endPoint = Uri.http(ip, '/accounts/rdv/');
+  Map data = accountsRdv.toData();
+  try {
+    var response = await Client().post(endPoint,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-CSRF-Token': accountsRdv.idClient,
+          'Authorization': 'Bearer ' + accountsRdv.idClient,
+        },
+        body: convert.json.encode(data));
+    return response;
+  } catch (e) {
+    throw (e.toString());
+  }
+}*/
