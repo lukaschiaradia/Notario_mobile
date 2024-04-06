@@ -20,7 +20,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
+import 'package:path_provider/path_provider.dart';
 
 
 class FileData {
@@ -73,7 +73,7 @@ class FileItemWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PdfViewerPage(fileData.url, fileData.name),
+            builder: (context) => MyPdfViewer(pdfUrl: 'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf'),
           ),
         );
       },
@@ -113,31 +113,72 @@ class FileItemWidget extends StatelessWidget {
   }
 }
 
-class PdfViewerPage extends StatelessWidget {
+class MyPdfViewer extends StatefulWidget {
   final String pdfUrl;
-  final String name;
 
-  PdfViewerPage(this.pdfUrl, this.name);
+  MyPdfViewer({required this.pdfUrl});
 
   @override
+  _MyPdfViewerState createState() => _MyPdfViewerState();
+}
+
+class _MyPdfViewerState extends State<MyPdfViewer> {
+  late String _localPath;
+  late String _localPdfUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPdf();
+  }
+
+  Future<void> _initPdf() async {
+    final filename = widget.pdfUrl.split('/').last;
+    final dir = await getApplicationDocumentsDirectory();
+    _localPath = dir.path;
+    _localPdfUrl = '$_localPath/$filename';
+
+    final File file = File('$_localPath/$filename');
+    final bool fileExists = await file.exists();
+    if (!fileExists) {
+      final http.Response response = await http.get(Uri.parse(widget.pdfUrl));
+      await file.writeAsBytes(response.bodyBytes);
+    }
+    setState(() {});
+  }
+
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(name),
-        actions: [
+        title: Text("My PDF Document"),
+        actions: <Widget>[
           IconButton(
             icon: Icon(Icons.download),
             onPressed: () {
-              _downloadPDF(context, 'http://' + pdfUrl, name);
+              _downloadPDF(context, widget.pdfUrl, 'document');
             },
           ),
         ],
       ),
-      body: Center(
-        child: CircularProgressIndicator(), // Placeholder pendant le téléchargement
-      ),
+      body: _localPdfUrl.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : PDFView(
+              filePath: _localPdfUrl,
+              autoSpacing: true,
+              enableSwipe: true,
+              pageSnap: true,
+              swipeHorizontal: true,
+              onError: (error) {
+                print(error);
+              },
+              onPageError: (page, error) {
+                print('$page: ${error.toString()}');
+              },
+            ),
     );
   }
+}
 
 void _downloadPDF(BuildContext context, String pdfUrl, String name) async {
   final url = Uri.parse(pdfUrl);
@@ -172,8 +213,6 @@ void _downloadPDF(BuildContext context, String pdfUrl, String name) async {
     );
   }
 }
-}
-
 
 
 class FileListWidget extends StatelessWidget {
