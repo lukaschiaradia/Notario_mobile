@@ -127,6 +127,7 @@ class AgePage extends StatelessWidget {
                   child: Text(
                     "Continuer",
                     textScaleFactor: 1.5,
+                    style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
                   ),
                 ),
               ),

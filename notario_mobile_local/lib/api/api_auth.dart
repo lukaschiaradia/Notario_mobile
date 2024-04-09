@@ -27,7 +27,8 @@ class ApiAuth {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: convert.json.encode(data));
-      print(data.toString());
+      print(response.body);
+      print(response.statusCode);
       Map<String, dynamic> jsonResponse = convert.json.decode(response.body);
       String token = jsonResponse['token'];
       TokenUser = token;

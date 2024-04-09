@@ -73,7 +73,7 @@ class MailPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: blue_color,
                     padding: EdgeInsets.symmetric(
                       vertical: 20,
                     ),
