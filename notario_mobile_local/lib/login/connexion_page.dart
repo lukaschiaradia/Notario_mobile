@@ -77,6 +77,7 @@ class ConnexionPage extends StatelessWidget {
                       onPressed: () async {
                         var value = await connectionControler.connection();
                         print(value);
+                        print(value.statusCode);
                         if (value.statusCode == successCode) {
                           Navigator.push(
                             context,
