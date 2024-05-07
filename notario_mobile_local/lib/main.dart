@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Notario',
-      debugShowCheckedModeBanner: false,
+      //debugShowCheckedModeBanner: false,
       home: WelcomePage(),
 
       //home: HomePage(),
