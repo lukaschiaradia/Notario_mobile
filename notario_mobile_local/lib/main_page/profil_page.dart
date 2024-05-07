@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notario_mobile/api/api_auth.dart';
+import 'package:notario_mobile/main_page/articlePage.dart';
+import 'package:notario_mobile/main_page/chat_box.dart';
+import 'package:notario_mobile/main_page/liaisonNotairePage.dart';
 import 'package:notario_mobile/models/utilisateur_modif.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import '../welcome_page.dart';
@@ -17,6 +20,16 @@ int profil_age = 0;
 var profil_email = '';
 var profil_firstName_notary = '';
 var profil_lastName_notary = '';
+
+void navigateToLiaisonNotairePage(BuildContext context) async {
+  List<dynamic> notaires = await api_get_notaires();
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => LiaisonNotairePage(notaires: notaires),
+    ),
+  );
+}
 
 void get_user_infos() async {
   var user = await getUserInfo();
@@ -56,10 +69,24 @@ class _ProfilState extends State<Profil> {
               child: null,
             ),
             ListTile(
+              title: Text('Lier avec un notaire'),
+              onTap: () {
+                navigateToLiaisonNotairePage(context);
+              },
+            ),
+            ListTile(
               title: Text('Information notaire'),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => InfoNotairePage()));
+              },
+            ),
+            ListTile(
+              title: Text('Acceder au articles'),
+              onTap: () {
+                api_get_articles();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ArticlesPage()));
               },
             ),
             ListTile(
@@ -68,13 +95,20 @@ class _ProfilState extends State<Profil> {
                   _showEditDialog(context);
                 }),
             ListTile(
-                title: Text('Déconnexion'),
-                onTap: () {
-                  TokenUser = '';
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => ConnexionPage()));
-                },
-              ),
+              title: Text('Message'),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ChatPage()));
+              },
+            ),
+            ListTile(
+              title: Text('Déconnexion'),
+              onTap: () {
+                TokenUser = '';
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => ConnexionPage()));
+              },
+            ),
             ListTile(
                 title: Text('Supprimer mon compte'),
                 onTap: () {
@@ -83,18 +117,18 @@ class _ProfilState extends State<Profil> {
           ],
         ),
       ),
-      backgroundColor: Color(0xFF351EA4), // Utilisation de la couleur primary-color
+      backgroundColor: Color(0xFF351EA4),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        iconTheme: IconThemeData(color: Colors.white), // Changement de la couleur de l'icône en blanc
-        backgroundColor: Color(0xFF351EA4), // Utilisation de la couleur primary-color pour la barre d'application
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Color(0xFF351EA4),
         elevation: 0,
         title: Padding(
           padding: const EdgeInsets.only(left: 10.0),
           child: Text(
             'Mon Profil',
             style: TextStyle(
-              color: Colors.white, // Changement de la couleur du texte en blanc
+              color: Colors.white,
               fontSize: 30,
               decoration: TextDecoration.underline,
               fontWeight: FontWeight.bold,
@@ -109,7 +143,6 @@ class _ProfilState extends State<Profil> {
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  // Dégradé de couleurs
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
@@ -117,7 +150,7 @@ class _ProfilState extends State<Profil> {
                     Color(0xFF1A1B25),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(10), // Bord arrondi pour le conteneur
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -222,10 +255,6 @@ class ProfileInfoItem extends StatelessWidget {
     );
   }
 }
-
-
-
-
 
 class ProfilPage extends StatefulWidget {
   const ProfilPage();

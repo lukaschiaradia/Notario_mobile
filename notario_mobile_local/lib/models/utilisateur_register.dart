@@ -25,7 +25,7 @@ class UtilisateurRegister {
       'email': email,
       'password': password,
       'password_confirm': password_confirm,
-      'phone': '+33645454545',
+      'phone': phone,
       'first_name': firstName,
       'last_name': LastName,
       'age': age,

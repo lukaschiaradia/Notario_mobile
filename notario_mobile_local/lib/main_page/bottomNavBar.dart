@@ -17,7 +17,6 @@ class ButtonNavBar extends StatefulWidget {
 }
 
 class _ButtonNavBarState extends State<ButtonNavBar> {
-
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -68,7 +67,7 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
               MaterialPageRoute(builder: (context) => DocumentPage()),
             );
           } else if (index == 1) {
-            rdv_list = Future(() => api_get_planning(token: token));
+            rdv_list = Future(() => api_get_planning());
             rdv_list.then((value) {
               rdv_list = value;
               Navigator.push(

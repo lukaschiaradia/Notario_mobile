@@ -19,10 +19,10 @@ class UtilisateurModif {
     return {
 
       'email': email,
-      'password': 'password123',
+      'password': password,
       'first_name': firstName,
       'last_name': LastName,
-      'phone':'+33656656555',
+      'phone': phone,
       'age': age,
     };
   }

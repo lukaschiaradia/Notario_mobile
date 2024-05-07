@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'main_page/delayed_animation.dart';
 import 'welcome_page.dart';
-import 'main_page/homePage.dart';
-import 'register/name_page.dart';
-import 'main_page/document_page.dart';
-import 'main_page/profil_page.dart';
-import 'main_page/message_page.dart';
 import 'main_page/faq_page.dart';
 
 const blue_color = Color(0xFF6949FF);

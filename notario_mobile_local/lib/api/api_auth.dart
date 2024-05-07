@@ -13,7 +13,7 @@ import 'package:notario_mobile/utils/constants/contants_url.dart';
 var json_info = {};
 
 class ApiAuth {
-  const ApiAuth(); 
+  const ApiAuth();
 
   Future<Response> apiLogin(
       {required UtilisateurLogin utilisateurLogin}) async {
@@ -28,6 +28,7 @@ class ApiAuth {
           },
           body: convert.json.encode(data));
       print(response.body);
+      print("tesst");
       print(response.statusCode);
       Map<String, dynamic> jsonResponse = convert.json.decode(response.body);
       String token = jsonResponse['token'];
@@ -79,14 +80,13 @@ class ApiAuth {
 
 Future<Map<String, dynamic>> getUserInfo() async {
   print(TokenUser);
-  var endPoint = Uri.http(ip,
-      '/accounts/user/');
+  var endPoint = Uri.http(ip, '/accounts/user/');
 
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
-        'X-CSRF-Token': TokenUser,
-        'Authorization': 'Bearer ' + TokenUser,
+      'X-CSRF-Token': TokenUser,
+      'Authorization': 'Bearer ' + TokenUser,
     });
 
     if (response.statusCode == 200) {
