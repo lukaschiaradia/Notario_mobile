@@ -12,6 +12,8 @@ import '../models/utilisateur_delete.dart';
 import 'info_notaire.dart';
 import '../api/api.dart';
 import '../login/connexion_page.dart';
+import '../utils/constants/privacy_policy.dart';
+
 
 var profil_phone = '';
 var profil_firstName = '';
@@ -114,6 +116,35 @@ class _ProfilState extends State<Profil> {
                 onTap: () {
                   _showDeleteDialog(context);
                 }),
+            ListTile(
+                title: Text('Politique de confidentialité'),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Politique de confidentialité'),
+                        content: SingleChildScrollView(
+                          child: Text(
+                            privacyPolicyText,
+                            style: TextStyle(
+                              color: Colors.black,
+                            )
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Fermer'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },     
+            ),
           ],
         ),
       ),
