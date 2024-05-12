@@ -307,7 +307,7 @@ class _DisplayQuestionsAndAnswersState
           final description = question['answer'];
 
           return Container(
-            width: MediaQuery.of(context).size.width, // Limitez la largeur de la liste à la largeur de l'écran
+            width: MediaQuery.of(context).size.width,
             child: Card(
               elevation: 2,
               margin: EdgeInsets.only(bottom: 16),
