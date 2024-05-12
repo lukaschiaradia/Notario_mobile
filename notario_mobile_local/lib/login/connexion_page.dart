@@ -2,9 +2,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notario_mobile/login/connection_controler.dart';
+import 'package:notario_mobile/main_page/homePage.dart';
 import 'package:notario_mobile/models/utilisateur_login.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import 'package:notario_mobile/utils/constants/status_code.dart';
+import 'package:notario_mobile/welcome_page.dart';
 import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
@@ -28,8 +30,9 @@ class ConnexionPage extends StatelessWidget {
               size: 30,
             ),
             onPressed: () {
-              Navigator.pop(context);
-            },
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => WelcomePage()));
+              },
           ),
         ),
         body: SingleChildScrollView(
