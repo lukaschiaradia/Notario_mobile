@@ -357,17 +357,15 @@ void _showEditDialog(BuildContext context) {
           TextButton(
             child: Text('Enregistrer'),
             onPressed: () async {
-              var value = await ApiAuth().apiUpdate(
-                  accountsModif: UtilisateurModif(
-                LastName: LastName,
-                age: age,
-                email: email,
-                firstName: firstName,
-                password: password,
-                phone: phone,
-              ));
+               var value = await ApiAuth().apiUpdate(
+                  first_name: editedFirstName,
+                  last_name: editedLastName,
+                  age: editedAge,
+                  email: editedEmail,
+                );
 
               Navigator.of(context).pop();
+              get_user_infos();
             },
           ),
         ],
