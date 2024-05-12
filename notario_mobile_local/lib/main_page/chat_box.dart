@@ -1,8 +1,9 @@
-import 'dart:async'; // Importer le package async pour utiliser Timer
+import 'dart:async'; // Import du package async pour utiliser Timer
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/models/utilisateur_message.dart';
+import 'package:notario_mobile/utils/constants/contants_url.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -87,36 +88,46 @@ class _ChatPageState extends State<ChatPage> {
         backgroundColor: Colors.blueGrey,
       ),
       body: Column(
-        children: <Widget>[
+        children: [
           Expanded(
             child: ListView.builder(
               reverse: true,
               itemCount: reversedMessages.length,
               itemBuilder: (context, index) {
-                bool isUserMessage = reversedMessages[index].sender == firstName; // Remplacez 'Your Name' par le nom de l'utilisateur
-                return Column(
-                  crossAxisAlignment: isUserMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      isUserMessage ? firstName : 'Notary', // Remplacez 'Your Name' et 'Notary' par les noms appropriés
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueGrey,
+                bool isUserMessage;
+
+                if (reversedMessages[index].sender.toString() == myId)
+                  isUserMessage = true;
+                else
+                  isUserMessage = false;
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isUserMessage ? 'Vous' : 'Votre notaire',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueGrey,
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 5.0),
-                      child: ListTile(
-                        leading: isUserMessage ? null : Icon(Icons.account_circle, color: Colors.blueGrey),
-                        trailing: isUserMessage ? Icon(Icons.account_circle, color: Colors.blueGrey) : null,
-                        title: Text(reversedMessages[index].text,
-                            style: TextStyle(color: Colors.black)),
-                        subtitle: Text(
-                            DateFormat('hh:mm a').format(reversedMessages[index].createdAt),
-                            style: TextStyle(color: Colors.grey)),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 5.0),
+                        child: ListTile(
+                          title: Text(
+                            reversedMessages[index].text,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          subtitle: Text(
+                            DateFormat('hh:mm a')
+                                .format(reversedMessages[index].createdAt),
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               },
             ),
@@ -124,21 +135,20 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
-              children: <Widget>[
+              children: [
                 Expanded(
                   child: TextField(
                     controller: _textController,
                     decoration: InputDecoration(hintText: 'Send a message'),
                   ),
                 ),
-                FutureBuilder<int>(
+                FutureBuilder(
                   future: notaryIdFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return IconButton(
                         icon: Icon(Icons.send, color: Colors.blueGrey),
-                        onPressed: () =>
-                            _sendMessage('Your Name', snapshot.data!),
+                        onPressed: () => _sendMessage(myId, snapshot.data!),
                       );
                     } else {
                       return CircularProgressIndicator();

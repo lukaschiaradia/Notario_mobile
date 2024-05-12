@@ -14,8 +14,8 @@ import '../api/api.dart';
 import '../login/connexion_page.dart';
 import '../utils/constants/privacy_policy.dart';
 
-
 var profil_phone = '';
+String profil_id = '';
 var profil_firstName = '';
 var profil_lastName = '';
 int profil_age = 0;
@@ -38,7 +38,7 @@ void get_user_infos() async {
   var user = await getUserInfo();
   profil_phone = user['user']['phone'];
   profil_firstName = user['user']['first_name'];
-  profil_lastName = user['user']['last_name'];
+  profil_lastName = user['user']['id'];
   profil_age = user['user']['age'];
   profil_email = user['user']['email'];
 }
@@ -57,27 +57,30 @@ class Profil extends StatefulWidget {
 class _ProfilState extends State<Profil> {
   @override
   void initState() {
-  super.initState();
-  loadData(); // Appeler une fonction pour charger les données
-}
+    super.initState();
+    loadData();
+  }
 
-void loadData() async {
-  var user = await getUserInfo();
-  setState(() {
-    profil_phone = user['user']['phone'];
-    profil_firstName = user['user']['first_name'];
-    profil_lastName = user['user']['last_name'];
-    profil_age = user['user']['age'];
-    profil_email = user['user']['email'];
-    profil_photo = user['user']['photo'];
-  });
-  
-  var notary = await api_get_notary();
-  setState(() {
-    profil_firstName_notary = notary['first_name'];
-    profil_lastName_notary = notary['last_name'];
-  });
-}
+  void loadData() async {
+    var user = await getUserInfo();
+    setState(() {
+      int test = user['user']['id'];
+      myId = test.toString();
+      profil_phone = user['user']['phone'];
+      profil_firstName = user['user']['first_name'];
+      profil_lastName = user['user']['id'];
+      profil_age = user['user']['age'];
+      profil_email = user['user']['email'];
+      profil_photo = user['user']['photo'];
+      myId = profil_id;
+    });
+
+    var notary = await api_get_notary();
+    setState(() {
+      profil_firstName_notary = notary['first_name'];
+      profil_lastName_notary = notary['last_name'];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,33 +138,31 @@ void loadData() async {
                   _showDeleteDialog(context);
                 }),
             ListTile(
-                title: Text('Politique de confidentialité'),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Politique de confidentialité'),
-                        content: SingleChildScrollView(
-                          child: Text(
-                            privacyPolicyText,
+              title: Text('Politique de confidentialité'),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Politique de confidentialité'),
+                      content: SingleChildScrollView(
+                        child: Text(privacyPolicyText,
                             style: TextStyle(
                               color: Colors.black,
-                            )
-                          ),
+                            )),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Fermer'),
                         ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Fermer'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },     
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),
@@ -205,10 +206,10 @@ void loadData() async {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 20),
-                 CircleAvatar(
-                  radius: 80,
-                  backgroundImage: NetworkImage(profil_photo),
-                ),
+                  CircleAvatar(
+                    radius: 80,
+                    backgroundImage: NetworkImage(profil_photo),
+                  ),
                   SizedBox(height: 20),
                   Text(
                     profil_firstName + ' ' + profil_lastName,
@@ -377,12 +378,12 @@ void _showEditDialog(BuildContext context) {
           TextButton(
             child: Text('Enregistrer'),
             onPressed: () async {
-               await ApiAuth().apiUpdate(
-                  first_name: editedFirstName,
-                  last_name: editedLastName,
-                  age: editedAge,
-                  email: editedEmail,
-                );
+              await ApiAuth().apiUpdate(
+                first_name: editedFirstName,
+                last_name: editedLastName,
+                age: editedAge,
+                email: editedEmail,
+              );
 
               Navigator.of(context).pop();
               get_user_infos();
