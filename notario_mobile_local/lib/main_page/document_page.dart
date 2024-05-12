@@ -1,33 +1,22 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
-import 'delayed_animation.dart';
-import '../main.dart';
-import 'package:open_file/open_file.dart';
-import 'package:file_picker/file_picker.dart';
-import 'profil_page.dart';
 import 'bottomNavBar.dart';
-import 'package:http/http.dart';
 import '../api/api.dart';
 import '../utils/constants/contants_url.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:open_file/open_file.dart';
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 
 class FileData {
   final String name;
   final String url;
+  String preview;
 
-  FileData({required this.name, required this.url});
+
+  FileData({required this.name, required this.url, required this.preview});
 }
 
 Future<List<FileData>> fetchFiles() async {
@@ -45,14 +34,20 @@ Future<List<FileData>> fetchFiles() async {
         String name = fileData["name"];
         String fileName = fileData["file"];
         String url = ip + fileName;
+        String preview = '';
 
         fileList.add(FileData(
           name: name,
-          url: url,
+          url: 'http://' + url,
+          preview: preview,
         ));
       }
+
+      fileList[0].preview = 'images/exDoc.png';
+      fileList[1].preview = 'images/exDocTest.png';
+
       fileList.forEach((fileData) {
-        print('name: ${fileData.name}, url: ${fileData.url}');
+        print('name: ${fileData.name}, url: ${fileData.url}, preview: ${fileData.preview}');
       });
 
       return fileList;
@@ -73,7 +68,7 @@ class FileItemWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MyPdfViewer(pdfUrl: 'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf'),
+            builder: (context) => MyPdfViewer(pdfUrl: fileData.url),
           ),
         );
       },
@@ -88,7 +83,7 @@ class FileItemWidget extends StatelessWidget {
           children: [
             Expanded(
               child: Image.asset(
-                'images/pdf1.png',
+                fileData.preview,
                 fit: BoxFit.contain,
               ),
             ),
@@ -149,9 +144,11 @@ class _MyPdfViewerState extends State<MyPdfViewer> {
 
    @override
   Widget build(BuildContext context) {
+    final filename = widget.pdfUrl.split('/').last;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("My PDF Document"),
+        title: Text(filename),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.download),
@@ -180,7 +177,7 @@ class _MyPdfViewerState extends State<MyPdfViewer> {
   }
 }
 
-void _downloadPDF(BuildContext context, String pdfUrl, String name) async {
+Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) async {
   final url = Uri.parse(pdfUrl);
   if (!url.isAbsolute || (url.scheme != 'http' && url.scheme != 'https')) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -194,17 +191,27 @@ void _downloadPDF(BuildContext context, String pdfUrl, String name) async {
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    final appDirectory = await getApplicationDocumentsDirectory();
-    final pdfDirectory = Directory('${appDirectory.path}/PDFs');
-    await pdfDirectory.create(recursive: true);
-    final file = File('${pdfDirectory.path}/$name.pdf');
-    print(file);
-    await file.writeAsBytes(response.bodyBytes);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('PDF téléchargé avec succès'),
-      ),
-    );
+    if (await Permission.storage.request().isGranted) {
+      final externalDirectory = await getExternalStorageDirectory();
+      final pdfDirectoryPath = externalDirectory?.path ?? '';
+      final pdfDirectory = Directory('$pdfDirectoryPath/PDFs');
+      await pdfDirectory.create(recursive: true);
+      final file = File('${pdfDirectory.path}/$name.pdf');
+      await file.writeAsBytes(response.bodyBytes);
+      // Afficher le chemin du fichier téléchargé
+      print('Chemin du fichier téléchargé: ${file.path}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('PDF téléchargé avec succès dans le stockage externe'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Permission d\'accès au stockage externe refusée'),
+        ),
+      );
+    }
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -224,7 +231,7 @@ class FileListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         crossAxisSpacing: 8.0,
         mainAxisSpacing: 8.0,
       ),
@@ -278,7 +285,7 @@ class _DocumentPageState extends State<DocumentPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Erreur de chargement des fichiers'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Aucun fichier disponible'));
+            return Center(child: Text('Vous n\'avez pas de fichiers'));
           } else {
             return FileListWidget(snapshot.data!);
           }
