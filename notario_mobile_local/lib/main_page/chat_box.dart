@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:notario_mobile/api/api.dart';
@@ -12,12 +14,22 @@ class _ChatPageState extends State<ChatPage> {
   final List<ChatMessage> messages = []; // Utilisez ChatMessage ici
   TextEditingController _textController = TextEditingController();
   late Future<int> notaryIdFuture;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     notaryIdFuture = _initNotary();
     loadMessages();
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      loadMessages();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   Future<int> _initNotary() async {

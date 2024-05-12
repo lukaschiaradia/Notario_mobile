@@ -154,13 +154,28 @@ class _NameFormState extends State<NameForm> {
             child: Container(
               margin: EdgeInsets.only(
                 top: 0,
-                bottom: 100,
+                bottom: 50,
               ),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'Prénom',
                 ),
                 onChanged: (value) => firstName = value,
+              ),
+            ),
+          ),
+          DelayedAnimation(
+            delay: 300,
+            child: Container(
+              margin: EdgeInsets.only(
+                top: 0,
+                bottom: 60,
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Telephone',
+                ),
+                onChanged: (value) => phone = value,
               ),
             ),
           ),

@@ -89,6 +89,7 @@ class PasswordPage extends StatelessWidget {
                             LastName: LastName,
                             age: age,
                             email: email,
+                            phone: phone,
                             firstName: firstName,
                             password: password,
                             password_confirm: password_confirm,
