@@ -180,9 +180,6 @@ Future<Map<String, dynamic>> api_get_notary() async {
       var json_response = response.body;
       var decode = utf8.decode(json_response.runes.toList());
       var json_map = json.decode(decode);
-      print("here is the status code");
-      print(response.statusCode);
-      print(json_map);
       return json_map;
     } else if (response.statusCode == 404) {
       print('You do not have a notary: ${response.statusCode}');
@@ -288,7 +285,15 @@ Future<List<String>> api_get_chat_id() async {
     print(response.statusCode);
     print("chat ici");
     print(json_map);
-    return await json_map;
+
+    // Extraire les identifiants de chat de json_map
+    List<String> chatIds = [];
+    for (var chat in json_map) {
+      chatIds.add(chat['id'].toString());
+    }
+
+    print(chatIds);
+    return chatIds;
   } catch (e) {
     throw (e.toString());
   }

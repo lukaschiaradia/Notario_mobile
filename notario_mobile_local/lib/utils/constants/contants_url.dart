@@ -14,3 +14,4 @@ const ip = '10.0.2.2:8000';
 //prod
 //const ip = '20.111.31.171:8000';
 String TokenUser = '';
+const myId = '';

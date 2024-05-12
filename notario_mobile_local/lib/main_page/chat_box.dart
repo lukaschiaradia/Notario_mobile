@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'dart:async'; // Importer le package async pour utiliser Timer
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:notario_mobile/api/api.dart';
@@ -11,24 +10,22 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final List<ChatMessage> messages = []; // Utilisez ChatMessage ici
+  final List<ChatMessage> messages = [];
   TextEditingController _textController = TextEditingController();
   late Future<int> notaryIdFuture;
-  Timer? _timer;
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
     notaryIdFuture = _initNotary();
-    loadMessages();
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      loadMessages();
-    });
+    loadChatId();
+    timer = Timer.periodic(Duration(seconds: 2), (Timer t) => loadChatId());
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    timer?.cancel();
     super.dispose();
   }
 
@@ -37,14 +34,29 @@ class _ChatPageState extends State<ChatPage> {
     return notary['user_id'];
   }
 
-  Future<void> loadMessages() async {
-    var chatData = await api_get_chat_with_notaire(idChat: 1);
-    for (var messageData in chatData) {
-      messages.add(ChatMessage.fromJson(
-          messageData)); // Utilisez ChatMessage.fromJson ici
+  Future<void> loadChatId() async {
+    try {
+      List<String> chatIdData = await api_get_chat_id();
+      String id = chatIdData[0];
+      await loadMessages(id);
+    } catch (e) {
+      print('Erreur lors du chargement de l\'identifiant du chat: $e');
     }
-    setState(
-        () {}); // Met à jour l'interface utilisateur après le chargement des messages
+  }
+
+  Future<void> loadMessages(String chatId) async {
+    try {
+      var chatData = await api_get_chat_with_notaire(idChat: chatId);
+      setState(() {
+        messages.clear(); // Vider la liste des messages
+        for (var messageData in chatData) {
+          messages.add(ChatMessage.fromJson(messageData));
+        }
+      });
+    } catch (e) {
+      print('Erreur lors du chargement des messages: $e');
+      // Gérer l'erreur ici
+    }
   }
 
   Future<void> _sendMessage(String sender, int notaryId) async {
@@ -54,7 +66,6 @@ class _ChatPageState extends State<ChatPage> {
         messages.insert(
             0,
             ChatMessage(
-                // Utilisez ChatMessage ici
                 id: messages.length,
                 read: false,
                 text: _textController.text,
@@ -69,6 +80,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    var reversedMessages = messages.reversed.toList();
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat Page'),
@@ -79,17 +91,32 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: ListView.builder(
               reverse: true,
-              itemCount: messages.length,
+              itemCount: reversedMessages.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Text(messages[index].sender.toString(),
+                bool isUserMessage = reversedMessages[index].sender == firstName; // Remplacez 'Your Name' par le nom de l'utilisateur
+                return Column(
+                  crossAxisAlignment: isUserMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isUserMessage ? firstName : 'Notary', // Remplacez 'Your Name' et 'Notary' par les noms appropriés
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.blueGrey)),
-                  title: Text(messages[index].text,
-                      style: TextStyle(color: Colors.black)),
-                  subtitle: Text(
-                      DateFormat('hh:mm a').format(messages[index].createdAt),
-                      style: TextStyle(color: Colors.grey)),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 5.0),
+                      child: ListTile(
+                        leading: isUserMessage ? null : Icon(Icons.account_circle, color: Colors.blueGrey),
+                        trailing: isUserMessage ? Icon(Icons.account_circle, color: Colors.blueGrey) : null,
+                        title: Text(reversedMessages[index].text,
+                            style: TextStyle(color: Colors.black)),
+                        subtitle: Text(
+                            DateFormat('hh:mm a').format(reversedMessages[index].createdAt),
+                            style: TextStyle(color: Colors.grey)),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
