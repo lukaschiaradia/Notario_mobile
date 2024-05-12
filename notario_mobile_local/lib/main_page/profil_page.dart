@@ -13,6 +13,8 @@ import 'info_notaire.dart';
 import '../api/api.dart';
 import '../login/connexion_page.dart';
 import '../utils/constants/privacy_policy.dart';
+import 'profil_page.dart';
+
 
 var profil_phone = '';
 String profil_id = '';
@@ -57,8 +59,8 @@ class Profil extends StatefulWidget {
 class _ProfilState extends State<Profil> {
   @override
   void initState() {
-    super.initState();
-    loadData();
+  super.initState();
+  loadData(); // Appeler une fonction pour charger les données
   }
 
   void loadData() async {
@@ -378,15 +380,18 @@ void _showEditDialog(BuildContext context) {
           TextButton(
             child: Text('Enregistrer'),
             onPressed: () async {
-              await ApiAuth().apiUpdate(
-                first_name: editedFirstName,
-                last_name: editedLastName,
-                age: editedAge,
-                email: editedEmail,
-              );
-
+               await ApiAuth().apiUpdate(
+                  first_name: editedFirstName,
+                  last_name: editedLastName,
+                  age: editedAge,
+                  email: editedEmail,
+                );
               Navigator.of(context).pop();
-              get_user_infos();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilPage()),
+                (route) => false,
+              );
             },
           ),
         ],
