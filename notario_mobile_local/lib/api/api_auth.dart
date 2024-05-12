@@ -45,7 +45,7 @@ class ApiAuth {
   }) async {
     var endPoint = Uri.http(ip, accountsRegister);
     Map data = utilisateurRegister.toData();
-
+    print(data);
     if (!utilisateurRegister.passwordIsConfirm)
       throw Exception('password incorect');
     try {

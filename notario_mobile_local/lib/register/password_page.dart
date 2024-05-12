@@ -95,7 +95,7 @@ class PasswordPage extends StatelessWidget {
                             password_confirm: password_confirm,
                             token: token,
                           ));
-
+                          print(value.statusCode);
                           if (value.statusCode == successCode) {
                             showDialog(
                               context: context,
