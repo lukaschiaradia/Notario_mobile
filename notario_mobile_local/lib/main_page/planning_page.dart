@@ -53,11 +53,8 @@ class Planning extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfilPage()),
-              );
-              /* showDialog(
+             
+              showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
@@ -124,7 +121,7 @@ class Planning extends StatelessWidget {
                     ],
                   );
                 },
-              );*/
+              );
             },
           ),
         ],

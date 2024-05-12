@@ -20,6 +20,7 @@ var profil_firstName = '';
 var profil_lastName = '';
 int profil_age = 0;
 var profil_email = '';
+var profil_photo = '';
 var profil_firstName_notary = '';
 var profil_lastName_notary = '';
 
@@ -56,10 +57,27 @@ class Profil extends StatefulWidget {
 class _ProfilState extends State<Profil> {
   @override
   void initState() {
-    super.initState();
-    get_user_infos();
-    get_notary_infos();
-  }
+  super.initState();
+  loadData(); // Appeler une fonction pour charger les données
+}
+
+void loadData() async {
+  var user = await getUserInfo();
+  setState(() {
+    profil_phone = user['user']['phone'];
+    profil_firstName = user['user']['first_name'];
+    profil_lastName = user['user']['last_name'];
+    profil_age = user['user']['age'];
+    profil_email = user['user']['email'];
+    profil_photo = user['user']['photo'];
+  });
+  
+  var notary = await api_get_notary();
+  setState(() {
+    profil_firstName_notary = notary['first_name'];
+    profil_lastName_notary = notary['last_name'];
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -187,13 +205,13 @@ class _ProfilState extends State<Profil> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 20),
-                  CircleAvatar(
-                    radius: 80,
-                    backgroundImage: AssetImage('images/bg.jpeg'),
-                  ),
+                 CircleAvatar(
+                  radius: 80,
+                  backgroundImage: NetworkImage(profil_photo),
+                ),
                   SizedBox(height: 20),
                   Text(
-                    'Beau Tristan',
+                    profil_firstName + ' ' + profil_lastName,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -202,7 +220,7 @@ class _ProfilState extends State<Profil> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    '22 ans',
+                    profil_age.toString() + ' ans',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -214,18 +232,20 @@ class _ProfilState extends State<Profil> {
                     child: Column(
                       children: [
                         ProfileInfoItem(
-                          title: '                  Email',
-                          value: 'beautristan33@gmail.com',
+                          title: 'Email',
+                          value: profil_email,
                         ),
                         Divider(),
                         ProfileInfoItem(
                           title: 'Téléphone',
-                          value: '06 12 34 56 78',
+                          value: profil_phone,
                         ),
                         Divider(),
                         ProfileInfoItem(
                           title: 'Mon notaire',
-                          value: 'Bobby Brown',
+                          value: profil_firstName_notary +
+                              ' ' +
+                              profil_lastName_notary,
                         ),
                       ],
                     ),
@@ -357,17 +377,15 @@ void _showEditDialog(BuildContext context) {
           TextButton(
             child: Text('Enregistrer'),
             onPressed: () async {
-              var value = await ApiAuth().apiUpdate(
-                  accountsModif: UtilisateurModif(
-                LastName: LastName,
-                age: age,
-                email: email,
-                firstName: firstName,
-                password: password,
-                phone: phone,
-              ));
+               await ApiAuth().apiUpdate(
+                  first_name: editedFirstName,
+                  last_name: editedLastName,
+                  age: editedAge,
+                  email: editedEmail,
+                );
 
               Navigator.of(context).pop();
+              get_user_infos();
             },
           ),
         ],
@@ -406,7 +424,6 @@ void _showDeleteDialog(BuildContext context) {
                 );
               } catch (e) {
                 print("Erreur lors de la suppression du compte : $e");
-                // Gérer les erreurs ou afficher un message d'erreur
               }
             },
           ),

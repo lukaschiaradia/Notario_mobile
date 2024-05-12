@@ -198,7 +198,6 @@ Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) asyn
       await pdfDirectory.create(recursive: true);
       final file = File('${pdfDirectory.path}/$name.pdf');
       await file.writeAsBytes(response.bodyBytes);
-      // Afficher le chemin du fichier téléchargé
       print('Chemin du fichier téléchargé: ${file.path}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

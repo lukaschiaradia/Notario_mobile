@@ -57,6 +57,7 @@ Future<dynamic> api_get_questions() async {
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
     rdv_list = json_map;
+    print(response.body);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -206,6 +207,7 @@ Future<dynamic> api_get_articles() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
+    print(response.body);
     print(response.statusCode);
     return await json_map;
   } catch (e) {

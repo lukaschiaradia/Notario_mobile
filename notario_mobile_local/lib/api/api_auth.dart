@@ -61,16 +61,28 @@ class ApiAuth {
   }
 
   Future<Response> apiUpdate({
-    required UtilisateurModif accountsModif,
+    required String first_name,
+    required String last_name,
+    required String email,
+    required int age,
   }) async {
     var endPoint = Uri.http(ip, accountsModifs);
-    Map data = accountsModif.toData();
+    Map data = {
+      'first_name': first_name,
+      'last_name': last_name,
+      'email': email,
+      'age': age,
+    };
+    print(data);
     try {
       var response = await Client().put(endPoint,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
+            'X-CSRF-Token': TokenUser,
+            'Authorization': 'Bearer ' + TokenUser,
           },
           body: convert.json.encode(data));
+      print(response.body);
       return await (response);
     } catch (e) {
       throw (e.toString());

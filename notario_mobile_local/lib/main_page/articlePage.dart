@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/main_page/articleDetailPage.dart';
 import 'package:notario_mobile/models/utilisateur_article.dart';
+import '../utils/constants/contants_url.dart';
 
 Future<List<Article>> fetchArticles() async {
   dynamic result = await api_get_articles();
@@ -57,7 +58,7 @@ class _ArticlesPageState extends State<ArticlesPage> {
                       child: articleData.image != null
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(6),
-                              child: Image.network(articleData.image!,
+                              child: Image.network('http://' +ip + articleData.image!,
                                   fit: BoxFit.cover),
                             )
                           : Container(color: Colors.transparent),

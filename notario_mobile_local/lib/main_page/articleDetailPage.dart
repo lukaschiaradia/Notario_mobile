@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notario_mobile/models/utilisateur_article.dart';
+import '../utils/constants/contants_url.dart';
 
 class ArticleDetailPage extends StatelessWidget {
   final Article articleData;
@@ -18,11 +19,16 @@ class ArticleDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (articleData.image != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(articleData.image!, fit: BoxFit.cover),
+           if (articleData.image != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.network(
+                'http://' + ip + articleData.image!,
+                fit: BoxFit.cover,
+                width: 200,
+                height: 200,
               ),
+            ),
             SizedBox(height: 20),
             Text(
               articleData.title,
