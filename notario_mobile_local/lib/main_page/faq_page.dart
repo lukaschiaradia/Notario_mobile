@@ -229,7 +229,7 @@ class DisplayCategory extends StatefulWidget {
 }
 
 class _DisplayCategoryState extends State<DisplayCategory> {
-  bool isExpanded = true;
+  bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -285,61 +285,64 @@ class DisplayQuestionsAndAnswers extends StatefulWidget {
 }
 
 class _DisplayQuestionsAndAnswersState
-  extends State<DisplayQuestionsAndAnswers> {
+    extends State<DisplayQuestionsAndAnswers> {
   late List<bool> isExpanded;
 
   @override
   void initState() {
     super.initState();
-    isExpanded = List.filled(widget.questionsAndAnswers.length, false);
+    isExpanded =
+        List.filled(widget.questionsAndAnswers.length, false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: widget.questionsAndAnswers.length,
-        itemBuilder: (context, index) {
-          final question = widget.questionsAndAnswers[index];
-          final title = question['question'];
-          final description = question['answer'];
+      child: SingleChildScrollView(
+        child: Column(
+          children: widget.questionsAndAnswers.map<Widget>((questionAndAnswer) {
+            final title = questionAndAnswer['question'];
+            final description = questionAndAnswer['answer'];
+            final index = widget.questionsAndAnswers.indexOf(questionAndAnswer);
 
-          return Container(
-            width: MediaQuery.of(context).size.width,
-            child: Card(
-              elevation: 2,
-              margin: EdgeInsets.only(bottom: 16),
-              child: ListTile(
-                title: Text(
-                  title,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  setState(() {
-                    isExpanded[index] = !isExpanded[index];
-                  });
-                },
-                subtitle: isExpanded[index]
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 5),
-                          Text(
-                            description,
-                          ),
-                        ],
-                      )
-                    : null,
-                trailing: Icon(
-                  isExpanded[index] ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                  color: Colors.black,
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              child: Card(
+                elevation: 2,
+                margin: EdgeInsets.only(bottom: 16),
+                child: ListTile(
+                  title: Text(
+                    title,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      isExpanded[index] = !isExpanded[index];
+                    });
+                  },
+                  subtitle: isExpanded[index]
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 5),
+                            Text(
+                              description,
+                            ),
+                          ],
+                        )
+                      : null,
+                  trailing: Icon(
+                    isExpanded[index]
+                        ? Icons.arrow_drop_up
+                        : Icons.arrow_drop_down,
+                    color: Colors.black,
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          }).toList(),
+        ),
       ),
     );
   }

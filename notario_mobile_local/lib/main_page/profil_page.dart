@@ -13,6 +13,7 @@ import 'info_notaire.dart';
 import '../api/api.dart';
 import '../login/connexion_page.dart';
 import '../utils/constants/privacy_policy.dart';
+import 'profil_page.dart';
 
 
 var profil_phone = '';
@@ -59,7 +60,7 @@ class _ProfilState extends State<Profil> {
   void initState() {
   super.initState();
   loadData(); // Appeler une fonction pour charger les données
-}
+  }
 
 void loadData() async {
   var user = await getUserInfo();
@@ -383,9 +384,12 @@ void _showEditDialog(BuildContext context) {
                   age: editedAge,
                   email: editedEmail,
                 );
-
               Navigator.of(context).pop();
-              get_user_infos();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilPage()),
+                (route) => false,
+              );
             },
           ),
         ],
