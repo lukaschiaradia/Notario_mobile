@@ -20,7 +20,12 @@ Future<List<dynamic>> get_faq_list() async {
   }
 }
 
-class FaqPage extends StatelessWidget {
+class FaqPage extends StatefulWidget {
+  @override
+  _FaqPageState createState() => _FaqPageState();
+}
+
+class _FaqPageState extends State<FaqPage> {
   final TextEditingController searchTextController = TextEditingController();
   final List<dynamic> questionsAndAnswers = [];
   final List<dynamic> questionsAndAnswersToShow = [];
@@ -28,20 +33,31 @@ class FaqPage extends StatelessWidget {
   final List<dynamic> categories = ["ACCOUNT", "DOCUMENT", "MEETING", "CHAT", "AUTRES"];
   final List<dynamic> categoriesName = ["Compte", "Documents", "Rendez-vous", "Chat", "Autres questions"];
 
-    FaqPage() {
+  @override
+  void initState() {
+    super.initState();
     _initializePage();
   }
 
   Future<void> _initializePage() async {
-    var questionsAndAnswers = await api_get_questions();
     try {
-      return questionsAndAnswers.map((item) {
-        return {
-          'question': item['title'],
-          'answer': item['description'],
-          'category': item['category'],
-        };
-      }).toList();
+      var fetchedQuestionsAndAnswers = await api_get_questions();
+      setState(() {
+        questionsAndAnswersToShow.addAll(fetchedQuestionsAndAnswers.map((item) {
+          return {
+            'question': item['title'],
+            'answer': item['description'],
+            'category': item['category'],
+          };
+        }).toList());
+        questionsAndAnswers.addAll(fetchedQuestionsAndAnswers.map((item) {
+          return {
+            'question': item['title'],
+            'answer': item['description'],
+            'category': item['category'],
+          };
+        }).toList());
+      });
     } catch (e) {
       print('Erreur lors de la récupération des questions et réponses : $e');
       return;
@@ -63,15 +79,6 @@ class FaqPage extends StatelessWidget {
         }
     }
     return categoriesThatHaveQuestions;
-  }
-
-   Future<void> _loadQuestionsAndAnswers() async {
-    try {
-      questionsAndAnswers.addAll(await get_faq_list());
-    } catch (e) {
-      print('Erreur lors du chargement des questions et réponses : $e');
-    }
-    questionsAndAnswersToShow.addAll(questionsAndAnswers);
   }
 
   void searchQuestionsByInput(String input) {
@@ -169,7 +176,7 @@ class FaqPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),            
+                        ),
                          if (questionsAndAnswersToShow.isEmpty)
                           Text(
                             'Aucun résultat',
@@ -289,7 +296,6 @@ class _DisplayQuestionsAndAnswersState
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
       child: ListView.builder(
@@ -300,32 +306,37 @@ class _DisplayQuestionsAndAnswersState
           final title = question['question'];
           final description = question['answer'];
 
-          return Card(
-            elevation: 2,
-            margin: EdgeInsets.only(bottom: 16),
-            child: ListTile(
-              title: Row(
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: 5),
-                  Icon(
-                    isExpanded[index] ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                    color: Colors.black,
-                  ),
-                ],
+          return Container(
+            width: MediaQuery.of(context).size.width, // Limitez la largeur de la liste à la largeur de l'écran
+            child: Card(
+              elevation: 2,
+              margin: EdgeInsets.only(bottom: 16),
+              child: ListTile(
+                title: Text(
+                  title,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  setState(() {
+                    isExpanded[index] = !isExpanded[index];
+                  });
+                },
+                subtitle: isExpanded[index]
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 5),
+                          Text(
+                            description,
+                          ),
+                        ],
+                      )
+                    : null,
+                trailing: Icon(
+                  isExpanded[index] ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                  color: Colors.black,
+                ),
               ),
-              subtitle: Text(
-                isExpanded[index] ? description : '',
-                maxLines: isExpanded[index] ? null : 1,
-              ),
-              onTap: () {
-                setState(() {
-                  isExpanded[index] = !isExpanded[index];
-                });
-              },
             ),
           );
         },
