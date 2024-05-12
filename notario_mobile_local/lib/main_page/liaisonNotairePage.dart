@@ -26,7 +26,7 @@ class _LiaisonNotairePageState extends State<LiaisonNotairePage> {
               padding: const EdgeInsets.all(8.0),
               child: IconButton(
                 icon: Icon(Icons.add),
-                iconSize: 24.0, // Adjust this value to change the size of the icon
+                iconSize: 24.0,
                 onPressed: () {
                   api_get_invite_requests();
                 },

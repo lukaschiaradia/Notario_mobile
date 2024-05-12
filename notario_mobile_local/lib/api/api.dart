@@ -238,6 +238,7 @@ Future<dynamic> api_link_notary({required dynamic notary_id}) async {
   var endPoint = Uri.http(ip, '/clients/invite/');
   Map data = {};
   data['notary_id'] = notary_id;
+  print(data);
   try {
     var response = await Client().post(endPoint,
         headers: <String, String>{
