@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:notario_mobile/login/connexion_page.dart';
 import 'package:http/http.dart';
+import 'package:notario_mobile/models/utilisateur_create_rdv.dart';
 import 'package:notario_mobile/models/utilisateur_message.dart';
 import '../utils/constants/contants_url.dart';
 
@@ -139,6 +140,25 @@ Future<num> api_add_message(
   Map data = {};
   data['receiver'] = receiver;
   data['text'] = message;
+  try {
+    var response = await Client().post(endPoint,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + TokenUser,
+        },
+        body: convert.json.encode(data));
+    return await (response.statusCode);
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_ask_rdv({required String Date, required String reason}) async {
+  var endPoint = Uri.http(ip, '/planning/ask/');
+
+  Map data = {};
+  data['available_dates'] = Date;
+  data['reason'] = reason;
   try {
     var response = await Client().post(endPoint,
         headers: <String, String>{

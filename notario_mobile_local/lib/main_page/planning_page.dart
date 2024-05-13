@@ -1,17 +1,19 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notario_mobile/models/utilisateur_create_rdv.dart';
 import 'dart:async';
 import 'delayed_animation.dart';
 import '../main.dart';
-import 'package:open_file/open_file.dart';
-import 'package:file_picker/file_picker.dart';
 import 'profil_page.dart';
 import 'bottomNavBar.dart';
 import '../api/api.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:lottie/lottie.dart';
+
+var date;
+var reason;
 
 List<dynamic> create_planning_list(List rdvList) {
   List<dynamic> planningList = [];
@@ -56,92 +58,26 @@ class Planning extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  DateTime? beginDate;
-                  TimeOfDay? beginTime;
-                  DateTime? endDate;
-                  TimeOfDay? endTime;
-
                   return AlertDialog(
                     title: Text('Enter Information'),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
                           TextFormField(
-                            decoration: InputDecoration(
-                              hintText: 'Enter name',
-                            ),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              hintText: 'Enter description',
-                            ),
-                          ),
-                          TextButton(
-                            child: Text('Select begin date and time'),
-                            onPressed: () async {
-                              beginDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2100),
-                              );
-                              beginTime = await showTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.now(),
-                              );
+                            onChanged: (value) {
+                              date = value;
                             },
+                            decoration: InputDecoration(
+                              hintText: 'Quand voulez vous un rendez-vous',
+                            ),
                           ),
-                          TextButton(
-                            child: Text('Select end date and time'),
-                            onPressed: () async {
-                              endDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2100),
-                              );
-                              endTime = await showTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.now(),
-                              );
+                          TextFormField(
+                            onChanged: (value) {
+                              reason = value;
                             },
-                          ),
-                          DropdownButtonFormField<String>(
                             decoration: InputDecoration(
-                              hintText: 'Select event type',
-                            ),
-                            items: <String>['Option 1', 'Option 2', 'Option 3']
-                                .map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (_) {},
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              hintText: 'Enter clients',
-                            ),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              hintText: 'Enter notaries',
-                            ),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              hintText: 'Enter invited clients',
-                            ),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              hintText: 'Enter invited notaries',
-                            ),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              hintText: 'Enter owner',
+                              hintText:
+                                  'Expliquez pourquoi vous voulez un rendez-vous',
                             ),
                           ),
                         ],
@@ -151,8 +87,8 @@ class Planning extends StatelessWidget {
                       TextButton(
                         child: Text('Submit'),
                         onPressed: () {
+                          api_ask_rdv(Date: date, reason: reason);
                           Navigator.of(context).pop();
-                          // Use the selected dates and times here...
                         },
                       ),
                     ],
