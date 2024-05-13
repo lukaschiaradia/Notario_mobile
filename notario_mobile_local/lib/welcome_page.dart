@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +8,31 @@ import 'main.dart';
 import 'register/name_page.dart';
 import 'login/connexion_page.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+triggerNotification() {
+  AwesomeNotifications().createNotification(
+      content: NotificationContent(
+          id: 10,
+          channelKey: 'alerts',
+          title: 'notifaction de test',
+          body: 'Simple button'));
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  @override
+  void initState() {
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +78,8 @@ class WelcomePage extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
+                      //triggerNotification();
+                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => NamePage()),
                       );
@@ -62,8 +88,8 @@ class WelcomePage extends StatelessWidget {
                       "S'inscrire",
                       textScaleFactor: 1.5,
                       style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+                        color: Colors.white,
+                        fontSize: 20,
                       ),
                     ),
                   ),
