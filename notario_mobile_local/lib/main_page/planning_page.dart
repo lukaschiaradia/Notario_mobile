@@ -53,69 +53,106 @@ class Planning extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-             
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
+                  DateTime? beginDate;
+                  TimeOfDay? beginTime;
+                  DateTime? endDate;
+                  TimeOfDay? endTime;
+
                   return AlertDialog(
                     title: Text('Enter Information'),
-                    content: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          height: 30,
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            hintText: 'Enter first text',
+                    content: SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          TextFormField(
+                            decoration: InputDecoration(
+                              hintText: 'Enter name',
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            hintText: 'Enter second text',
+                          TextFormField(
+                            decoration: InputDecoration(
+                              hintText: 'Enter description',
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            hintText: 'Select an option',
+                          TextButton(
+                            child: Text('Select begin date and time'),
+                            onPressed: () async {
+                              beginDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+                              beginTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+                            },
                           ),
-                          items: <String>['Option 1', 'Option 2', 'Option 3']
-                              .map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (_) {},
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            hintText: 'Select an option',
+                          TextButton(
+                            child: Text('Select end date and time'),
+                            onPressed: () async {
+                              endDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+                              endTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+                            },
                           ),
-                          items: <String>['Option 1', 'Option 2']
-                              .map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (_) {},
-                        ),
-                      ],
+                          DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              hintText: 'Select event type',
+                            ),
+                            items: <String>['Option 1', 'Option 2', 'Option 3']
+                                .map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (_) {},
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              hintText: 'Enter clients',
+                            ),
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              hintText: 'Enter notaries',
+                            ),
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              hintText: 'Enter invited clients',
+                            ),
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              hintText: 'Enter invited notaries',
+                            ),
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              hintText: 'Enter owner',
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     actions: <Widget>[
                       TextButton(
                         child: Text('Submit'),
                         onPressed: () {
                           Navigator.of(context).pop();
+                          // Use the selected dates and times here...
                         },
                       ),
                     ],

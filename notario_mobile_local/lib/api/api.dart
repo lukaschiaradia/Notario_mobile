@@ -237,8 +237,8 @@ Future<List<dynamic>> api_get_notaires() async {
 Future<dynamic> api_link_notary({required dynamic notary_id}) async {
   var endPoint = Uri.http(ip, '/clients/invite/');
   Map data = {};
-  data['notary_id'] = notary_id;
-  print(data);
+  data['email'] = notary_id;
+  print(notary_id);
   try {
     var response = await Client().post(endPoint,
         headers: <String, String>{
