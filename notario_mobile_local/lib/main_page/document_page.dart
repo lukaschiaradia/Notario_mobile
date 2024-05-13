@@ -201,7 +201,7 @@ Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) asyn
       print('Chemin du fichier téléchargé: ${file.path}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('PDF téléchargé avec succès dans le stockage externe'),
+          content: Text('PDF téléchargé avec succès'),
         ),
       );
     } else {
