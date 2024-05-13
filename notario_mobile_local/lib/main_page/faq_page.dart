@@ -104,14 +104,6 @@ class _FaqPageState extends State<FaqPage> {
         automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Color(0Xff6949FF)),
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        title: Text(
-          'NOTARIO',
-          style: TextStyle(
-            color: Color(0Xff6949FF),
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
         elevation: 0,
         centerTitle: true,
       ),

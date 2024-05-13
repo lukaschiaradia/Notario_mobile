@@ -17,87 +17,82 @@ import '../api/api.dart';
 
 class ConnexionPage extends StatelessWidget {
   final connectionControler = ConnectionControler(apiAuth: ApiAuth());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white.withOpacity(0),
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => WelcomePage()));
-              },
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+            size: 30,
           ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => WelcomePage()),
+            );
+          },
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              DelayedAnimation(
-                delay: 200,
-                child: Container(
-                  height: 100,
-                  margin: EdgeInsets.only(
-                    top: 40,
-                    bottom: 0,
-                  ),
-                  child: Text("Connectez-vous",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontSize: 25,
-                      )),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 40),
+            Text(
+              "Connectez-vous",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 30),
+            ConnexionForm(
+              connectionControler: connectionControler,
+            ),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () async {
+                var value = await connectionControler.connection();
+                print(value);
+                print(value.statusCode);
+                if (value.statusCode == successCode) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DocumentPage()),
+                  );
+                } else {
+                  await alertConnectionFail(context);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: blue_color,
+                padding: EdgeInsets.symmetric(vertical: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              SizedBox(height: 35),
-              ConnexionForm(
-                connectionControler: connectionControler,
+              child: Text(
+                "Connexion",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
               ),
-              SizedBox(height: 35),
-              DelayedAnimation(
-                  delay: 500,
-                  child: Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: blue_color,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 20,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Text(
-                        "Connexion",
-                        textScaleFactor: 1.5,
-                      ),
-                      onPressed: () async {
-                        var value = await connectionControler.connection();
-                        print(value);
-                        print(value.statusCode);
-                        if (value.statusCode == successCode) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DocumentPage()),
-                          );
-                        } else {
-                          await alertConnectionFail(context);
-                        }
-                        ;
-                      },
-                    ),
-                  )),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
+
 
   Future<void> alertConnectionFail(BuildContext context) async {
     await showDialog(

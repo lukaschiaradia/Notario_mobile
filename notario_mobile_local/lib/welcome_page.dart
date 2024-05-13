@@ -44,6 +44,8 @@ class _WelcomePageState extends State<WelcomePage> {
             horizontal: 30,
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               DelayedAnimation(
                 delay: 200,
@@ -63,6 +65,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   child: Image.asset('images/man.png', scale: 1.5),
                 ),
               ),
+              SizedBox(height: 40),
               DelayedAnimation(
                 delay: 500,
                 child: Container(
@@ -76,10 +79,11 @@ class _WelcomePageState extends State<WelcomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
                       ),
+                      shadowColor: Colors.blue.withOpacity(0.5),
+                      elevation: 5,
                     ),
                     onPressed: () {
-                      //triggerNotification();
-                       Navigator.push(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => NamePage()),
                       );
@@ -95,25 +99,23 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                 ),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 20),
               DelayedAnimation(
                 delay: 500,
-                child: RichText(
-                  text: TextSpan(
-                    text: "J'ai déjà un compte",
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ConnexionPage()),
+                    );
+                  },
+                  child: Text(
+                    "J'ai déjà un compte",
                     style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
+                      color: Colors.grey[700],
+                      fontSize: 18,
+                      decoration: TextDecoration.underline,
                     ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ConnexionPage(),
-                          ),
-                        );
-                      },
                   ),
                 ),
               ),
