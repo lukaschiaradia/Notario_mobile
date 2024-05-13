@@ -15,7 +15,6 @@ import '../login/connexion_page.dart';
 import '../utils/constants/privacy_policy.dart';
 import 'profil_page.dart';
 
-
 var profil_phone = '';
 var profil_firstName = '';
 var profil_lastName = '';
@@ -58,167 +57,168 @@ class Profil extends StatefulWidget {
 class _ProfilState extends State<Profil> {
   @override
   void initState() {
-  super.initState();
-  loadData(); // Appeler une fonction pour charger les données
+    super.initState();
+    loadData(); // Appeler une fonction pour charger les données
   }
 
-void loadData() async {
-  var user = await getUserInfo();
-  setState(() {
-    profil_phone = user['user']['phone'];
-    profil_firstName = user['user']['first_name'];
-    profil_lastName = user['user']['last_name'];
-    profil_age = user['user']['age'];
-    profil_email = user['user']['email'];
-    profil_photo = user['user']['photo'];
-  });
-  
-  var notary = await api_get_notary();
-  setState(() {
-    profil_firstName_notary = notary['first_name'];
-    profil_lastName_notary = notary['last_name'];
-  });
-}
+  void loadData() async {
+    var user = await getUserInfo();
+    setState(() {
+      myId = user['user']['id'].toString();
+      profil_phone = user['user']['phone'];
+      profil_firstName = user['user']['first_name'];
+      profil_lastName = user['user']['last_name'];
+      profil_age = user['user']['age'];
+      profil_email = user['user']['email'];
+      profil_photo = user['user']['photo'];
+      user['user']['id'];
+    });
+
+    var notary = await api_get_notary();
+    setState(() {
+      profil_firstName_notary = notary['first_name'];
+      profil_lastName_notary = notary['last_name'];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-  endDrawer: Drawer(
-    child: Container(
-      color: Color(0xFF1A1B25),
-      child: ListView(
-        children: [
-          DrawerHeader(
-          decoration: BoxDecoration(
-            color: Color(0xFF351EA4),
-          ),
-          child: Image.asset(
-            'images/white_notario.png',
-            width: 100,
-            height: 100,
-          ),
-        ),
-          ListTile(
-            title: Text(
-              'Lier avec un notaire',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              navigateToLiaisonNotairePage(context);
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Information notaire',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => InfoNotairePage()),
-              );
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Acceder au articles',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              api_get_articles();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ArticlesPage()),
-              );
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Modifier mes infos',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              _showEditDialog(context);
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Message',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ChatPage()),
-              );
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Déconnexion',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              TokenUser = '';
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => ConnexionPage()),
-              );
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Supprimer mon compte',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              _showDeleteDialog(context);
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Politique de confidentialité',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text(
-                      'Politique de confidentialité',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    content: SingleChildScrollView(
-                      child: Text(
-                        privacyPolicyText,
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    backgroundColor: Color(0xFF351EA4),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          'Fermer',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
+      endDrawer: Drawer(
+        child: Container(
+          color: Color(0xFF1A1B25),
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Color(0xFF351EA4),
+                ),
+                child: Image.asset(
+                  'images/white_notario.png',
+                  width: 100,
+                  height: 100,
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Lier avec un notaire',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  navigateToLiaisonNotairePage(context);
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Information notaire',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => InfoNotairePage()),
                   );
                 },
-              );
-            },
+              ),
+              ListTile(
+                title: Text(
+                  'Acceder au articles',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  api_get_articles();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ArticlesPage()),
+                  );
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Modifier mes infos',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  _showEditDialog(context);
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Message',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatPage()),
+                  );
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Déconnexion',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  TokenUser = '';
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => ConnexionPage()),
+                  );
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Supprimer mon compte',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  _showDeleteDialog(context);
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Politique de confidentialité',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Politique de confidentialité',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        content: SingleChildScrollView(
+                          child: Text(
+                            privacyPolicyText,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: Color(0xFF351EA4),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(
+                              'Fermer',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-    ),
-  ),
-
       backgroundColor: Color(0xFF351EA4),
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -258,10 +258,10 @@ void loadData() async {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 20),
-                 CircleAvatar(
-                  radius: 80,
-                  backgroundImage: NetworkImage(profil_photo),
-                ),
+                  CircleAvatar(
+                    radius: 80,
+                    backgroundImage: NetworkImage(profil_photo),
+                  ),
                   SizedBox(height: 20),
                   Text(
                     profil_firstName + ' ' + profil_lastName,
@@ -430,12 +430,12 @@ void _showEditDialog(BuildContext context) {
           TextButton(
             child: Text('Enregistrer'),
             onPressed: () async {
-               await ApiAuth().apiUpdate(
-                  first_name: editedFirstName,
-                  last_name: editedLastName,
-                  age: editedAge,
-                  email: editedEmail,
-                );
+              await ApiAuth().apiUpdate(
+                first_name: editedFirstName,
+                last_name: editedLastName,
+                age: editedAge,
+                email: editedEmail,
+              );
               Navigator.of(context).pop();
               Navigator.pushAndRemoveUntil(
                 context,

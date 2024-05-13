@@ -28,62 +28,80 @@ class _InfoNotairePageState extends State<InfoNotairePage> {
     get_notary_infos();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Notary Information'),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Information de votre notaire'),
+      backgroundColor: Colors.blueGrey,
+    ),
+    body: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView(
+        children: <Widget>[
+          Card(
+            color: Colors.blue[50],
+            elevation: 5,
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.person, color: Colors.white),
+                backgroundColor: Colors.blue,
+              ),
+              title: Text('Prenom'),
+              subtitle: Text(profil_firstName),
+            ),
+          ),
+          Card(
+            color: Colors.green[50],
+            elevation: 5,
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.person, color: Colors.white),
+                backgroundColor: Colors.green,
+              ),
+              title: Text('Nom de famille'),
+              subtitle: Text(profil_lastName),
+            ),
+          ),
+          Card(
+            color: Colors.red[50],
+            elevation: 5,
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.phone, color: Colors.white),
+                backgroundColor: Colors.red,
+              ),
+              title: Text('Téléphone'),
+              subtitle: Text(profil_phone),
+            ),
+          ),
+          Card(
+            color: Colors.purple[50],
+            elevation: 5,
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.email, color: Colors.white),
+                backgroundColor: Colors.purple,
+              ),
+              title: Text('Email'),
+              subtitle: Text(profil_email),
+            ),
+          ),
+          Card(
+            color: Colors.orange[50],
+            elevation: 5,
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.home, color: Colors.white),
+                backgroundColor: Colors.orange,
+              ),
+              title: Text('Address'),
+              subtitle: Text(profil_adresse),
+            ),
+          ),
+        ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 16),
-            Text(
-              'Information Notaire',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Phone Number: $profil_phone',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Email: $profil_email',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Adresse: $profil_adresse',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'First Name: $profil_firstName',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Last Name: $profil_lastName',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 }

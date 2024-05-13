@@ -109,7 +109,7 @@ class _ChatPageState extends State<ChatPage> {
                         isUserMessage ? 'Vous' : 'Votre notaire',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey,
+                          color: isUserMessage ? Colors.red : Colors.blueGrey,
                         ),
                       ),
                       Container(
