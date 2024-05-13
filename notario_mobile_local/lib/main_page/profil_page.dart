@@ -110,7 +110,7 @@ class _ProfilState extends State<Profil> {
               ),
               ListTile(
                 title: Text(
-                  'Information notaire',
+                  'Informations notaire',
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () {
@@ -122,7 +122,7 @@ class _ProfilState extends State<Profil> {
               ),
               ListTile(
                 title: Text(
-                  'Acceder au articles',
+                  'Accéder aux articles',
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () {
@@ -283,6 +283,7 @@ class _ProfilState extends State<Profil> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start, // Alignement à gauche
                       children: [
                         ProfileInfoItem(
                           title: 'Email',
