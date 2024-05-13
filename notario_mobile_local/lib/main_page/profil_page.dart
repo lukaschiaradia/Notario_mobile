@@ -83,90 +83,142 @@ void loadData() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              child: null,
-            ),
-            ListTile(
-              title: Text('Lier avec un notaire'),
-              onTap: () {
-                navigateToLiaisonNotairePage(context);
-              },
-            ),
-            ListTile(
-              title: Text('Information notaire'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => InfoNotairePage()));
-              },
-            ),
-            ListTile(
-              title: Text('Acceder au articles'),
-              onTap: () {
-                api_get_articles();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ArticlesPage()));
-              },
-            ),
-            ListTile(
-                title: Text('Modifier mes infos'),
-                onTap: () {
-                  _showEditDialog(context);
-                }),
-            ListTile(
-              title: Text('Message'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ChatPage()));
-              },
-            ),
-            ListTile(
-              title: Text('Déconnexion'),
-              onTap: () {
-                TokenUser = '';
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => ConnexionPage()));
-              },
-            ),
-            ListTile(
-                title: Text('Supprimer mon compte'),
-                onTap: () {
-                  _showDeleteDialog(context);
-                }),
-            ListTile(
-                title: Text('Politique de confidentialité'),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Politique de confidentialité'),
-                        content: SingleChildScrollView(
-                          child: Text(
-                            privacyPolicyText,
-                            style: TextStyle(
-                              color: Colors.black,
-                            )
-                          ),
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Fermer'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },     
-            ),
-          ],
+  endDrawer: Drawer(
+    child: Container(
+      color: Color(0xFF1A1B25),
+      child: ListView(
+        children: [
+          DrawerHeader(
+          decoration: BoxDecoration(
+            color: Color(0xFF351EA4),
+          ),
+          child: Image.asset(
+            'images/white_notario.png',
+            width: 100,
+            height: 100,
+          ),
         ),
+          ListTile(
+            title: Text(
+              'Lier avec un notaire',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              navigateToLiaisonNotairePage(context);
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Information notaire',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => InfoNotairePage()),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Acceder au articles',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              api_get_articles();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ArticlesPage()),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Modifier mes infos',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              _showEditDialog(context);
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Message',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatPage()),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Déconnexion',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              TokenUser = '';
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => ConnexionPage()),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Supprimer mon compte',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              _showDeleteDialog(context);
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Politique de confidentialité',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(
+                      'Politique de confidentialité',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    content: SingleChildScrollView(
+                      child: Text(
+                        privacyPolicyText,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    backgroundColor: Color(0xFF351EA4),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Fermer',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
+    ),
+  ),
+
       backgroundColor: Color(0xFF351EA4),
       appBar: AppBar(
         automaticallyImplyLeading: false,
