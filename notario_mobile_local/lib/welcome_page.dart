@@ -83,6 +83,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       elevation: 5,
                     ),
                     onPressed: () {
+                      //triggerNotification();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => NamePage()),
