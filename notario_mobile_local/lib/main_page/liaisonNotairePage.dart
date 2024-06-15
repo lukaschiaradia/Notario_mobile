@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notario_mobile/api/api.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LiaisonNotairePage extends StatefulWidget {
   final List<dynamic> notaires;
@@ -58,6 +59,16 @@ class _LiaisonNotairePageState extends State<LiaisonNotairePage> {
                       onPressed: () {
                         print(notaire['email']);
                         api_link_notary(notary_id: notaire['email']);
+
+                        Fluttertoast.showToast(
+                            msg:
+                                '${notaire['first_name']} ${notaire['last_name']} a été lié.',
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.grey,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
                       },
                       child: Text('Lier'),
                       style: ElevatedButton.styleFrom(
