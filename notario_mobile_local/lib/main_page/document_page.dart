@@ -191,19 +191,32 @@ Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) asyn
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    if (await Permission.storage.request().isGranted) {
-      final externalDirectory = await getExternalStorageDirectory();
-      final pdfDirectoryPath = externalDirectory?.path ?? '';
-      final pdfDirectory = Directory('$pdfDirectoryPath/PDFs');
-      await pdfDirectory.create(recursive: true);
-      final file = File('${pdfDirectory.path}/$name.pdf');
-      await file.writeAsBytes(response.bodyBytes);
-      print('Chemin du fichier téléchargé: ${file.path}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('PDF téléchargé avec succès'),
-        ),
-      );
+    if (await _requestPermission()) {
+      final Directory? externalDirectory = await getExternalStorageDirectory();
+      
+      if (externalDirectory != null) {
+        final String pdfDirectoryPath = '${externalDirectory.path}/PDFs';
+        final Directory pdfDirectory = Directory(pdfDirectoryPath);
+
+        await pdfDirectory.create(recursive: true);
+
+        final File file = File('${pdfDirectory.path}/$name.pdf');
+        await file.writeAsBytes(response.bodyBytes);
+
+        print('Chemin du fichier téléchargé: ${file.path}');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('PDF téléchargé avec succès'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Impossible d\'obtenir le répertoire de stockage externe'),
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -214,12 +227,27 @@ Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) asyn
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Impossible de télécharger le PDF'),
+        content: Text('Échec du téléchargement du PDF'),
       ),
     );
   }
 }
 
+Future<bool> _requestPermission() async {
+  if (Platform.isAndroid && (await Permission.manageExternalStorage.isGranted)) {
+    return true;
+  } else if (Platform.isAndroid && (await Permission.manageExternalStorage.request().isGranted)) {
+    return true;
+  } else {
+    final status = await Permission.storage.request();
+    if (status.isGranted) {
+      return true;
+    } else if (status.isPermanentlyDenied) {
+      openAppSettings();
+    }
+  }
+  return false;
+}
 
 class FileListWidget extends StatelessWidget {
   final List<FileData> fileList;
