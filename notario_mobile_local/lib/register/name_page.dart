@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notario_mobile/utils/custom_progress_bar.dart';
 import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
@@ -7,6 +8,8 @@ import 'age_page.dart';
 import '../api/api.dart';
 
 class NamePage extends StatelessWidget {
+  int currentStep = 4;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,19 +48,6 @@ class NamePage extends StatelessWidget {
               ),
               NameForm(),
               DelayedAnimation(
-                delay: 300,
-                child: Container(
-                  height: 50,
-                  margin: EdgeInsets.only(
-                    top: 0,
-                    bottom: 100,
-                  ),
-                  child: Image.asset(
-                    "images/progression1.png",
-                  ),
-                ),
-              ),
-              DelayedAnimation(
                   delay: 500,
                   child: Container(
                     width: 300,
@@ -79,18 +69,15 @@ class NamePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // Regular expression for phone number validation.
                         String phonePattern = r'(^(?:\+33)?[0-9]{9}$)';
                         RegExp regExp = new RegExp(phonePattern);
 
-                        // Check if the "LastName", "firstName", and "phone" fields are empty.
                         if (LastName == null ||
                             LastName!.isEmpty ||
                             firstName == null ||
                             firstName!.isEmpty ||
                             phone == null ||
                             phone!.isEmpty) {
-                          // Show an alert dialog if the fields are empty.
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -110,7 +97,6 @@ class NamePage extends StatelessWidget {
                             },
                           );
                         } else if (!regExp.hasMatch(phone!)) {
-                          // Show an alert dialog if the phone number is not valid.
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -138,6 +124,11 @@ class NamePage extends StatelessWidget {
                       },
                     ),
                   )),
+                  SizedBox(height: 20),
+              DelayedAnimation(
+                delay: 300,
+                child: CustomProgressBar(progress: currentStep / 5),
+              ),
             ],
           ),
         ));
