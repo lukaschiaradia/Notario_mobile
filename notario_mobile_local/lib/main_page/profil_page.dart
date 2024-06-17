@@ -13,7 +13,7 @@ import 'info_notaire.dart';
 import '../api/api.dart';
 import '../login/connexion_page.dart';
 import '../utils/constants/privacy_policy.dart';
-import 'profil_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 var profil_phone = '';
 var profil_firstName = '';
@@ -215,6 +215,15 @@ class _ProfilState extends State<Profil> {
                   );
                 },
               ),
+              ListTile(
+            title: Text(
+              'Visiter notre site web',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              _launchURL('http://20.111.31.171:3000');
+            },
+          ),
             ],
           ),
         ),
@@ -315,6 +324,15 @@ class _ProfilState extends State<Profil> {
     );
   }
 }
+
+Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunch(uri.toString())) {
+      await launch(uri.toString());
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
 class ProfileInfoItem extends StatelessWidget {
   final String title;
