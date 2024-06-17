@@ -153,7 +153,7 @@ class _MyPdfViewerState extends State<MyPdfViewer> {
           IconButton(
             icon: Icon(Icons.download),
             onPressed: () {
-              _downloadPDF(context, widget.pdfUrl, 'document');
+              _downloadPDF(context, widget.pdfUrl, filename);
             },
           ),
         ],
@@ -196,6 +196,7 @@ Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) asyn
       final pdfDirectoryPath = externalDirectory?.path ?? '';
       final pdfDirectory = Directory('$pdfDirectoryPath/PDFs');
       await pdfDirectory.create(recursive: true);
+      print(name);
       final file = File('${pdfDirectory.path}/$name.pdf');
       await file.writeAsBytes(response.bodyBytes);
       print('Chemin du fichier téléchargé: ${file.path}');

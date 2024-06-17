@@ -438,11 +438,6 @@ void _showEditDialog(BuildContext context) {
                 email: editedEmail,
               );
               Navigator.of(context).pop();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => ProfilPage()),
-                (route) => false,
-              );
             },
           ),
         ],
