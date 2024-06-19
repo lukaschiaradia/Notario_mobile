@@ -153,7 +153,7 @@ class _MyPdfViewerState extends State<MyPdfViewer> {
           IconButton(
             icon: Icon(Icons.download),
             onPressed: () {
-              _downloadPDF(context, widget.pdfUrl, 'document');
+              _downloadPDF(context, widget.pdfUrl, filename);
             },
           ),
         ],

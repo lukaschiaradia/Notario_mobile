@@ -115,7 +115,7 @@ class _ProfilState extends State<Profil> {
                         return AlertDialog(
                           title: Text('Accès refusé'),
                           content: Text(
-                              'Vous etes deja lié avec un notaire, vous ne pouvez pas lier avec un autre notaire'),
+                              'Vous êtes déjà lié avec un notaire. Vous ne pouvez pas vous lier avec un autre.'),
                           actions: <Widget>[
                             TextButton(
                               onPressed: () {
@@ -531,10 +531,9 @@ void _showEditDialog(BuildContext context) {
                 email: editedEmail,
               );
               Navigator.of(context).pop();
-              Navigator.pushAndRemoveUntil(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => ProfilPage()),
-                (route) => false,
               );
             },
           ),

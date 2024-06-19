@@ -4,8 +4,11 @@ import '../main_page/delayed_animation.dart';
 import '../main.dart';
 import 'age_page.dart';
 import '../api/api.dart';
+import 'package:notario_mobile/utils/custom_progress_bar.dart';
 
 class NamePage extends StatelessWidget {
+  int currentStep = 4;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,19 +46,6 @@ class NamePage extends StatelessWidget {
                 ),
               ),
               NameForm(),
-              DelayedAnimation(
-                delay: 300,
-                child: Container(
-                  height: 50,
-                  margin: EdgeInsets.only(
-                    top: 0,
-                    bottom: 100,
-                  ),
-                  child: Image.asset(
-                    "images/progression1.png",
-                  ),
-                ),
-              ),
               DelayedAnimation(
                   delay: 500,
                   child: Container(
@@ -133,6 +123,11 @@ class NamePage extends StatelessWidget {
                       },
                     ),
                   )),
+                     SizedBox(height: 20),
+              DelayedAnimation(
+                delay: 300,
+                child: CustomProgressBar(progress: currentStep / 5),
+              ),
             ],
           ),
         ));
