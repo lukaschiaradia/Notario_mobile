@@ -531,9 +531,9 @@ void _showEditDialog(BuildContext context) {
                 email: editedEmail,
               );
               Navigator.of(context).pop();
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfilPage()),
+                MaterialPageRoute(builder: (context) => Profil()),
               );
             },
           ),
