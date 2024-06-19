@@ -160,7 +160,7 @@ class PasswordPage extends StatelessWidget {
               SizedBox(height: 20),
               DelayedAnimation(
                 delay: 300,
-                child: CustomProgressBar(progress: currentStep / 5),
+                child: CustomProgressBar(progress: currentStep / 4),
               ),
             ],
           ),

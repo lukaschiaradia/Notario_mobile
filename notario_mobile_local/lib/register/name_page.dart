@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notario_mobile/register/number%20page.dart';
 import 'package:notario_mobile/utils/custom_progress_bar.dart';
 
 import '../main_page/delayed_animation.dart';
@@ -69,15 +70,10 @@ class NamePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        String phonePattern = r'(^(?:\+33)?[0-9]{9}$)';
-                        RegExp regExp = new RegExp(phonePattern);
-
                         if (LastName == null ||
                             LastName!.isEmpty ||
                             firstName == null ||
-                            firstName!.isEmpty ||
-                            phone == null ||
-                            phone!.isEmpty) {
+                            firstName!.isEmpty) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -96,38 +92,19 @@ class NamePage extends StatelessWidget {
                               );
                             },
                           );
-                        } else if (!regExp.hasMatch(phone!)) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text("Numéro de téléphone invalide"),
-                                content: Text(
-                                    "Veuillez entrer un numéro de téléphone valide."),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text("OK"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
                         } else {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => AgePage()),
+                            MaterialPageRoute(builder: (context) => NumberPage()),
                           );
                         }
                       },
                     ),
                   )),
-                  SizedBox(height: 20),
+              SizedBox(height: 20),
               DelayedAnimation(
                 delay: 300,
-                child: CustomProgressBar(progress: currentStep / 5),
+                child: CustomProgressBar(progress: currentStep / 4),
               ),
             ],
           ),
@@ -178,21 +155,6 @@ class _NameFormState extends State<NameForm> {
                   labelText: 'Prénom',
                 ),
                 onChanged: (value) => firstName = value,
-              ),
-            ),
-          ),
-          DelayedAnimation(
-            delay: 300,
-            child: Container(
-              margin: EdgeInsets.only(
-                top: 0,
-                bottom: 60,
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Telephone',
-                ),
-                onChanged: (value) => phone = value,
               ),
             ),
           ),

@@ -17,7 +17,7 @@ void main() {
 class MailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    int currentStep = 2;
+    int currentStep = 3;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -92,7 +92,7 @@ class MailPage extends StatelessWidget {
             SizedBox(height: 20),
             DelayedAnimation(
               delay: 300,
-              child: CustomProgressBar(progress: currentStep / 5),
+              child: CustomProgressBar(progress: currentStep / 4),
             ),
           ],
         ),
