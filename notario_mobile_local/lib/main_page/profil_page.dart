@@ -12,6 +12,7 @@ import '../api/api.dart';
 import '../login/connexion_page.dart';
 import '../utils/constants/privacy_policy.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 var profil_phone = '';
 var profil_firstName = '';
@@ -131,38 +132,38 @@ class _ProfilState extends State<Profil> {
                 },
               ),
               ListTile(
-                title: Text(
-                  'Informations notaire',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  if (typeUser == "Client") {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => InfoNotairePage()),
-                    );
-                  } else if (typeUser == "User") {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Accès refusé'),
-                          content: Text(
-                              'Vous devez être lié avec un notaire pour consulter ses informations.'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                }
-              ),
+                  title: Text(
+                    'Informations notaire',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    if (typeUser == "Client") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => InfoNotairePage()),
+                      );
+                    } else if (typeUser == "User") {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Accès refusé'),
+                            content: Text(
+                                'Vous devez être lié avec un notaire pour consulter ses informations.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  }),
               ListTile(
                 title: Text(
                   'Accéder aux articles',
@@ -186,39 +187,37 @@ class _ProfilState extends State<Profil> {
                 },
               ),
               ListTile(
-                title: Text(
-                  'Message',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  if (typeUser == "Client") {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ChatPage()),
-                    );
-                  } else if (typeUser == "User") {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Accès refusé'),
-                          content: Text(
-                              'Vous devez être lié avec un notaire pour accéder à la messagerie.'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  
-                  }
-                }
-              ),
+                  title: Text(
+                    'Message',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    if (typeUser == "Client") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ChatPage()),
+                      );
+                    } else if (typeUser == "User") {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Accès refusé'),
+                            content: Text(
+                                'Vous devez être lié avec un notaire pour accéder à la messagerie.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  }),
               ListTile(
                 title: Text(
                   'Déconnexion',
@@ -289,14 +288,14 @@ class _ProfilState extends State<Profil> {
                 },
               ),
               ListTile(
-            title: Text(
-              'Visiter notre site web',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () {
-              _launchURL('http://20.111.31.171:3000');
-            },
-          ),
+                title: Text(
+                  'Visiter notre site web',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  _launchURL('http://20.111.31.171:3000');
+                },
+              ),
             ],
           ),
         ),
@@ -344,7 +343,7 @@ class _ProfilState extends State<Profil> {
                     radius: 80,
                     backgroundImage: profil_photo.isEmpty
                         ? AssetImage('images/noicon.jpg')
-                        : NetworkImage(profil_photo) as ImageProvider, 
+                        : NetworkImage(profil_photo) as ImageProvider,
                   ),
                   SizedBox(height: 20),
                   Text(
@@ -401,13 +400,13 @@ class _ProfilState extends State<Profil> {
 }
 
 Future<void> _launchURL(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (await canLaunch(uri.toString())) {
-      await launch(uri.toString());
-    } else {
-      throw 'Could not launch $url';
-    }
+  final Uri uri = Uri.parse(url);
+  if (await canLaunch(uri.toString())) {
+    await launch(uri.toString());
+  } else {
+    throw 'Could not launch $url';
   }
+}
 
 class ProfileInfoItem extends StatelessWidget {
   final String title;
@@ -535,6 +534,14 @@ void _showEditDialog(BuildContext context) {
                 context,
                 MaterialPageRoute(builder: (context) => Profil()),
               );
+              Fluttertoast.showToast(
+                  msg: 'Vos informations ont été lié.',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.grey,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
             },
           ),
         ],
