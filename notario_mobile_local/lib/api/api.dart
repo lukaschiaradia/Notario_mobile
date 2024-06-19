@@ -201,6 +201,7 @@ Future<Map<String, dynamic>> api_get_notary() async {
       var json_response = response.body;
       var decode = utf8.decode(json_response.runes.toList());
       var json_map = json.decode(decode);
+      print(json_map);
       return json_map;
     } else if (response.statusCode == 404) {
       print('You do not have a notary: ${response.statusCode}');

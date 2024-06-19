@@ -15,3 +15,4 @@ const filesGet = '/files/list/';
 const ip = '20.111.31.171:8000';
 String TokenUser = '';
 String myId = '';
+String typeUser = '';

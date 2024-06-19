@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notario_mobile/login/connection_controler.dart';
+import 'package:notario_mobile/main_page/faq_page.dart';
 import 'package:notario_mobile/main_page/homePage.dart';
 import 'package:notario_mobile/models/utilisateur_login.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
@@ -13,7 +14,7 @@ import '../main.dart';
 import '../main_page/document_page.dart';
 import '../api/api_auth.dart';
 import '../api/api.dart';
-
+import '../utils/constants/contants_url.dart';
 
 class ConnexionPage extends StatelessWidget {
   final connectionControler = ConnectionControler(apiAuth: ApiAuth());
@@ -64,10 +65,17 @@ class ConnexionPage extends StatelessWidget {
                 print(value);
                 print(value.statusCode);
                 if (value.statusCode == successCode) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DocumentPage()),
-                  );
+                  if (typeUser == "User") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FaqPage()),
+                    );
+                  } else if (typeUser == "Client") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DocumentPage()),
+                    );
+                  }
                 } else {
                   await alertConnectionFail(context);
                 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notario_mobile/api/api.dart';
+import 'package:notario_mobile/main_page/profil_page.dart';
+import 'package:notario_mobile/utils/constants/contants_url.dart';
 
 class LiaisonNotairePage extends StatefulWidget {
   final List<dynamic> notaires;
@@ -58,6 +60,7 @@ class _LiaisonNotairePageState extends State<LiaisonNotairePage> {
                       onPressed: () {
                         print(notaire['email']);
                         api_link_notary(notary_id: notaire['email']);
+                        typeUser = 'Client';
                       },
                       child: Text('Lier'),
                       style: ElevatedButton.styleFrom(

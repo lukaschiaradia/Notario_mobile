@@ -6,6 +6,7 @@ import 'planning_page.dart';
 import 'faq_page.dart';
 import '../api/api.dart';
 import '../api/api_auth.dart';
+import '../utils/constants/contants_url.dart';
 
 int _currentIndex = 0;
 
@@ -62,19 +63,59 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
         setState(() {
           _currentIndex = index;
           if (index == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DocumentPage()),
-            );
-          } else if (index == 1) {
-            rdv_list = Future(() => api_get_planning());
-            rdv_list.then((value) {
-              rdv_list = value;
+            if (typeUser == "Client") {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Planning()),
+                MaterialPageRoute(builder: (context) => DocumentPage()),
               );
-            });
+            } else if (typeUser == "User") {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Accès refusé'),
+                    content: Text('Vous devez être client d\'un notaire pour consulter vos documents.'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            } 
+          } else if (index == 1) {
+            if (typeUser == "Client") {
+              rdv_list = Future(() => api_get_planning());
+              rdv_list.then((value) {
+                rdv_list = value;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Planning()),
+                );
+              });
+            } else if (typeUser == "User") {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Accès refusé'),
+                    content: Text('Vous devez être client d\'un notaire pour consulter votre agenda.'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            } 
           } else if (index == 2) {
             faq_list = Future(() => api_get_questions());
             faq_list.then((value) {

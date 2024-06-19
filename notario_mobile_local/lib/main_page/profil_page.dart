@@ -58,7 +58,7 @@ class _ProfilState extends State<Profil> {
   @override
   void initState() {
     super.initState();
-    loadData(); // Appeler une fonction pour charger les données
+    loadData();
   }
 
   void loadData() async {
@@ -70,7 +70,10 @@ class _ProfilState extends State<Profil> {
       profil_lastName = user['user']['last_name'];
       profil_age = user['user']['age'];
       profil_email = user['user']['email'];
-      profil_photo = user['user']['photo'];
+      if (user['user']['photo'] == null)
+        profil_photo = '';
+      else
+        profil_photo = user['user']['photo'];
       user['user']['id'];
     });
 
@@ -105,7 +108,28 @@ class _ProfilState extends State<Profil> {
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () {
-                  navigateToLiaisonNotairePage(context);
+                  if (typeUser == "User")
+                    navigateToLiaisonNotairePage(context);
+                  else if (typeUser == "Client") {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Accès refusé'),
+                          content: Text(
+                              'Vous etes deja lié avec un notaire, vous ne pouvez pas lier avec un autre notaire'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
               ),
               ListTile(
@@ -114,11 +138,32 @@ class _ProfilState extends State<Profil> {
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => InfoNotairePage()),
-                  );
-                },
+                  if (typeUser == "Client") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => InfoNotairePage()),
+                    );
+                  } else if (typeUser == "User") {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Accès refusé'),
+                          content: Text(
+                              'Vous devez être lié avec un notaire pour consulter ses informations.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }
               ),
               ListTile(
                 title: Text(
@@ -148,11 +193,33 @@ class _ProfilState extends State<Profil> {
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChatPage()),
-                  );
-                },
+                  if (typeUser == "Client") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatPage()),
+                    );
+                  } else if (typeUser == "User") {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Accès refusé'),
+                          content: Text(
+                              'Vous devez être lié avec un notaire pour accéder à la messagerie.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  
+                  }
+                }
               ),
               ListTile(
                 title: Text(
@@ -161,6 +228,14 @@ class _ProfilState extends State<Profil> {
                 ),
                 onTap: () {
                   TokenUser = '';
+                  profil_phone = '';
+                  profil_firstName = '';
+                  profil_lastName = '';
+                  profil_age = 0;
+                  profil_email = '';
+                  profil_photo = '';
+                  profil_firstName_notary = '';
+                  profil_lastName_notary = '';
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => ConnexionPage()),
@@ -269,7 +344,9 @@ class _ProfilState extends State<Profil> {
                   SizedBox(height: 20),
                   CircleAvatar(
                     radius: 80,
-                    backgroundImage: NetworkImage(profil_photo),
+                    backgroundImage: profil_photo.isEmpty
+                        ? AssetImage('images/noicon.jpg')
+                        : NetworkImage(profil_photo) as ImageProvider, 
                   ),
                   SizedBox(height: 20),
                   Text(
@@ -292,7 +369,7 @@ class _ProfilState extends State<Profil> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start, // Alignement à gauche
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ProfileInfoItem(
                           title: 'Email',
