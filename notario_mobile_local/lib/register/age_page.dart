@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:notario_mobile/utils/custom_progress_bar.dart';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
-import 'name_page.dart';
 import 'mail_page.dart';
 import '../api/api.dart';
 
 class AgePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    int currentStep = 1;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -27,9 +28,9 @@ class AgePage extends StatelessWidget {
         child: Column(
           children: [
             DelayedAnimation(
-              delay: 200,
+              delay: 300,
               child: Container(
-                height: 100,
+                height: 50,
                 margin: EdgeInsets.only(
                   top: 40,
                   bottom: 0,
@@ -45,19 +46,6 @@ class AgePage extends StatelessWidget {
               ),
             ),
             AgeForm(),
-            DelayedAnimation(
-              delay: 300,
-              child: Container(
-                height: 50,
-                margin: EdgeInsets.only(
-                  top: 0,
-                  bottom: 100,
-                ),
-                child: Image.asset(
-                  "images/progression2.png",
-                ),
-              ),
-            ),
             DelayedAnimation(
               delay: 500,
               child: Container(
@@ -127,10 +115,16 @@ class AgePage extends StatelessWidget {
                   child: Text(
                     "Continuer",
                     textScaleFactor: 1.5,
-                    style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
+                    style: TextStyle(
+                        color: const Color.fromARGB(255, 255, 255, 255)),
                   ),
                 ),
               ),
+            ),
+            SizedBox(height: 20),
+            DelayedAnimation(
+              delay: 300,
+              child: CustomProgressBar(progress: currentStep / 5),
             ),
           ],
         ),

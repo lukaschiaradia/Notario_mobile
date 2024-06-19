@@ -204,7 +204,6 @@ Future<Map<String, dynamic>> api_get_notary() async {
       return json_map;
     } else if (response.statusCode == 404) {
       print('You do not have a notary: ${response.statusCode}');
-      //showNoNotaryPopup(context);
       throw Exception('You do not have a notary');
     } else {
       print(

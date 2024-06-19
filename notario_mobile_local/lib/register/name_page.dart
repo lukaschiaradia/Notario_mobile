@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notario_mobile/utils/custom_progress_bar.dart';
-import 'dart:async';
+
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
 import 'age_page.dart';
 import '../api/api.dart';
 
 class NamePage extends StatelessWidget {
-  int currentStep = 4;
+  int currentStep = 0;
 
   @override
   Widget build(BuildContext context) {
