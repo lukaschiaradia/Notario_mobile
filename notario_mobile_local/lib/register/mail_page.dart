@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:notario_mobile/utils/custom_progress_bar.dart';
+import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
+import 'name_page.dart';
 import 'password_page.dart';
 import '../api/api.dart';
-
 
 void main() {
   runApp(MaterialApp(
@@ -14,6 +17,7 @@ void main() {
 class MailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    int currentStep = 3;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -52,19 +56,6 @@ class MailPage extends StatelessWidget {
             ),
             EmailForm(),
             DelayedAnimation(
-              delay: 300,
-              child: Container(
-                height: 50,
-                margin: EdgeInsets.only(
-                  top: 0,
-                  bottom: 100,
-                ),
-                child: Image.asset(
-                  "images/progression3.png",
-                ),
-              ),
-            ),
-            DelayedAnimation(
               delay: 500,
               child: Container(
                 width: double.infinity,
@@ -78,13 +69,18 @@ class MailPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
-                  child: Text("Continuer", textScaleFactor: 1.5),
+                  child: Text(
+                    "Continuer",
+                    textScaleFactor: 1.5,
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                    ),
+                  ),
                   onPressed: () {
                     if (isValidEmail(email)) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => PasswordPage()),
+                        MaterialPageRoute(builder: (context) => PasswordPage()),
                       );
                     } else {
                       showAlert(context);
@@ -92,6 +88,11 @@ class MailPage extends StatelessWidget {
                   },
                 ),
               ),
+            ),
+            SizedBox(height: 20),
+            DelayedAnimation(
+              delay: 300,
+              child: CustomProgressBar(progress: currentStep / 4),
             ),
           ],
         ),
@@ -156,7 +157,6 @@ class _EmailFormState extends State<EmailForm> {
     );
   }
 }
-
 
 bool isValidEmail(String email) {
   // Utilisez une expression régulière pour valider l'adresse e-mail.
