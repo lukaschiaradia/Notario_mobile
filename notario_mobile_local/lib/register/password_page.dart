@@ -1,3 +1,4 @@
+import 'dart:convert'; 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notario_mobile/api/api_auth.dart';
@@ -5,10 +6,8 @@ import 'package:notario_mobile/models/utilisateur_register.dart';
 import 'package:notario_mobile/register/register_controler.dart';
 import 'package:notario_mobile/utils/constants/status_code.dart';
 import 'package:notario_mobile/welcome_page.dart';
-import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
-import 'name_page.dart';
 import '../api/api.dart';
 
 class PasswordPage extends StatelessWidget {
@@ -114,6 +113,28 @@ class PasswordPage extends StatelessWidget {
                                               builder: (context) =>
                                                   WelcomePage()),
                                         );
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } else if (value.statusCode == 400) {
+                            Map<String, dynamic> responseJson =
+                                jsonDecode(value.body);
+                            String message = responseJson['email'][0];
+
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Erreur"),
+                                  content: Text(message),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text("OK"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
                                       },
                                     ),
                                   ],

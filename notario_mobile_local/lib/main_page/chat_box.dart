@@ -1,4 +1,4 @@
-import 'dart:async'; // Import du package async pour utiliser Timer
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:notario_mobile/api/api.dart';

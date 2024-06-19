@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
-import 'name_page.dart';
 import 'password_page.dart';
 import '../api/api.dart';
 

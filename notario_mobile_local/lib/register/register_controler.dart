@@ -1,4 +1,3 @@
-import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/api/api_auth.dart';
 import 'package:http/src/response.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';

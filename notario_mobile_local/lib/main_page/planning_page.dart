@@ -1,11 +1,4 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:notario_mobile/models/utilisateur_create_rdv.dart';
-import 'dart:async';
-import 'delayed_animation.dart';
-import '../main.dart';
-import 'profil_page.dart';
 import 'bottomNavBar.dart';
 import '../api/api.dart';
 import 'package:intl/intl.dart';
@@ -89,6 +82,24 @@ class Planning extends StatelessWidget {
                         onPressed: () {
                           api_ask_rdv(Date: date, reason: reason);
                           Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Confirmation'),
+                                content: Text(
+                                    'Votre demande a été soumise avec succès.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
                       ),
                     ],

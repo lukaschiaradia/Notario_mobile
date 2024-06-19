@@ -1,10 +1,6 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:notario_mobile/login/connection_controler.dart';
 import 'package:notario_mobile/main_page/faq_page.dart';
-import 'package:notario_mobile/main_page/homePage.dart';
-import 'package:notario_mobile/models/utilisateur_login.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import 'package:notario_mobile/utils/constants/status_code.dart';
 import 'package:notario_mobile/welcome_page.dart';
@@ -14,7 +10,6 @@ import '../main.dart';
 import '../main_page/document_page.dart';
 import '../api/api_auth.dart';
 import '../api/api.dart';
-import '../utils/constants/contants_url.dart';
 
 class ConnexionPage extends StatelessWidget {
   final connectionControler = ConnectionControler(apiAuth: ApiAuth());
@@ -77,7 +72,24 @@ class ConnexionPage extends StatelessWidget {
                     );
                   }
                 } else {
-                  await alertConnectionFail(context);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Erreur"),
+                        content:
+                            Text("L'email ou le mot de passe est incorrect."),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -101,7 +113,6 @@ class ConnexionPage extends StatelessWidget {
     );
   }
 
-
   Future<void> alertConnectionFail(BuildContext context) async {
     await showDialog(
       context: context,
@@ -122,7 +133,6 @@ class ConnexionPage extends StatelessWidget {
     );
   }
 }
-
 
 class ConnexionForm extends StatefulWidget {
   const ConnexionForm({required this.connectionControler});
@@ -240,5 +250,3 @@ class _ConnexionFormState extends State<ConnexionForm> {
     );
   }
 }
-
-

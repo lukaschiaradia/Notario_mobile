@@ -5,7 +5,6 @@ import 'document_page.dart';
 import 'planning_page.dart';
 import 'faq_page.dart';
 import '../api/api.dart';
-import '../api/api_auth.dart';
 import '../utils/constants/contants_url.dart';
 
 int _currentIndex = 0;

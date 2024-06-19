@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
 import 'age_page.dart';
@@ -75,23 +74,45 @@ class NamePage extends StatelessWidget {
                         "Continuer",
                         textScaleFactor: 1.5,
                         style: GoogleFonts.poppins(
-                        color: Colors.white,
+                          color: Colors.white,
                         ),
                       ),
                       onPressed: () {
-                        // Vérifiez si les champs "Nom" et "Prénom" sont vides.
+                        String phonePattern = r'(^(?:\+33)?[0-9]{9}$)';
+                        RegExp regExp = new RegExp(phonePattern);
                         if (LastName == null ||
                             LastName!.isEmpty ||
                             firstName == null ||
-                            firstName!.isEmpty) {
-                          // Affichez une boîte de dialogue (alerte) si les champs sont vides.
+                            firstName!.isEmpty ||
+                            phone == null ||
+                            phone!.isEmpty) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text("Champs vides"),
+                                content:
+                                    Text("Veuillez remplir tous les champs."),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text("OK"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else if (!regExp.hasMatch(phone!)) {
+                          // Show an alert dialog if the phone number is not valid.
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Numéro de téléphone invalide"),
                                 content: Text(
-                                    "Veuillez remplir les champs Nom et Prénom."),
+                                    "Veuillez entrer un numéro de téléphone valide."),
                                 actions: <Widget>[
                                   TextButton(
                                     child: Text("OK"),
