@@ -80,8 +80,8 @@ class FileItemWidget extends StatelessWidget {
         );
       },
       child: Container(
-         width: 125.0, // Ajuste la largeur du conteneur
-      height: 300.0, // Ajuste la hauteur du conteneur
+         width: 125.0,
+      height: 300.0,
       margin: EdgeInsets.all(8.0),
       padding: EdgeInsets.all(12.0),
       decoration: BoxDecoration(
@@ -89,12 +89,12 @@ class FileItemWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF351EA4), // Couleur de début du dégradé
-            Color(0xFF1A1B25), // Couleur de fin du dégradé
+            Color(0xFF351EA4),
+            Color(0xFF1A1B25),
           ],
         ),
         borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Color(0xFF1A1B25), width: 2.0), // Couleur de bordure en contraste
+        border: Border.all(color: Color(0xFF1A1B25), width: 2.0),
       ),
       child: Row(
         children: [
@@ -102,83 +102,78 @@ class FileItemWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Affichage du nom du document
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
                     fileData.name,
                     style: TextStyle(
-                      fontSize: 16.0, // Taille de la police augmentée pour le nom
-                      color: Colors.white, // Texte en blanc pour la lisibilité
+                      fontSize: 16.0,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.left,
                   ),
                 ),
-                // Affichage des informations sur le notaire
                 Row(
                   children: [
                     Icon(
                       fileData.signedNotary ? Icons.check_circle : Icons.cancel,
                       color: fileData.signedNotary ? Colors.green : Colors.red,
-                      size: 20.0, // Taille de l'icône augmentée
+                      size: 20.0,
                     ),
                     SizedBox(width: 8.0),
                     Text(
                       'Signé par le notaire',
                       style: TextStyle(
-                        fontSize: 14.0, // Taille de la police augmentée pour la lisibilité
-                        color: Colors.white, // Texte en blanc pour la lisibilité
+                        fontSize: 14.0,
+                        color: Colors.white,
                       ),
                     ),
                   ],
                 ),
-                // Affichage des informations sur le client
                 Row(
                   children: [
                     Icon(
                       fileData.signedClient ? Icons.check_circle : Icons.cancel,
                       color: fileData.signedClient ? Colors.green : Colors.red,
-                      size: 20.0, // Taille de l'icône augmentée
+                      size: 20.0,
                     ),
                     SizedBox(width: 8.0),
                     Text(
                       'Signé par le client',
                       style: TextStyle(
-                        fontSize: 14.0, // Taille de la police augmentée pour la lisibilité
-                        color: Colors.white, // Texte en blanc pour la lisibilité
+                        fontSize: 14.0,
+                        color: Colors.white,
                       ),
                     ),
                   ],
                 ),
-                // Affichage des dates
                 SizedBox(height: 16.0),
                 Text(
                   'Créé le: ${formatDate(fileData.createdAt)}',
                   style: TextStyle(
-                    fontSize: 12.0, // Taille de la police
-                    color: Colors.white, // Texte en blanc pour la lisibilité
+                    fontSize: 12.0,
+                    color: Colors.white,
                   ),
                 ),
                 Text(
                   'Dernière mise à jour: ${formatDate(fileData.updatedAt)}',
                   style: TextStyle(
-                    fontSize: 12.0, // Taille de la police
-                    color: Colors.white, // Texte en blanc pour la lisibilité
+                    fontSize: 12.0,
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
           ),
-          // Icône PDF centrée verticalement
           SizedBox(
-            width: 60.0, // Ajuste la largeur pour l'espacement
+            width: 60.0,
             child: Align(
               alignment: Alignment.centerRight,
               child: Icon(
-                Icons.picture_as_pdf, // Icône PDF
+                Icons.picture_as_pdf,
                 color: Colors.white,
-                size: 50.0, // Taille de l'icône
+                size: 50.0,
               ),
             ),
           ),
