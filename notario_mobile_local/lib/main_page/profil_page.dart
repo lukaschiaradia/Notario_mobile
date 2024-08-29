@@ -3,6 +3,7 @@ import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/main_page/articlePage.dart';
 import 'package:notario_mobile/main_page/chat_box.dart';
 import 'package:notario_mobile/main_page/liaisonNotairePage.dart';
+import 'package:notario_mobile/main_page/page_notification.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import '../welcome_page.dart';
 import 'bottomNavBar.dart';
@@ -83,6 +84,34 @@ class _ProfilState extends State<Profil> {
     });
   }
 
+  Future<void> _dissociateNotary(BuildContext context) async {
+    try {
+      // Assurez-vous de remplacer cette méthode par votre propre logique de dissociation
+      await apiDissociateNotary();
+      setState(() {
+        profil_firstName_notary = '';
+        profil_lastName_notary = '';
+      });
+      Fluttertoast.showToast(
+          msg: "Vous avez été dissocié du notaire.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Erreur lors de la dissociation : $e",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,6 +158,28 @@ class _ProfilState extends State<Profil> {
                       },
                     );
                   }
+                },
+              ),
+               ListTile(
+                title: Text(
+                  'Dissocier',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  _dissociateNotary(context);
+                },
+              ),
+               ListTile(
+                title: Text(
+                  'Notification',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                   Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NotificationPage()),
+                      );
                 },
               ),
               ListTile(
@@ -535,7 +586,7 @@ void _showEditDialog(BuildContext context) {
                 MaterialPageRoute(builder: (context) => Profil()),
               );
               Fluttertoast.showToast(
-                  msg: 'Vos informations ont été lié.',
+                  msg: 'Vos informations ont été mis à jour.',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   timeInSecForIosWeb: 1,

@@ -153,7 +153,8 @@ Future<num> api_add_message(
   }
 }
 
-Future<dynamic> api_ask_rdv({required String Date, required String reason}) async {
+Future<dynamic> api_ask_rdv(
+    {required String Date, required String reason}) async {
   var endPoint = Uri.http(ip, '/planning/ask/');
 
   Map data = {};
@@ -336,6 +337,80 @@ Future<List<dynamic>> api_get_chat_with_notaire(
     print(response.statusCode);
     print(json_map);
     return await json_map;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<void> apiDissociateNotary() async {
+  var endPoint = Uri.http(ip, '/clients/dissociate/');
+  try {
+    var response = await Client().delete(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    if (response.statusCode == 200) {
+      print("Dissociation réussie.");
+    } else {
+      print("Erreur lors de la dissociation : ${response.body}");
+    }
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_get_requests() async {
+  var endPoint = Uri.http(ip, '/clients/get-requests/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+    print(response.statusCode);
+    print(json_map);
+    return await json_map;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_acceptNotary({required int id}) async {
+  var endPoint = Uri.http(ip, '/clients/accept-request/');
+  Map data = {};
+  data['notary_id'] = id;
+  print(data['id']);
+  try {
+    var response = await Client().post(endPoint,
+        headers: <String, String> {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + TokenUser,
+        },
+        body: convert.json.encode(data));
+    print(response.statusCode);
+    print(response.body);
+    return await (response.statusCode);
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_rejectNotary({required int id}) async {
+  var endPoint = Uri.http(ip, '/clients/refuse-request/');
+  Map data = {};
+  data['notary'] = id;
+  try {
+    var response = await Client().delete(endPoint,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + TokenUser,
+        },
+        body: convert.json.encode(data));
+    print(response.statusCode);
+    print(response.body);
+    return await (response.statusCode);
   } catch (e) {
     throw (e.toString());
   }

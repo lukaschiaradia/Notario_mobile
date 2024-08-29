@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:notario_mobile/utils/custom_progress_bar.dart';
 
 import '../main_page/delayed_animation.dart';
@@ -46,7 +47,7 @@ class NumberPage extends StatelessWidget {
                       )),
                 ),
               ),
-              PhoneForm(),
+              PhoneForm(onPhoneChanged: (value) => phone = value),
               DelayedAnimation(
                   delay: 500,
                   child: Container(
@@ -69,7 +70,7 @@ class NumberPage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        String phonePattern = r'(^(?:\+33)?[0-9]{9}$)';
+                        String phonePattern = r'^\+\d{1,3}\d{9,14}$';
                         RegExp regExp = new RegExp(phonePattern);
 
                         if (phone == null || phone!.isEmpty) {
@@ -115,6 +116,7 @@ class NumberPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(builder: (context) => AgePage()),
                           );
+                          print(phone);
                         }
                       },
                     ),
@@ -131,7 +133,9 @@ class NumberPage extends StatelessWidget {
 }
 
 class PhoneForm extends StatefulWidget {
-  const PhoneForm();
+  final Function(String) onPhoneChanged; // Ajoutez ce champ
+
+  const PhoneForm({required this.onPhoneChanged}); // Modifiez le constructeur
 
   @override
   _PhoneFormState createState() => _PhoneFormState();
@@ -153,11 +157,14 @@ class _PhoneFormState extends State<PhoneForm> {
                 top: 0,
                 bottom: 60,
               ),
-              child: TextField(
+              child: IntlPhoneField(
                 decoration: InputDecoration(
                   labelText: 'Telephone',
                 ),
-                onChanged: (value) => phone = value,
+                initialCountryCode: 'FR', // Vous pouvez définir le code de pays initial ici
+                onChanged: (phone) {
+                  widget.onPhoneChanged(phone.completeNumber); // Utilisez la fonction de rappel
+                },
               ),
             ),
           ),
