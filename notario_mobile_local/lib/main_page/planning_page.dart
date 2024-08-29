@@ -25,10 +25,31 @@ List<dynamic> create_planning_list(List rdvList) {
   return planningList;
 }
 
-class Planning extends StatelessWidget {
-  final List rdvList = create_planning_list(rdv_list);
+class Planning extends StatefulWidget {
+  @override
+  _PlanningState createState() => _PlanningState();
+}
+
+class _PlanningState extends State<Planning> {
+  bool showPastAppointments = false; // État pour afficher ou non les rendez-vous passés
+  List rdvList = create_planning_list(rdv_list);
+
+  bool isPastAppointment(String date) {
+    DateTime appointmentDate = DateFormat('dd/MM/yyyy').parse(date);
+    return appointmentDate.isBefore(DateTime.now());
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Filtrer les rendez-vous en fonction de l'état de showPastAppointments
+    List filteredAppointments = rdvList.where((appointment) {
+      if (showPastAppointments) {
+        return !isPastAppointment(appointment['date']);
+      } else {
+        return true;
+      }
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -110,20 +131,34 @@ class Planning extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          color: Colors.white,
-          child: Column(
+      body: Column(
+        children: [
+          // Ajout du filtre pour les rendez-vous passés
+          Row(
             children: [
-              Column(
-                children: rdvList.map((rdv) {
-                  return rdvCard(rdv);
-                }).toList(),
+              Checkbox(
+                value: showPastAppointments,
+                onChanged: (bool? value) {
+                  setState(() {
+                    showPastAppointments = value!;
+                  });
+                },
+              ),
+              Text(
+                'Afficher uniquement les rendez-vous à venir',
+                style: TextStyle(fontSize: 16),
               ),
             ],
           ),
-        ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredAppointments.length,
+              itemBuilder: (context, index) {
+                return rdvCard(filteredAppointments[index]);
+              },
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: ButtonNavBar(),
     );
@@ -131,7 +166,6 @@ class Planning extends StatelessWidget {
 }
 
 class rdvCard extends StatefulWidget {
-  // replaced StatelessWidget with StatefulWidget
   final Map rdvData;
   rdvCard(this.rdvData);
 
@@ -140,7 +174,6 @@ class rdvCard extends StatefulWidget {
 }
 
 class _rdvCardState extends State<rdvCard> {
-  // added state class
   bool isFav = false;
 
   @override
@@ -167,48 +200,49 @@ class _rdvCardState extends State<rdvCard> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
+          child: Row(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today_outlined, color: Colors.white),
-                      SizedBox(width: 10),
-                      Text(widget.rdvData['date'],
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                          )),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.access_time, color: Colors.white),
-                      SizedBox(width: 10),
-                      Text(widget.rdvData['time'],
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                          )),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Text(widget.rdvData['title'],
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  )),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_today_outlined, color: Colors.white),
+                            SizedBox(width: 10),
+                            Text(widget.rdvData['date'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                )),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time, color: Colors.white),
+                            SizedBox(width: 10),
+                            Text(widget.rdvData['time'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                )),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Text(widget.rdvData['title'],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )),
+                    SizedBox(height: 20),
+                    Text(
                       widget.rdvData['description'],
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -216,17 +250,17 @@ class _rdvCardState extends State<rdvCard> {
                         color: Colors.white,
                       ),
                     ),
-                  ),
-                  if (isFav)
-                    FadeInUp(
-                      child: Lottie.asset(
-                        './images/fav_lottie.json',
-                        repeat: false,
-                        height: 60,
-                        width: 60,
+                    if (isFav)
+                      FadeInUp(
+                        child: Lottie.asset(
+                          './images/fav_lottie.json',
+                          repeat: false,
+                          height: 60,
+                          width: 60,
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

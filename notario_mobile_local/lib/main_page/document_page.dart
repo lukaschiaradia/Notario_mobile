@@ -8,16 +8,24 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:intl/intl.dart';
 
 
 class FileData {
   final String name;
   final String url;
-  String preview;
+  final bool signedClient;
+  final bool signedNotary;
+  final DateTime updatedAt;
+  final DateTime createdAt;
 
 
-  FileData({required this.name, required this.url, required this.preview});
+  FileData({required this.name, required this.url, required this.signedClient, required this.signedNotary, required this.updatedAt, required this.createdAt});
 }
+
+ String formatDate(DateTime date) {
+    return DateFormat('dd/MM/yyyy').format(date);
+  }
 
 Future<List<FileData>> fetchFiles() async {
 
@@ -34,21 +42,20 @@ Future<List<FileData>> fetchFiles() async {
         String name = fileData["name"];
         String fileName = fileData["file"];
         String url = ip + fileName;
-        String preview = '';
+        bool signedClient = fileData["is_signed_by_client"] ?? false;
+        bool signedNotary = fileData["is_signed_by_notary"] ?? false;
+        DateTime updatedAt = fileData["updated_at"] != null ? DateTime.parse(fileData["updated_at"]) : DateTime.now();
+        DateTime createdAt = fileData["created_at"] != null ? DateTime.parse(fileData["created_at"]) : DateTime.now();
 
         fileList.add(FileData(
           name: name,
           url: 'http://' + url,
-          preview: preview,
+          signedClient: signedClient,
+          signedNotary: signedNotary,
+          updatedAt: updatedAt,
+          createdAt: createdAt,
         ));
       }
-
-      fileList[0].preview = 'images/exDoc.png';
-      fileList[1].preview = 'images/exDocTest.png';
-
-      fileList.forEach((fileData) {
-        print('name: ${fileData.name}, url: ${fileData.url}, preview: ${fileData.preview}');
-      });
 
       return fileList;
   } catch (e) {
@@ -73,35 +80,104 @@ class FileItemWidget extends StatelessWidget {
         );
       },
       child: Container(
-        width: 150.0,
-        height: 200.0,
-        margin: EdgeInsets.all(8.0),
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Image.asset(
-                fileData.preview,
-                fit: BoxFit.contain,
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-              child: Center(
-                child: Text(
-                  fileData.name,
-                  style: TextStyle(fontSize: 14.0),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
+         width: 125.0,
+      height: 300.0,
+      margin: EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF351EA4),
+            Color(0xFF1A1B25),
           ],
         ),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
-          borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(color: Color(0xFF1A1B25), width: 2.0),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    fileData.name,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      fileData.signedNotary ? Icons.check_circle : Icons.cancel,
+                      color: fileData.signedNotary ? Colors.green : Colors.red,
+                      size: 20.0,
+                    ),
+                    SizedBox(width: 8.0),
+                    Text(
+                      'Signé par le notaire',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      fileData.signedClient ? Icons.check_circle : Icons.cancel,
+                      color: fileData.signedClient ? Colors.green : Colors.red,
+                      size: 20.0,
+                    ),
+                    SizedBox(width: 8.0),
+                    Text(
+                      'Signé par le client',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                Text(
+                  'Créé le: ${formatDate(fileData.createdAt)}',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  'Dernière mise à jour: ${formatDate(fileData.updatedAt)}',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 60.0,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Icon(
+                Icons.picture_as_pdf,
+                color: Colors.white,
+                size: 50.0,
+              ),
+            ),
+          ),
+        ],
         ),
       ),
     );
@@ -258,9 +334,10 @@ class FileListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 1,
         crossAxisSpacing: 8.0,
         mainAxisSpacing: 8.0,
+        childAspectRatio: 2,
       ),
       itemCount: fileList.length,
       itemBuilder: (context, index) {
