@@ -528,35 +528,85 @@ void _showEditDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Modifier mes informations'),
+        backgroundColor: Color(0xFF1A1B25), // Background color of the dialog
+        title: Text(
+          'Modifier mes informations',
+          style: TextStyle(
+            color: Colors.white, // Title text color
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextFormField(
                 initialValue: profil_firstName,
-                decoration: InputDecoration(labelText: 'Prénom'),
+                decoration: InputDecoration(
+                  labelText: 'Prénom',
+                  labelStyle: TextStyle(color: Colors.white), // Label text color
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color when focused
+                  ),
+                ),
+                style: TextStyle(color: Colors.white), // Input text color
                 onChanged: (value) {
                   editedFirstName = value;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 initialValue: profil_lastName,
-                decoration: InputDecoration(labelText: 'Nom'),
+                decoration: InputDecoration(
+                  labelText: 'Nom',
+                  labelStyle: TextStyle(color: Colors.white), // Label text color
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color when focused
+                  ),
+                ),
+                style: TextStyle(color: Colors.white), // Input text color
                 onChanged: (value) {
                   editedLastName = value;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 initialValue: profil_email,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.white), // Label text color
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color when focused
+                  ),
+                ),
+                style: TextStyle(color: Colors.white), // Input text color
                 onChanged: (value) {
                   editedEmail = value;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 initialValue: profil_age.toString(),
-                decoration: InputDecoration(labelText: 'Âge'),
+                decoration: InputDecoration(
+                  labelText: 'Âge',
+                  labelStyle: TextStyle(color: Colors.white), // Label text color
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color when focused
+                  ),
+                ),
+                style: TextStyle(color: Colors.white), // Input text color
                 onChanged: (value) {
                   editedAge = int.tryParse(value) ?? profil_age;
                 },
@@ -566,13 +616,23 @@ void _showEditDialog(BuildContext context) {
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('Annuler'),
+            child: Text(
+              'Annuler',
+              style: TextStyle(
+                color: Color(0xFF351EA4), // Cancel button text color
+              ),
+            ),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: Text('Enregistrer'),
+            child: Text(
+              'Enregistrer',
+              style: TextStyle(
+                color: Color(0xFF351EA4), // Save button text color
+              ),
+            ),
             onPressed: () async {
               await ApiAuth().apiUpdate(
                 first_name: editedFirstName,
@@ -586,13 +646,14 @@ void _showEditDialog(BuildContext context) {
                 MaterialPageRoute(builder: (context) => Profil()),
               );
               Fluttertoast.showToast(
-                  msg: 'Vos informations ont été mis à jour.',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.grey,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
+                msg: 'Vos informations ont été mises à jour.',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Color(0xFF1A1B25), // Toast background color
+                textColor: Colors.white, // Toast text color
+                fontSize: 16.0,
+              );
             },
           ),
         ],
@@ -600,6 +661,7 @@ void _showEditDialog(BuildContext context) {
     },
   );
 }
+
 
 void _showDeleteDialog(BuildContext context) {
   showDialog(
