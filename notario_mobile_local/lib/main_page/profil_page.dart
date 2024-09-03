@@ -14,6 +14,7 @@ import '../login/connexion_page.dart';
 import '../utils/constants/privacy_policy.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:notario_mobile/main_page/tutorial.dart';
 
 var profil_phone = '';
 var profil_firstName = '';
@@ -292,6 +293,15 @@ class _ProfilState extends State<Profil> {
               ),
               ListTile(
                 title: Text(
+                  'Tutoriel',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  _showTutorialConfirmationDialog(context);
+                },
+              ),
+              ListTile(
+                title: Text(
                   'Supprimer mon compte',
                   style: TextStyle(color: Colors.white),
                 ),
@@ -518,6 +528,59 @@ class ProfilPageState extends State<ProfilPage> {
   }
 }
 
+ void _showTutorialConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              'Lancer le tutoriel ?',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextButton(
+                  child: Text(
+                    'Non',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Color(0xFF351EA4),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                SizedBox(width: 20),
+                TextButton(
+                  child: Text(
+                    'Oui',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Color(0xFF351EA4),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => TutorialScreen()),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+          backgroundColor: Color(0xFF351EA4),
+        );
+      },
+    );
+  }
+
 void _showEditDialog(BuildContext context) {
   String editedFirstName = profil_firstName;
   String editedLastName = profil_lastName;
@@ -528,11 +591,11 @@ void _showEditDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        backgroundColor: Color(0xFF1A1B25), // Background color of the dialog
+        backgroundColor: Color(0xFF1A1B25),
         title: Text(
           'Modifier mes informations',
           style: TextStyle(
-            color: Colors.white, // Title text color
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -544,15 +607,15 @@ void _showEditDialog(BuildContext context) {
                 initialValue: profil_firstName,
                 decoration: InputDecoration(
                   labelText: 'Prénom',
-                  labelStyle: TextStyle(color: Colors.white), // Label text color
+                  labelStyle: TextStyle(color: Colors.white),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color when focused
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
                   ),
                 ),
-                style: TextStyle(color: Colors.white), // Input text color
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   editedFirstName = value;
                 },
@@ -562,15 +625,15 @@ void _showEditDialog(BuildContext context) {
                 initialValue: profil_lastName,
                 decoration: InputDecoration(
                   labelText: 'Nom',
-                  labelStyle: TextStyle(color: Colors.white), // Label text color
+                  labelStyle: TextStyle(color: Colors.white),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color when focused
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
                   ),
                 ),
-                style: TextStyle(color: Colors.white), // Input text color
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   editedLastName = value;
                 },
@@ -580,15 +643,15 @@ void _showEditDialog(BuildContext context) {
                 initialValue: profil_email,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.white), // Label text color
+                  labelStyle: TextStyle(color: Colors.white),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color when focused
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
                   ),
                 ),
-                style: TextStyle(color: Colors.white), // Input text color
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   editedEmail = value;
                 },
@@ -598,15 +661,15 @@ void _showEditDialog(BuildContext context) {
                 initialValue: profil_age.toString(),
                 decoration: InputDecoration(
                   labelText: 'Âge',
-                  labelStyle: TextStyle(color: Colors.white), // Label text color
+                  labelStyle: TextStyle(color: Colors.white),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF351EA4)), // Border color when focused
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
                   ),
                 ),
-                style: TextStyle(color: Colors.white), // Input text color
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   editedAge = int.tryParse(value) ?? profil_age;
                 },
@@ -619,7 +682,7 @@ void _showEditDialog(BuildContext context) {
             child: Text(
               'Annuler',
               style: TextStyle(
-                color: Color(0xFF351EA4), // Cancel button text color
+                color: Color(0xFF351EA4),
               ),
             ),
             onPressed: () {
@@ -630,7 +693,7 @@ void _showEditDialog(BuildContext context) {
             child: Text(
               'Enregistrer',
               style: TextStyle(
-                color: Color(0xFF351EA4), // Save button text color
+                color: Color(0xFF351EA4),
               ),
             ),
             onPressed: () async {
@@ -650,8 +713,8 @@ void _showEditDialog(BuildContext context) {
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
                 timeInSecForIosWeb: 1,
-                backgroundColor: Color(0xFF1A1B25), // Toast background color
-                textColor: Colors.white, // Toast text color
+                backgroundColor: Color(0xFF1A1B25),
+                textColor: Colors.white,
                 fontSize: 16.0,
               );
             },
@@ -661,7 +724,6 @@ void _showEditDialog(BuildContext context) {
     },
   );
 }
-
 
 void _showDeleteDialog(BuildContext context) {
   showDialog(
