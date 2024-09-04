@@ -28,13 +28,13 @@ class ApiAuth {
           },
           body: convert.json.encode(data));
       print(response.body);
-      print("tesst");
       print(response.statusCode);
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       typeUser = responseData['user']['type'];
       print("usertype: $typeUser");
       Map<String, dynamic> jsonResponse = convert.json.decode(response.body);
       String token = jsonResponse['token'];
+      stateUser = jsonResponse['user']['state'];
       TokenUser = token;
       print('Le token est : $TokenUser');
       return (response);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notario_mobile/login/connection_controler.dart';
 import 'package:notario_mobile/main_page/faq_page.dart';
+import 'package:notario_mobile/main_page/tutorial.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import 'package:notario_mobile/utils/constants/status_code.dart';
 import 'package:notario_mobile/welcome_page.dart';
@@ -60,7 +61,46 @@ class ConnexionPage extends StatelessWidget {
                 print(value);
                 print(value.statusCode);
                 if (value.statusCode == successCode) {
-                  if (typeUser == "User") {
+                  if ( stateUser == "NEW") {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Première connexion'),
+                          content: Text('Voulez-vous lancer le tutoriel ?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Oui'),
+                              onPressed: () {
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => TutorialScreen()),
+                              );
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Non'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                if (typeUser == "User") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => FaqPage()),
+                                  );
+                                } else if (typeUser == "Client") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => DocumentPage()),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    if (typeUser == "User") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => FaqPage()),
@@ -71,6 +111,7 @@ class ConnexionPage extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => DocumentPage()),
                     );
                   }
+                }
                 } else {
                   showDialog(
                     context: context,
