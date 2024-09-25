@@ -30,8 +30,8 @@ class _FaqPageState extends State<FaqPage> {
   final List<dynamic> questionsAndAnswers = [];
   List<dynamic> questionsAndAnswersToShow = [];
 
-  final List<String> categories = ["ACCOUNT", "DOCUMENT", "MEETING", "CHAT", "AUTRES"];
-  final List<String> categoriesName = ["Compte", "Documents", "Rendez-vous", "Chat", "Autres questions"];
+  final List<String> categories = ["ACCOUNT", "DOCUMENT", "MEETING", "CHAT", "ARTICLE", "AUTRES"];
+  final List<String> categoriesName = ["Compte", "Documents", "Rendez-vous", "Chat", "Article", "Autres questions"];
   late Map<String, bool> categoryFilterStates; // Etat local pour les cases à cocher dans le dialogue
 
   @override

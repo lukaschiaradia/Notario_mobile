@@ -85,7 +85,6 @@ class ApiAuth {
             'Authorization': 'Bearer ' + TokenUser,
           },
           body: convert.json.encode(data));
-      print(response.body);
       return await (response);
     } catch (e) {
       throw (e.toString());

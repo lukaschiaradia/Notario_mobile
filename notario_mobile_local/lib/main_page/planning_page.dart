@@ -73,7 +73,7 @@ class _PlanningState extends State<Planning> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Enter Information'),
+                    title: Text("Demande d'événement"),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
@@ -99,7 +99,7 @@ class _PlanningState extends State<Planning> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('Submit'),
+                        child: Text('Envoyer'),
                         onPressed: () {
                           api_ask_rdv(Date: date, reason: reason);
                           Navigator.of(context).pop();

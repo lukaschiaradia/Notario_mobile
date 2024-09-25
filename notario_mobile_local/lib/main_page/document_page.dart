@@ -40,7 +40,7 @@ Future<List<FileData>> fetchFiles() async {
 
       for (var fileData in json_response) {
         String name = fileData["name"];
-        String fileName = fileData["file"];
+        String fileName = fileData["path"];
         String url = ip + fileName;
         bool signedClient = fileData["is_signed_by_client"] ?? false;
         bool signedNotary = fileData["is_signed_by_notary"] ?? false;

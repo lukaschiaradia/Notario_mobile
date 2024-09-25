@@ -307,7 +307,6 @@ Future<List<String>> api_get_chat_id() async {
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
     print(response.statusCode);
-    print("chat ici");
     print(json_map);
 
     // Extraire les identifiants de chat de json_map

@@ -38,6 +38,7 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> loadChatId() async {
     try {
       List<String> chatIdData = await api_get_chat_id();
+      print(chatIdData);
       String id = chatIdData[0];
       await loadMessages(id);
     } catch (e) {
