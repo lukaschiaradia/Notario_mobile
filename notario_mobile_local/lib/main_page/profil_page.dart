@@ -4,17 +4,12 @@ import 'package:notario_mobile/main_page/articlePage.dart';
 import 'package:notario_mobile/main_page/chat_box.dart';
 import 'package:notario_mobile/main_page/liaisonNotairePage.dart';
 import 'package:notario_mobile/main_page/page_notification.dart';
+import 'package:notario_mobile/main_page/settingsPage.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
-import '../welcome_page.dart';
 import 'bottomNavBar.dart';
-import '../models/utilisateur_delete.dart';
 import 'info_notaire.dart';
 import '../api/api.dart';
-import '../login/connexion_page.dart';
-import '../utils/constants/privacy_policy.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:notario_mobile/main_page/tutorial.dart';
 
 
 var profil_phone = '';
@@ -271,90 +266,18 @@ class _ProfilState extends State<Profil> {
                     }
                   }),
               ListTile(
+                leading: Icon(Icons.settings, color: Colors.white),
                 title: Text(
-                  'Déconnexion',
+                  'Paramètres',
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () {
-                  TokenUser = '';
-                  profil_phone = '';
-                  profil_firstName = '';
-                  profil_lastName = '';
-                  profil_age = 0;
-                  profil_email = '';
-                  profil_photo = '';
-                  profil_firstName_notary = '';
-                  profil_lastName_notary = '';
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ConnexionPage()),
+                    MaterialPageRoute(
+                      builder: (context) => SettingsPage(),
+                    ),
                   );
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'Tutoriel',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  _showTutorialConfirmationDialog(context);
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'Supprimer mon compte',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  _showDeleteDialog(context);
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'Politique de confidentialité',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(
-                          'Politique de confidentialité',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        content: SingleChildScrollView(
-                          child: Text(
-                            privacyPolicyText,
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        backgroundColor: Color(0xFF351EA4),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Fermer',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'Visiter notre site web',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  _launchURL('http://20.111.31.171:3000');
                 },
               ),
             ],
@@ -460,14 +383,7 @@ class _ProfilState extends State<Profil> {
   }
 }
 
-Future<void> _launchURL(String url) async {
-  final Uri uri = Uri.parse(url);
-  if (await canLaunch(uri.toString())) {
-    await launch(uri.toString());
-  } else {
-    throw 'Could not launch $url';
-  }
-}
+
 
 class ProfileInfoItem extends StatelessWidget {
   final String title;
@@ -527,59 +443,6 @@ class ProfilPageState extends State<ProfilPage> {
     return Scaffold();
   }
 }
-
- void _showTutorialConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Center(
-            child: Text(
-              'Lancer le tutoriel ?',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextButton(
-                  child: Text(
-                    'Non',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Color(0xFF351EA4),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                SizedBox(width: 20),
-                TextButton(
-                  child: Text(
-                    'Oui',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Color(0xFF351EA4),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => TutorialScreen()),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
-          backgroundColor: Color(0xFF351EA4),
-        );
-      },
-    );
-  }
 
 void _showEditDialog(BuildContext context) {
   String editedFirstName = profil_firstName;
@@ -717,43 +580,6 @@ void _showEditDialog(BuildContext context) {
                 textColor: Colors.white,
                 fontSize: 16.0,
               );
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showDeleteDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Supprimer mon compte'),
-        content: SingleChildScrollView(),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Annuler'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text('Supprimer mon compte'),
-            onPressed: () async {
-              UtilisateurDelete utilisateurASupprimer =
-                  UtilisateurDelete(idClient: TokenUser);
-              try {
-                await apiDelete(accountsDeleteId: utilisateurASupprimer);
-                Navigator.of(context).pop();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => WelcomePage()),
-                );
-              } catch (e) {
-                print("Erreur lors de la suppression du compte : $e");
-              }
             },
           ),
         ],
