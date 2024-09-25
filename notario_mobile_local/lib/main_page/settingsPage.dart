@@ -245,7 +245,7 @@ class SettingsPage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                _launchURL2('http://youtube.com');
+                _launchURL2('https://forms.office.com/e/d7age1dYzk');
                 Navigator.of(context).pop();
               },
               child: Text('Oui', style: TextStyle(color: Colors.white)),
