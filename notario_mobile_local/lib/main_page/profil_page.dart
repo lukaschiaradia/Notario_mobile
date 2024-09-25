@@ -16,6 +16,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:notario_mobile/main_page/tutorial.dart';
 
+
 var profil_phone = '';
 var profil_firstName = '';
 var profil_lastName = '';
@@ -87,7 +88,6 @@ class _ProfilState extends State<Profil> {
 
   Future<void> _dissociateNotary(BuildContext context) async {
     try {
-      // Assurez-vous de remplacer cette méthode par votre propre logique de dissociation
       await apiDissociateNotary();
       setState(() {
         profil_firstName_notary = '';
@@ -746,8 +746,6 @@ void _showDeleteDialog(BuildContext context) {
                   UtilisateurDelete(idClient: TokenUser);
               try {
                 await apiDelete(accountsDeleteId: utilisateurASupprimer);
-                print("Suppression réussie");
-                print(TokenUser);
                 Navigator.of(context).pop();
                 Navigator.push(
                   context,

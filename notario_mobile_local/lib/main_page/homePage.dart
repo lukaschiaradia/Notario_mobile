@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notario_mobile/main_page/profil_page.dart';
 import 'document_page.dart';
 
+
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

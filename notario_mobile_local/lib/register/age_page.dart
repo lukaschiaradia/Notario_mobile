@@ -60,9 +60,7 @@ class AgePage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // Vérifiez si le champ "Âge" est vide.
                     if (age == null || age!.isEmpty) {
-                      // Affichez une boîte de dialogue (alerte) si le champ est vide.
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {

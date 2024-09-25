@@ -19,7 +19,6 @@ class FileData {
   final DateTime updatedAt;
   final DateTime createdAt;
 
-
   FileData({required this.name, required this.url, required this.signedClient, required this.signedNotary, required this.updatedAt, required this.createdAt});
 }
 
@@ -33,8 +32,6 @@ Future<List<FileData>> fetchFiles() async {
     var response = await api_get_files(token: TokenUser);
 
       var json_response = response;
-
-      print(json_response);
 
       List<FileData> fileList = [];
 
@@ -278,8 +275,6 @@ Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) asyn
 
         final File file = File('${pdfDirectory.path}/$name.pdf');
         await file.writeAsBytes(response.bodyBytes);
-
-        print('Chemin du fichier téléchargé: ${file.path}');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

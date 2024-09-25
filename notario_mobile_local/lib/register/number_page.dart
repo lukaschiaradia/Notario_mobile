@@ -133,9 +133,9 @@ class NumberPage extends StatelessWidget {
 }
 
 class PhoneForm extends StatefulWidget {
-  final Function(String) onPhoneChanged; // Ajoutez ce champ
+  final Function(String) onPhoneChanged;
 
-  const PhoneForm({required this.onPhoneChanged}); // Modifiez le constructeur
+  const PhoneForm({required this.onPhoneChanged});
 
   @override
   _PhoneFormState createState() => _PhoneFormState();
@@ -161,9 +161,9 @@ class _PhoneFormState extends State<PhoneForm> {
                 decoration: InputDecoration(
                   labelText: 'Telephone',
                 ),
-                initialCountryCode: 'FR', // Vous pouvez définir le code de pays initial ici
+                initialCountryCode: 'FR',
                 onChanged: (phone) {
-                  widget.onPhoneChanged(phone.completeNumber); // Utilisez la fonction de rappel
+                  widget.onPhoneChanged(phone.completeNumber);
                 },
               ),
             ),

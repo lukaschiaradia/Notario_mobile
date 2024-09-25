@@ -58,8 +58,6 @@ class ConnexionPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 var value = await connectionControler.connection();
-                print(value);
-                print(value.statusCode);
                 if (value.statusCode == successCode) {
                   if ( stateUser == "NEW") {
                     showDialog(
@@ -185,7 +183,6 @@ class ConnexionForm extends StatefulWidget {
 class _ConnexionFormState extends State<ConnexionForm> {
   var _obscureText2 = true;
 
-  // Méthode pour afficher le dialogue de réinitialisation de mot de passe
   void _showPasswordResetDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -274,7 +271,6 @@ class _ConnexionFormState extends State<ConnexionForm> {
             alignment: Alignment.centerRight,
             child: GestureDetector(
               onTap: () {
-                // Afficher le dialogue de réinitialisation du mot de passe lorsque l'utilisateur clique sur "Mot de passe oublié ?"
                 _showPasswordResetDialog(context);
               },
               child: Text(

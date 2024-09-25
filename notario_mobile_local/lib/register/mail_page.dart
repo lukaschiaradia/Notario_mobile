@@ -159,8 +159,6 @@ class _EmailFormState extends State<EmailForm> {
 }
 
 bool isValidEmail(String email) {
-  // Utilisez une expression régulière pour valider l'adresse e-mail.
-  // Cette expression régulière peut varier en fonction de vos besoins.
   final emailRegExp = RegExp(
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   );

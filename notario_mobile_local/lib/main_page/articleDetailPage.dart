@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notario_mobile/models/utilisateur_article.dart';
 import '../utils/constants/contants_url.dart';
 
+
 class ArticleDetailPage extends StatelessWidget {
   final Article articleData;
 

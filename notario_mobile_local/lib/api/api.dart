@@ -7,16 +7,15 @@ import 'package:notario_mobile/models/utilisateur_create_rdv.dart';
 import 'package:notario_mobile/models/utilisateur_message.dart';
 import '../utils/constants/contants_url.dart';
 
+
 var user_id = 0;
 var receiver_id = 0;
-
 var firstName = '';
 var phone = '';
 var LastName = '';
 var email = '';
 var password = '';
 var password_confirm = '';
-
 var age = '';
 var token = '';
 dynamic rdv_list = [];
@@ -40,8 +39,6 @@ Future<dynamic> api_get_planning() async {
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
 
-    print(response.statusCode);
-    print(response.body);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -58,7 +55,6 @@ Future<dynamic> api_get_questions() async {
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
     rdv_list = json_map;
-    print(response.body);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -75,10 +71,7 @@ Future<dynamic> api_get_chats() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
     chats_list = json_map;
-    print("json_map of chats");
-    print(json_map);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -101,7 +94,6 @@ List<dynamic> create_chat_list(List chats_list) {
 }
 
 Future<dynamic> api_get_chat(chatId) async {
-  print(chatId);
   var endPoint = Uri.http(ip, '/chat/$chatId');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
@@ -111,7 +103,6 @@ Future<dynamic> api_get_chat(chatId) async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
     chat_with_messages = json_map;
     return await json_map;
   } catch (e) {
@@ -202,7 +193,6 @@ Future<Map<String, dynamic>> api_get_notary() async {
       var json_response = response.body;
       var decode = utf8.decode(json_response.runes.toList());
       var json_map = json.decode(decode);
-      print(json_map);
       return json_map;
     } else if (response.statusCode == 404) {
       print('You do not have a notary: ${response.statusCode}');
@@ -228,8 +218,6 @@ Future<dynamic> api_get_articles() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.body);
-    print(response.statusCode);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -246,9 +234,6 @@ Future<List<dynamic>> api_get_notaires() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_list = json.decode(decode) as List;
-    print(TokenUser);
-    print(response.statusCode);
-    print(json_list);
     return json_list;
   } catch (e) {
     throw (e.toString());
@@ -259,7 +244,6 @@ Future<dynamic> api_link_notary({required dynamic notary_id}) async {
   var endPoint = Uri.http(ip, '/clients/invite/');
   Map data = {};
   data['email'] = notary_id;
-  print(notary_id);
   try {
     var response = await Client().post(endPoint,
         headers: <String, String>{
@@ -270,8 +254,6 @@ Future<dynamic> api_link_notary({required dynamic notary_id}) async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(json_map);
-    print(response.statusCode);
     return await (response.statusCode);
   } catch (e) {
     throw (e.toString());
@@ -288,8 +270,6 @@ Future<dynamic> api_get_invite_requests() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
-    print(json_map);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -306,16 +286,12 @@ Future<List<String>> api_get_chat_id() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
-    print(json_map);
 
-    // Extraire les identifiants de chat de json_map
     List<String> chatIds = [];
     for (var chat in json_map) {
       chatIds.add(chat['id'].toString());
     }
 
-    print(chatIds);
     return chatIds;
   } catch (e) {
     throw (e.toString());
@@ -333,8 +309,6 @@ Future<List<dynamic>> api_get_chat_with_notaire(
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
-    print(json_map);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -368,8 +342,6 @@ Future<dynamic> api_get_requests() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
-    print(json_map);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -380,7 +352,6 @@ Future<dynamic> api_acceptNotary({required int id}) async {
   var endPoint = Uri.http(ip, '/clients/accept-request/');
   Map data = {};
   data['notary_id'] = id;
-  print(data['id']);
   try {
     var response = await Client().post(endPoint,
         headers: <String, String> {
@@ -388,8 +359,6 @@ Future<dynamic> api_acceptNotary({required int id}) async {
           'Authorization': 'Bearer ' + TokenUser,
         },
         body: convert.json.encode(data));
-    print(response.statusCode);
-    print(response.body);
     return await (response.statusCode);
   } catch (e) {
     throw (e.toString());
@@ -407,8 +376,6 @@ Future<dynamic> api_rejectNotary({required int id}) async {
           'Authorization': 'Bearer ' + TokenUser,
         },
         body: convert.json.encode(data));
-    print(response.statusCode);
-    print(response.body);
     return await (response.statusCode);
   } catch (e) {
     throw (e.toString());

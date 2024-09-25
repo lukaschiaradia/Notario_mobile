@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:notario_mobile/api/api.dart'; // Assurez-vous que ce chemin est correct
+import 'package:notario_mobile/api/api.dart';
+
 
 class NotificationPage extends StatefulWidget {
   @override

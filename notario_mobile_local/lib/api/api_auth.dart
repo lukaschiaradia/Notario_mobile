@@ -1,6 +1,5 @@
 import 'dart:convert' as convert;
 import 'package:notario_mobile/api/api.dart';
-
 import '../utils/constants/contants_url.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
@@ -9,6 +8,7 @@ import 'package:notario_mobile/models/utilisateur_delete.dart';
 import 'package:notario_mobile/models/utilisateur_modif.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
+
 
 var json_info = {};
 
@@ -20,23 +20,18 @@ class ApiAuth {
     var endPoint = Uri.http(ip, accountsLogin);
     Map data = utilisateurLogin.toData();
     json_info = data;
-    print(data.toString());
     try {
       var response = await Client().post(endPoint,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: convert.json.encode(data));
-      print(response.body);
-      print(response.statusCode);
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       typeUser = responseData['user']['type'];
-      print("usertype: $typeUser");
       Map<String, dynamic> jsonResponse = convert.json.decode(response.body);
       String token = jsonResponse['token'];
       stateUser = jsonResponse['user']['state'];
       TokenUser = token;
-      print('Le token est : $TokenUser');
       return (response);
     } catch (e) {
       throw e;
@@ -48,7 +43,6 @@ class ApiAuth {
   }) async {
     var endPoint = Uri.http(ip, accountsRegister);
     Map data = utilisateurRegister.toData();
-    print(data);
     if (!utilisateurRegister.passwordIsConfirm)
       throw Exception('password incorect');
     try {
@@ -76,7 +70,6 @@ class ApiAuth {
       'email': email,
       'age': age,
     };
-    print(data);
     try {
       var response = await Client().put(endPoint,
           headers: <String, String>{
@@ -93,7 +86,6 @@ class ApiAuth {
 }
 
 Future<Map<String, dynamic>> getUserInfo() async {
-  print(TokenUser);
   var endPoint = Uri.http(ip, '/accounts/user/');
 
   try {
@@ -105,7 +97,6 @@ Future<Map<String, dynamic>> getUserInfo() async {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> userInfo = convert.json.decode(response.body);
-      print(userInfo);
       return userInfo;
     } else {
       print(
@@ -117,7 +108,6 @@ Future<Map<String, dynamic>> getUserInfo() async {
   }
 }
 
-//call api pour le delete
 Future<Response> apiDelete({
   required UtilisateurDelete accountsDeleteId,
 }) async {
@@ -131,7 +121,6 @@ Future<Response> apiDelete({
         'Authorization': 'Bearer ' + accountsDeleteId.idClient,
       },
     );
-    print(accountsDeleteId.idClient);
     return response;
   } catch (e) {
     throw (e.toString());
@@ -150,7 +139,6 @@ Future<dynamic> apiForgotPassword({required String email}) async {
     );
 
     var jsonResponse = jsonDecode(response.body);
-    print(jsonResponse);
     return jsonResponse;
   } catch (e) {
     throw (e.toString());

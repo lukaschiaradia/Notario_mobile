@@ -4,6 +4,7 @@ import '../main.dart';
 import 'bottomNavBar.dart';
 import '../api/api.dart';
 
+
 Future<List<dynamic>> get_faq_list() async {
   var questionsAndAnswers = await api_get_questions();
   try {
@@ -52,7 +53,6 @@ class _FaqPageState extends State<FaqPage> {
             'category': item['category'],
           };
         }).toList());
-        // Filtrer initialement pour afficher toutes les questions
         searchQuestionsByInput(searchTextController.text);
       });
     } catch (e) {
@@ -97,8 +97,7 @@ class _FaqPageState extends State<FaqPage> {
                       value: categoryFilterStates[category],
                       onChanged: (bool? selected) {
                         setState(() {
-                          categoryFilterStates[category] = selected ?? false; // Mettre à jour l'état dans le dialogue
-                          // Mettre à jour la liste affichée en temps réel
+                          categoryFilterStates[category] = selected ?? false;
                           searchQuestionsByInput(searchTextController.text);
                         });
                       },

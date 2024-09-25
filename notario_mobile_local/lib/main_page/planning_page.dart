@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:lottie/lottie.dart';
 
+
 var date;
 var reason;
 
@@ -133,7 +134,6 @@ class _PlanningState extends State<Planning> {
       ),
       body: Column(
         children: [
-          // Ajout du filtre pour les rendez-vous passés
           Row(
             children: [
               Checkbox(

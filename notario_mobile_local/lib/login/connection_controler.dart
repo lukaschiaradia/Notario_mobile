@@ -26,7 +26,6 @@ class ConnectionControler {
       return apiAuth.apiLogin(
           utilisateurLogin: UtilisateurLogin(email: email, password: password));
     } catch (e) {
-      print('test');
       throw e;
     }
   }

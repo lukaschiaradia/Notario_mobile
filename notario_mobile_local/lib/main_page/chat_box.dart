@@ -5,12 +5,14 @@ import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/models/utilisateur_message.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 
+
 class ChatPage extends StatefulWidget {
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
+  
   final List<ChatMessage> messages = [];
   TextEditingController _textController = TextEditingController();
   late Future<int> notaryIdFuture;
@@ -38,7 +40,6 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> loadChatId() async {
     try {
       List<String> chatIdData = await api_get_chat_id();
-      print(chatIdData);
       String id = chatIdData[0];
       await loadMessages(id);
     } catch (e) {
