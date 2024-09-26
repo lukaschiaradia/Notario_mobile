@@ -31,6 +31,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+notario_mobile_local/windows/flutter/generated_plugin_registrant.cc
+notario_mobile_local/windows/flutter/generated_plugins.cmake
 
 # Symbolication related
 app.*.symbols

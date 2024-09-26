@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+2
+version: 1.0.0+4
 
 environment:
   sdk: '>=3.1.0-111.0.dev <4.0.0'
@@ -30,21 +30,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl_phone_field: ^3.0.0
   url_launcher: ^6.0.3
+  flutter_custom_clippers: ^2.1.0
+  percent_indicator: ^4.2.3
   flutter_launcher_icons: ^0.13.1
   cupertino_icons: ^1.0.2
-  google_fonts: ^4.0.4
+  google_fonts: ^6.2.1
   font_awesome_flutter: ^10.3.0
-  file_picker: ^6.1.1
+  file_picker: ^8.0.1
   open_file: ^3.2.1
-  intl: ^0.18.0
-  http: ^0.13.3
-  syncfusion_flutter_pdfviewer: ^20.4.54
+  intl: ^0.19.0
+  http: ^1.2.1
+  syncfusion_flutter_pdfviewer: ^26.1.35
   pdf: ^3.8.4
   flutter_pdfview: ^1.0.0
   flutter_cached_pdfview: ^0.4.2
   screenshot: ^2.1.0
   path_provider: ^2.0.2
+  flutter_animator: ^3.2.2
+  lottie: ^3.0.0
+  permission_handler: ^11.3.1
+  awesome_notifications: ^0.9.3+1
+  fluttertoast: ^8.0.7
+  intro_slider: ^3.0.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
 
@@ -81,6 +90,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/
+    - images/tutorial/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
