@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:notario_mobile/utils/custom_progress_bar.dart';
+
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
 import 'age_page.dart';
 import '../api/api.dart';
-import 'package:notario_mobile/utils/custom_progress_bar.dart';
-import 'package:notario_mobile/register/number_page.dart';
 
-class NamePage extends StatelessWidget {
-  int currentStep = 0;
+class NumberPage extends StatelessWidget {
+  int currentStep = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class NamePage extends StatelessWidget {
                       )),
                 ),
               ),
-              NameForm(),
+              PhoneForm(onPhoneChanged: (value) => phone = value),
               DelayedAnimation(
                   delay: 500,
                   child: Container(
@@ -69,10 +70,10 @@ class NamePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        if (LastName == null ||
-                            LastName!.isEmpty ||
-                            firstName == null ||
-                            firstName!.isEmpty) {
+                        String phonePattern = r'^\+\d{1,3}\d{9,14}$';
+                        RegExp regExp = new RegExp(phonePattern);
+
+                        if (phone == null || phone!.isEmpty) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -91,16 +92,36 @@ class NamePage extends StatelessWidget {
                               );
                             },
                           );
+                        } else if (!regExp.hasMatch(phone!)) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Numéro de téléphone invalide"),
+                                content: Text(
+                                    "Veuillez entrer un numéro de téléphone valide."),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text("OK"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         } else {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => NumberPage()),
+                            MaterialPageRoute(builder: (context) => AgePage()),
                           );
+                          print(phone);
                         }
                       },
                     ),
                   )),
-                     SizedBox(height: 20),
+              SizedBox(height: 20),
               DelayedAnimation(
                 delay: 300,
                 child: CustomProgressBar(progress: currentStep / 4),
@@ -111,14 +132,16 @@ class NamePage extends StatelessWidget {
   }
 }
 
-class NameForm extends StatefulWidget {
-  const NameForm();
+class PhoneForm extends StatefulWidget {
+  final Function(String) onPhoneChanged;
+
+  const PhoneForm({required this.onPhoneChanged});
 
   @override
-  _NameFormState createState() => _NameFormState();
+  _PhoneFormState createState() => _PhoneFormState();
 }
 
-class _NameFormState extends State<NameForm> {
+class _PhoneFormState extends State<PhoneForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -132,28 +155,16 @@ class _NameFormState extends State<NameForm> {
             child: Container(
               margin: EdgeInsets.only(
                 top: 0,
-                bottom: 50,
+                bottom: 60,
               ),
-              child: TextField(
+              child: IntlPhoneField(
                 decoration: InputDecoration(
-                  labelText: 'Nom',
+                  labelText: 'Telephone',
                 ),
-                onChanged: (value) => LastName = value,
-              ),
-            ),
-          ),
-          DelayedAnimation(
-            delay: 300,
-            child: Container(
-              margin: EdgeInsets.only(
-                top: 0,
-                bottom: 50,
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Prénom',
-                ),
-                onChanged: (value) => firstName = value,
+                initialCountryCode: 'FR',
+                onChanged: (phone) {
+                  widget.onPhoneChanged(phone.completeNumber);
+                },
               ),
             ),
           ),

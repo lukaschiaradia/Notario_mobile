@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'main_page/delayed_animation.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'welcome_page.dart';
-import 'main_page/homePage.dart';
-import 'register/name_page.dart';
-import 'main_page/document_page.dart';
-import 'main_page/profil_page.dart';
-import 'main_page/message_page.dart';
-import 'main_page/faq_page.dart';
 
 const blue_color = Color(0xFF6949FF);
 
-
 void main() {
+  AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+            channelKey: 'alerts',
+            channelName: 'Alerts',
+            channelDescription: 'Notification tests as alerts')
+      ],
+      debug: true);
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -20,10 +22,16 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,7 +39,6 @@ class MyApp extends StatelessWidget {
       //debugShowCheckedModeBanner: false,
       home: WelcomePage(),
 
-      //home: HomePage(),
     );
   }
 }

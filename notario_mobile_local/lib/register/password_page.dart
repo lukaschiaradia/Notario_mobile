@@ -1,20 +1,21 @@
+import 'dart:convert'; 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
 import 'package:notario_mobile/register/register_controler.dart';
+import 'package:notario_mobile/utils/custom_progress_bar.dart';
 import 'package:notario_mobile/utils/constants/status_code.dart';
 import 'package:notario_mobile/welcome_page.dart';
-import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
-import 'name_page.dart';
 import '../api/api.dart';
 
 class PasswordPage extends StatelessWidget {
   final registerController = RegisterController(apiAuth: ApiAuth());
   @override
   Widget build(BuildContext context) {
+    int currentStep = 4;
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -51,20 +52,6 @@ class PasswordPage extends StatelessWidget {
               ),
               SizedBox(height: 35),
               PasswordForm(),
-              SizedBox(height: 35),
-              DelayedAnimation(
-                delay: 300,
-                child: Container(
-                  height: 50,
-                  margin: EdgeInsets.only(
-                    top: 0,
-                    bottom: 100,
-                  ),
-                  child: Image.asset(
-                    "images/progression4.png",
-                  ),
-                ),
-              ),
               DelayedAnimation(
                   delay: 500,
                   child: Container(
@@ -82,37 +69,24 @@ class PasswordPage extends StatelessWidget {
                         child: Text(
                           "Continuer",
                           textScaleFactor: 1.5,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                          ),
                         ),
                         onPressed: () async {
-                          var value = await ApiAuth().apiRegister(
-                              utilisateurRegister: UtilisateurRegister(
-                            LastName: LastName,
-                            age: age,
-                            email: email,
-                            firstName: firstName,
-                            password: password,
-                            password_confirm: password_confirm,
-                            token: token,
-                          ));
-
-                          if (value.statusCode == successCode) {
+                           if (password != password_confirm) {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text('Confirmez votre e-mail'),
+                                  title: Text("Erreur"),
                                   content: Text(
-                                      'Un e-mail de confirmation a été envoyé. Veuillez confirmer votre e-mail pour vous connecter.'),
+                                      "Les mots de passe ne correspondent pas."),
                                   actions: <Widget>[
                                     TextButton(
-                                      child: Text('OK'),
+                                      child: Text("OK"),
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  WelcomePage()),
-                                        );
+                                        Navigator.of(context).pop();
                                       },
                                     ),
                                   ],
@@ -120,10 +94,71 @@ class PasswordPage extends StatelessWidget {
                               },
                             );
                           } else {
-                            print("Erreur");
+                             var value = await ApiAuth().apiRegister(
+                                utilisateurRegister: UtilisateurRegister(
+                              LastName: LastName,
+                              age: age,
+                              email: email,
+                              phone: phone,
+                              firstName: firstName,
+                              password: password,
+                              password_confirm: password_confirm,
+                              token: token,
+                            ));
+                            print(value.statusCode);
+                            if (value.statusCode == successCode) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Confirmez votre e-mail'),
+                                    content: Text(
+                                        'Un e-mail de confirmation a été envoyé. Veuillez confirmer votre e-mail pour vous connecter.'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    WelcomePage()),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else if (value.statusCode == 400) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Erreur"),
+                                    content: Text("Votre compte existe déjà."),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text("OK"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              print("Erreur");
+                            }
                           }
                         }),
                   )),
+                  SizedBox(height: 20),
+                  DelayedAnimation(
+                    delay: 300,
+                    child: CustomProgressBar(progress: currentStep / 4),
+                  ),
             ],
           ),
         ));

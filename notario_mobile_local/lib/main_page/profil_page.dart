@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:notario_mobile/api/api_auth.dart';
-import 'package:notario_mobile/models/utilisateur_modif.dart';
+import 'package:notario_mobile/main_page/articlePage.dart';
+import 'package:notario_mobile/main_page/chat_box.dart';
+import 'package:notario_mobile/main_page/liaisonNotairePage.dart';
+import 'package:notario_mobile/main_page/page_notification.dart';
+import 'package:notario_mobile/main_page/settingsPage.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
-import '../welcome_page.dart';
 import 'bottomNavBar.dart';
-import '../models/utilisateur_delete.dart';
 import 'info_notaire.dart';
 import '../api/api.dart';
-import '../login/connexion_page.dart';
-import '../utils/constants/privacy_policy.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 var profil_phone = '';
@@ -17,8 +17,19 @@ var profil_firstName = '';
 var profil_lastName = '';
 int profil_age = 0;
 var profil_email = '';
+var profil_photo = '';
 var profil_firstName_notary = '';
 var profil_lastName_notary = '';
+
+void navigateToLiaisonNotairePage(BuildContext context) async {
+  List<dynamic> notaires = await api_get_notaires();
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => LiaisonNotairePage(notaires: notaires),
+    ),
+  );
+}
 
 void get_user_infos() async {
   var user = await getUserInfo();
@@ -44,88 +55,247 @@ class _ProfilState extends State<Profil> {
   @override
   void initState() {
     super.initState();
-    get_user_infos();
-    get_notary_infos();
+    loadData();
+  }
+
+  void loadData() async {
+    var user = await getUserInfo();
+    setState(() {
+      myId = user['user']['id'].toString();
+      profil_phone = user['user']['phone'];
+      profil_firstName = user['user']['first_name'];
+      profil_lastName = user['user']['last_name'];
+      profil_age = user['user']['age'];
+      profil_email = user['user']['email'];
+      if (user['user']['photo'] == null)
+        profil_photo = '';
+      else
+        profil_photo = user['user']['photo'];
+      user['user']['id'];
+    });
+
+    var notary = await api_get_notary();
+    setState(() {
+      profil_firstName_notary = notary['first_name'];
+      profil_lastName_notary = notary['last_name'];
+    });
+  }
+
+  Future<void> _dissociateNotary(BuildContext context) async {
+    try {
+      await apiDissociateNotary();
+      setState(() {
+        profil_firstName_notary = '';
+        profil_lastName_notary = '';
+      });
+      Fluttertoast.showToast(
+          msg: "Vous avez été dissocié du notaire.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Erreur lors de la dissociation : $e",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              child: null,
-            ),
-            ListTile(
-              title: Text('Information notaire'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => InfoNotairePage()));
-              },
-            ),
-            ListTile(
-                title: Text('Modifier mes infos'),
+        child: Container(
+          color: Color(0xFF1A1B25),
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Color(0xFF351EA4),
+                ),
+                child: Image.asset(
+                  'images/white_notario.png',
+                  width: 100,
+                  height: 100,
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Lier avec un notaire',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () {
-                  _showEditDialog(context);
-                }),
-            ListTile(
-                title: Text('Déconnexion'),
-                onTap: () {
-                  TokenUser = '';
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => ConnexionPage()));
+                  if (typeUser == "User")
+                    navigateToLiaisonNotairePage(context);
+                  else if (typeUser == "Client") {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Accès refusé'),
+                          content: Text(
+                              'Vous êtes déjà lié avec un notaire. Vous ne pouvez pas vous lier avec un autre.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
               ),
-            ListTile(
-                title: Text('Supprimer mon compte'),
+               ListTile(
+                title: Text(
+                  'Dissocier',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () {
-                  _showDeleteDialog(context);
-                }),
-            ListTile(
-                title: Text('Politique de confidentialité'),
+                  _dissociateNotary(context);
+                },
+              ),
+               ListTile(
+                title: Text(
+                  'Notification',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Politique de confidentialité'),
-                        content: SingleChildScrollView(
-                          child: Text(
-                            privacyPolicyText,
-                            style: TextStyle(
-                              color: Colors.black,
-                            )
-                          ),
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Fermer'),
-                          ),
-                        ],
+                   Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NotificationPage()),
                       );
-                    },
+                },
+              ),
+              ListTile(
+                  title: Text(
+                    'Informations notaire',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    if (typeUser == "Client") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => InfoNotairePage()),
+                      );
+                    } else if (typeUser == "User") {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Accès refusé'),
+                            content: Text(
+                                'Vous devez être lié avec un notaire pour consulter ses informations.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  }),
+              ListTile(
+                title: Text(
+                  'Accéder aux articles',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  api_get_articles();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ArticlesPage()),
                   );
-                },     
-            ),
-          ],
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Modifier mes infos',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  _showEditDialog(context);
+                },
+              ),
+              ListTile(
+                  title: Text(
+                    'Message',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    if (typeUser == "Client") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ChatPage()),
+                      );
+                    } else if (typeUser == "User") {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Accès refusé'),
+                            content: Text(
+                                'Vous devez être lié avec un notaire pour accéder à la messagerie.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  }),
+              ListTile(
+                leading: Icon(Icons.settings, color: Colors.white),
+                title: Text(
+                  'Paramètres',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-      backgroundColor: Color(0xFF351EA4), // Utilisation de la couleur primary-color
+      backgroundColor: Color(0xFF351EA4),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        iconTheme: IconThemeData(color: Colors.white), // Changement de la couleur de l'icône en blanc
-        backgroundColor: Color(0xFF351EA4), // Utilisation de la couleur primary-color pour la barre d'application
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Color(0xFF351EA4),
         elevation: 0,
         title: Padding(
           padding: const EdgeInsets.only(left: 10.0),
           child: Text(
             'Mon Profil',
             style: TextStyle(
-              color: Colors.white, // Changement de la couleur du texte en blanc
+              color: Colors.white,
               fontSize: 30,
               decoration: TextDecoration.underline,
               fontWeight: FontWeight.bold,
@@ -140,7 +310,6 @@ class _ProfilState extends State<Profil> {
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  // Dégradé de couleurs
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
@@ -148,7 +317,7 @@ class _ProfilState extends State<Profil> {
                     Color(0xFF1A1B25),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(10), // Bord arrondi pour le conteneur
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,11 +325,13 @@ class _ProfilState extends State<Profil> {
                   SizedBox(height: 20),
                   CircleAvatar(
                     radius: 80,
-                    backgroundImage: AssetImage('images/bg.jpeg'),
+                    backgroundImage: profil_photo.isEmpty
+                        ? AssetImage('images/noicon.jpg')
+                        : NetworkImage(profil_photo) as ImageProvider,
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'Beau Tristan',
+                    profil_firstName + ' ' + profil_lastName,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -169,7 +340,7 @@ class _ProfilState extends State<Profil> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    '22 ans',
+                    profil_age.toString() + ' ans',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -179,20 +350,23 @@ class _ProfilState extends State<Profil> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ProfileInfoItem(
-                          title: '                  Email',
-                          value: 'beautristan33@gmail.com',
+                          title: 'Email',
+                          value: profil_email,
                         ),
                         Divider(),
                         ProfileInfoItem(
                           title: 'Téléphone',
-                          value: '06 12 34 56 78',
+                          value: profil_phone,
                         ),
                         Divider(),
                         ProfileInfoItem(
                           title: 'Mon notaire',
-                          value: 'Bobby Brown',
+                          value: profil_firstName_notary +
+                              ' ' +
+                              profil_lastName_notary,
                         ),
                       ],
                     ),
@@ -208,6 +382,8 @@ class _ProfilState extends State<Profil> {
     );
   }
 }
+
+
 
 class ProfileInfoItem extends StatelessWidget {
   final String title;
@@ -254,10 +430,6 @@ class ProfileInfoItem extends StatelessWidget {
   }
 }
 
-
-
-
-
 class ProfilPage extends StatefulWidget {
   const ProfilPage();
 
@@ -282,35 +454,85 @@ void _showEditDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Modifier mes informations'),
+        backgroundColor: Color(0xFF1A1B25),
+        title: Text(
+          'Modifier mes informations',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextFormField(
                 initialValue: profil_firstName,
-                decoration: InputDecoration(labelText: 'Prénom'),
+                decoration: InputDecoration(
+                  labelText: 'Prénom',
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   editedFirstName = value;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 initialValue: profil_lastName,
-                decoration: InputDecoration(labelText: 'Nom'),
+                decoration: InputDecoration(
+                  labelText: 'Nom',
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   editedLastName = value;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 initialValue: profil_email,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   editedEmail = value;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 initialValue: profil_age.toString(),
-                decoration: InputDecoration(labelText: 'Âge'),
+                decoration: InputDecoration(
+                  labelText: 'Âge',
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF351EA4)),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 onChanged: (value) {
                   editedAge = int.tryParse(value) ?? profil_age;
                 },
@@ -320,65 +542,44 @@ void _showEditDialog(BuildContext context) {
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('Annuler'),
+            child: Text(
+              'Annuler',
+              style: TextStyle(
+                color: Color(0xFF351EA4),
+              ),
+            ),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: Text('Enregistrer'),
+            child: Text(
+              'Enregistrer',
+              style: TextStyle(
+                color: Color(0xFF351EA4),
+              ),
+            ),
             onPressed: () async {
-              var value = await ApiAuth().apiUpdate(
-                  accountsModif: UtilisateurModif(
-                LastName: LastName,
-                age: age,
-                email: email,
-                firstName: firstName,
-                password: password,
-                phone: phone,
-              ));
-
+              await ApiAuth().apiUpdate(
+                first_name: editedFirstName,
+                last_name: editedLastName,
+                age: editedAge,
+                email: editedEmail,
+              );
               Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showDeleteDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Supprimer mon compte'),
-        content: SingleChildScrollView(),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Annuler'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text('Supprimer mon compte'),
-            onPressed: () async {
-              UtilisateurDelete utilisateurASupprimer =
-                  UtilisateurDelete(idClient: TokenUser);
-              try {
-                await apiDelete(accountsDeleteId: utilisateurASupprimer);
-                print("Suppression réussie");
-                print(TokenUser);
-                Navigator.of(context).pop();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => WelcomePage()),
-                );
-              } catch (e) {
-                print("Erreur lors de la suppression du compte : $e");
-                // Gérer les erreurs ou afficher un message d'erreur
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profil()),
+              );
+              Fluttertoast.showToast(
+                msg: 'Vos informations ont été mises à jour.',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Color(0xFF1A1B25),
+                textColor: Colors.white,
+                fontSize: 16.0,
+              );
             },
           ),
         ],

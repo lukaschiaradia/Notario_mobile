@@ -1,15 +1,13 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'dart:async';
-import 'delayed_animation.dart';
-import '../main.dart';
-import 'package:open_file/open_file.dart';
-import 'package:file_picker/file_picker.dart';
-import 'profil_page.dart';
 import 'bottomNavBar.dart';
 import '../api/api.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_animator/flutter_animator.dart';
+import 'package:lottie/lottie.dart';
+
+
+var date;
+var reason;
 
 List<dynamic> create_planning_list(List rdvList) {
   List<dynamic> planningList = [];
@@ -28,10 +26,31 @@ List<dynamic> create_planning_list(List rdvList) {
   return planningList;
 }
 
-class Planning extends StatelessWidget {
-  final List rdvList = create_planning_list(rdv_list);
+class Planning extends StatefulWidget {
+  @override
+  _PlanningState createState() => _PlanningState();
+}
+
+class _PlanningState extends State<Planning> {
+  bool showPastAppointments = false; // État pour afficher ou non les rendez-vous passés
+  List rdvList = create_planning_list(rdv_list);
+
+  bool isPastAppointment(String date) {
+    DateTime appointmentDate = DateFormat('dd/MM/yyyy').parse(date);
+    return appointmentDate.isBefore(DateTime.now());
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Filtrer les rendez-vous en fonction de l'état de showPastAppointments
+    List filteredAppointments = rdvList.where((appointment) {
+      if (showPastAppointments) {
+        return !isPastAppointment(appointment['date']);
+      } else {
+        return true;
+      }
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -47,115 +66,205 @@ class Planning extends StatelessWidget {
                   decoration: TextDecoration.underline,
                   fontWeight: FontWeight.bold)),
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Demande d'événement"),
+                    content: SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          TextFormField(
+                            onChanged: (value) {
+                              date = value;
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Quand voulez vous un rendez-vous',
+                            ),
+                          ),
+                          TextFormField(
+                            onChanged: (value) {
+                              reason = value;
+                            },
+                            decoration: InputDecoration(
+                              hintText:
+                                  'Expliquez pourquoi vous voulez un rendez-vous',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('Envoyer'),
+                        onPressed: () {
+                          api_ask_rdv(Date: date, reason: reason);
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Confirmation'),
+                                content: Text(
+                                    'Votre demande a été soumise avec succès.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          color: Colors.white,
-          child: Column(
+      body: Column(
+        children: [
+          Row(
             children: [
-              Column(
-                children: rdvList.map((rdv) {
-                  return rdvCard(rdv);
-                }).toList(),
+              Checkbox(
+                value: showPastAppointments,
+                onChanged: (bool? value) {
+                  setState(() {
+                    showPastAppointments = value!;
+                  });
+                },
+              ),
+              Text(
+                'Afficher uniquement les rendez-vous à venir',
+                style: TextStyle(fontSize: 16),
               ),
             ],
           ),
-        ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredAppointments.length,
+              itemBuilder: (context, index) {
+                return rdvCard(filteredAppointments[index]);
+              },
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: ButtonNavBar(),
     );
   }
 }
 
-class rdvCard extends StatelessWidget {
+class rdvCard extends StatefulWidget {
   final Map rdvData;
   rdvCard(this.rdvData);
+
+  @override
+  _rdvCardState createState() => _rdvCardState();
+}
+
+class _rdvCardState extends State<rdvCard> {
+  bool isFav = false;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(15),
-      height: 230,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Color(0Xff313131),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: blue_color,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(18), topRight: Radius.circular(18)),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          isFav = !isFav;
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Color(0xFF351EA4),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ImageIcon(
-                  size: 30,
-                  AssetImage("images/planning-white.png"),
-                  color: Colors.white,
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_today_outlined, color: Colors.white),
+                            SizedBox(width: 10),
+                            Text(widget.rdvData['date'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                )),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time, color: Colors.white),
+                            SizedBox(width: 10),
+                            Text(widget.rdvData['time'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                )),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Text(widget.rdvData['title'],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )),
+                    SizedBox(height: 20),
+                    Text(
+                      widget.rdvData['description'],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                    if (isFav)
+                      FadeInUp(
+                        child: Lottie.asset(
+                          './images/fav_lottie.json',
+                          repeat: false,
+                          height: 60,
+                          width: 60,
+                        ),
+                      ),
+                  ],
                 ),
-                Text(rdvData['date'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                    )),
-                ImageIcon(
-                  size: 30,
-                  AssetImage("images/time.png"),
-                  color: Colors.white,
-                ),
-                Text(rdvData['time'],
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                    )),
-              ],
-            ),
+              ),
+            ],
           ),
-          Container(
-            margin: EdgeInsets.fromLTRB(10, 25, 10, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(rdvData['title'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    )),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(10, 40, 10, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(rdvData['description'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white,
-                    )),
-              ],
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
@@ -171,6 +280,6 @@ class PlanningPage extends StatefulWidget {
 class PlanningPageState extends State<PlanningPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Planning();
   }
 }

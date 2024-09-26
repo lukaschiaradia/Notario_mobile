@@ -6,7 +6,6 @@ class UtilisateurGetIdClient {
 
   String tokenUser;
 
-
   Map<String, dynamic> toData() {
     return {
       'token': tokenUser,

@@ -1,6 +1,5 @@
 import 'dart:convert' as convert;
 import 'package:notario_mobile/api/api.dart';
-
 import '../utils/constants/contants_url.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
@@ -10,29 +9,29 @@ import 'package:notario_mobile/models/utilisateur_modif.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 
+
 var json_info = {};
 
 class ApiAuth {
-  const ApiAuth(); 
+  const ApiAuth();
 
   Future<Response> apiLogin(
       {required UtilisateurLogin utilisateurLogin}) async {
     var endPoint = Uri.http(ip, accountsLogin);
     Map data = utilisateurLogin.toData();
     json_info = data;
-    print(data.toString());
     try {
       var response = await Client().post(endPoint,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: convert.json.encode(data));
-      print(response.body);
-      print(response.statusCode);
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      typeUser = responseData['user']['type'];
       Map<String, dynamic> jsonResponse = convert.json.decode(response.body);
       String token = jsonResponse['token'];
+      stateUser = jsonResponse['user']['state'];
       TokenUser = token;
-      print('Le token est : $TokenUser');
       return (response);
     } catch (e) {
       throw e;
@@ -44,7 +43,6 @@ class ApiAuth {
   }) async {
     var endPoint = Uri.http(ip, accountsRegister);
     Map data = utilisateurRegister.toData();
-
     if (!utilisateurRegister.passwordIsConfirm)
       throw Exception('password incorect');
     try {
@@ -60,14 +58,24 @@ class ApiAuth {
   }
 
   Future<Response> apiUpdate({
-    required UtilisateurModif accountsModif,
+    required String first_name,
+    required String last_name,
+    required String email,
+    required int age,
   }) async {
     var endPoint = Uri.http(ip, accountsModifs);
-    Map data = accountsModif.toData();
+    Map data = {
+      'first_name': first_name,
+      'last_name': last_name,
+      'email': email,
+      'age': age,
+    };
     try {
       var response = await Client().put(endPoint,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
+            'X-CSRF-Token': TokenUser,
+            'Authorization': 'Bearer ' + TokenUser,
           },
           body: convert.json.encode(data));
       return await (response);
@@ -78,20 +86,17 @@ class ApiAuth {
 }
 
 Future<Map<String, dynamic>> getUserInfo() async {
-  print(TokenUser);
-  var endPoint = Uri.http(ip,
-      '/accounts/user/');
+  var endPoint = Uri.http(ip, '/accounts/user/');
 
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
-        'X-CSRF-Token': TokenUser,
-        'Authorization': 'Bearer ' + TokenUser,
+      'X-CSRF-Token': TokenUser,
+      'Authorization': 'Bearer ' + TokenUser,
     });
 
     if (response.statusCode == 200) {
       Map<String, dynamic> userInfo = convert.json.decode(response.body);
-      print(userInfo);
       return userInfo;
     } else {
       print(
@@ -103,7 +108,6 @@ Future<Map<String, dynamic>> getUserInfo() async {
   }
 }
 
-//call api pour le delete
 Future<Response> apiDelete({
   required UtilisateurDelete accountsDeleteId,
 }) async {
@@ -117,7 +121,6 @@ Future<Response> apiDelete({
         'Authorization': 'Bearer ' + accountsDeleteId.idClient,
       },
     );
-    print(accountsDeleteId.idClient);
     return response;
   } catch (e) {
     throw (e.toString());
@@ -136,7 +139,6 @@ Future<dynamic> apiForgotPassword({required String email}) async {
     );
 
     var jsonResponse = jsonDecode(response.body);
-    print(jsonResponse);
     return jsonResponse;
   } catch (e) {
     throw (e.toString());

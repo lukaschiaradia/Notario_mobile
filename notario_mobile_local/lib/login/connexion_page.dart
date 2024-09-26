@@ -1,10 +1,10 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:notario_mobile/login/connection_controler.dart';
-import 'package:notario_mobile/models/utilisateur_login.dart';
+import 'package:notario_mobile/main_page/faq_page.dart';
+import 'package:notario_mobile/main_page/tutorial.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import 'package:notario_mobile/utils/constants/status_code.dart';
+import 'package:notario_mobile/welcome_page.dart';
 import 'dart:async';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
@@ -12,88 +12,144 @@ import '../main_page/document_page.dart';
 import '../api/api_auth.dart';
 import '../api/api.dart';
 
-
 class ConnexionPage extends StatelessWidget {
   final connectionControler = ConnectionControler(apiAuth: ApiAuth());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white.withOpacity(0),
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+            size: 30,
           ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => WelcomePage()),
+            );
+          },
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              DelayedAnimation(
-                delay: 200,
-                child: Container(
-                  height: 100,
-                  margin: EdgeInsets.only(
-                    top: 40,
-                    bottom: 0,
-                  ),
-                  child: Text("Connectez-vous",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontSize: 25,
-                      )),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 40),
+            Text(
+              "Connectez-vous",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 30),
+            ConnexionForm(
+              connectionControler: connectionControler,
+            ),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () async {
+                var value = await connectionControler.connection();
+                if (value.statusCode == successCode) {
+                  if ( stateUser == "NEW") {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Première connexion'),
+                          content: Text('Voulez-vous lancer le tutoriel ?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Oui'),
+                              onPressed: () {
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => TutorialScreen()),
+                              );
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Non'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                if (typeUser == "User") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => FaqPage()),
+                                  );
+                                } else if (typeUser == "Client") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => DocumentPage()),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    if (typeUser == "User") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FaqPage()),
+                    );
+                  } else if (typeUser == "Client") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DocumentPage()),
+                    );
+                  }
+                }
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Erreur"),
+                        content:
+                            Text("L'email ou le mot de passe est incorrect."),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: blue_color,
+                padding: EdgeInsets.symmetric(vertical: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              SizedBox(height: 35),
-              ConnexionForm(
-                connectionControler: connectionControler,
+              child: Text(
+                "Connexion",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
               ),
-              SizedBox(height: 35),
-              DelayedAnimation(
-                  delay: 500,
-                  child: Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: blue_color,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 20,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Text(
-                        "Connexion",
-                        textScaleFactor: 1.5,
-                      ),
-                      onPressed: () async {
-                        var value = await connectionControler.connection();
-                        print(value);
-                        print(value.statusCode);
-                        if (value.statusCode == successCode) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DocumentPage()),
-                          );
-                        } else {
-                          await alertConnectionFail(context);
-                        }
-                        ;
-                      },
-                    ),
-                  )),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> alertConnectionFail(BuildContext context) async {
@@ -117,7 +173,6 @@ class ConnexionPage extends StatelessWidget {
   }
 }
 
-
 class ConnexionForm extends StatefulWidget {
   const ConnexionForm({required this.connectionControler});
   final ConnectionControler connectionControler;
@@ -128,7 +183,6 @@ class ConnexionForm extends StatefulWidget {
 class _ConnexionFormState extends State<ConnexionForm> {
   var _obscureText2 = true;
 
-  // Méthode pour afficher le dialogue de réinitialisation de mot de passe
   void _showPasswordResetDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -217,7 +271,6 @@ class _ConnexionFormState extends State<ConnexionForm> {
             alignment: Alignment.centerRight,
             child: GestureDetector(
               onTap: () {
-                // Afficher le dialogue de réinitialisation du mot de passe lorsque l'utilisateur clique sur "Mot de passe oublié ?"
                 _showPasswordResetDialog(context);
               },
               child: Text(
@@ -234,5 +287,3 @@ class _ConnexionFormState extends State<ConnexionForm> {
     );
   }
 }
-
-

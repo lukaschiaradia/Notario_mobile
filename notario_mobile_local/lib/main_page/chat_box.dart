@@ -1,165 +1,167 @@
-import 'package:notario_mobile/main_page/faq_page.dart';
-import 'package:notario_mobile/main.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import '../api/api.dart';
+import 'package:intl/intl.dart';
+import 'package:notario_mobile/api/api.dart';
+import 'package:notario_mobile/models/utilisateur_message.dart';
+import 'package:notario_mobile/utils/constants/contants_url.dart';
 
 
-class ChatBox extends StatefulWidget {
+class ChatPage extends StatefulWidget {
   @override
-  _ChatBoxState createState() => _ChatBoxState();
+  _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatBoxState extends State<ChatBox> {
-  final TextEditingController _textController = TextEditingController();
-  final List<String> _messages = [];
-  final List<String> _messages2 = [];
+class _ChatPageState extends State<ChatPage> {
+  
+  final List<ChatMessage> messages = [];
+  TextEditingController _textController = TextEditingController();
+  late Future<int> notaryIdFuture;
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    notaryIdFuture = _initNotary();
+    loadChatId();
+    timer = Timer.periodic(Duration(seconds: 2), (Timer t) => loadChatId());
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  Future<int> _initNotary() async {
+    var notary = await api_get_notary();
+    return notary['user_id'];
+  }
+
+  Future<void> loadChatId() async {
+    try {
+      List<String> chatIdData = await api_get_chat_id();
+      String id = chatIdData[0];
+      await loadMessages(id);
+    } catch (e) {
+      print('Erreur lors du chargement de l\'identifiant du chat: $e');
+    }
+  }
+
+  Future<void> loadMessages(String chatId) async {
+    try {
+      var chatData = await api_get_chat_with_notaire(idChat: chatId);
+      setState(() {
+        messages.clear(); // Vider la liste des messages
+        for (var messageData in chatData) {
+          messages.add(ChatMessage.fromJson(messageData));
+        }
+      });
+    } catch (e) {
+      print('Erreur lors du chargement des messages: $e');
+      // Gérer l'erreur ici
+    }
+  }
+
+  Future<void> _sendMessage(String sender, int notaryId) async {
+    if (_textController.text.isNotEmpty) {
+      api_add_message(receiver: notaryId, message: _textController.text);
+      setState(() {
+        messages.insert(
+            0,
+            ChatMessage(
+                id: messages.length,
+                read: false,
+                text: _textController.text,
+                createdAt: DateTime.now(),
+                sender: int.parse(sender),
+                receiver: notaryId,
+                chat: 1));
+        _textController.clear();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    var reversedMessages = messages.reversed.toList();
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-            size: 30,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FaqPage()),
-            );
-          },
-        ),
-        iconTheme: IconThemeData(color: Color(0Xff6949FF)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 10.0, top: 5.0),
-          child: Text('Discussion',
-              style: TextStyle(
-                  fontSize: 30,
-                  color: Color(0Xff6949FF),
-                  decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.bold)),
-        ),
+        title: Text('Chat Page'),
+        backgroundColor: Colors.blueGrey,
       ),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-        child: Column(
-          children: [
-            Display_chat(),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(45)),
-                      borderSide: BorderSide.none),
-                  labelText: "Chat",
-                  hintText: "Envoyez un message",
-                  suffixIcon: Icon(Icons.send),
-                ),
-                controller: _textController,
-                onSubmitted: (text) {
-                  setState(
-                    () {
-                      api_add_message(receiver: receiver_id, message: text);
-                      _textController.clear();
-                      chats_list = Future(() => api_get_chats());
-                      chats_list.then((value) {
-                        chats_list = value;
-                        chat_List = create_chat_list(chats_list);
-                        chat_id = Future(() => api_get_chat(chat_List[0]['chat_id']));
-                        chat_id.then((value) {
-                          receiver_id = chat_List[0]['id_receiver'];
-                          chat_with_messages = value;
-                          all_messages = create_messages_list(chat_with_messages);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ChatBox()),
-                          );
-                        });
-                      });
-                    },
-                  );
-                },
-              ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              reverse: true,
+              itemCount: reversedMessages.length,
+              itemBuilder: (context, index) {
+                bool isUserMessage;
+
+                if (reversedMessages[index].sender.toString() == myId)
+                  isUserMessage = true;
+                else
+                  isUserMessage = false;
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isUserMessage ? 'Vous' : 'Votre notaire',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isUserMessage ? Colors.red : Colors.blueGrey,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 5.0),
+                        child: ListTile(
+                          title: Text(
+                            reversedMessages[index].text,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          subtitle: Text(
+                            DateFormat('hh:mm a')
+                                .format(reversedMessages[index].createdAt),
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            final String text = _textController.text;
-            api_add_message(receiver: receiver_id, message: text);
-            _textController.clear();
-            chats_list = Future(() => api_get_chats());
-            chats_list.then((value) {
-              chats_list = value;
-              chat_List = create_chat_list(chats_list);
-              chat_id = Future(() => api_get_chat(chat_List[0]['chat_id']));
-              chat_id.then((value) {
-                receiver_id = chat_List[0]['id_receiver'];
-                chat_with_messages = value;
-                all_messages = create_messages_list(chat_with_messages);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChatBox()),
-              );
-              });
-            });
-          });
-        },
-        child: Icon(Icons.send),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _textController,
+                    decoration: InputDecoration(hintText: 'Send a message'),
+                  ),
+                ),
+                FutureBuilder(
+                  future: notaryIdFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return IconButton(
+                        icon: Icon(Icons.send, color: Colors.blueGrey),
+                        onPressed: () => _sendMessage(myId, snapshot.data!),
+                      );
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-
-class Display_chat extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) =>
-                    Row(
-                        mainAxisAlignment: user_id == all_messages[index]['sender'] ? MainAxisAlignment.end : MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 200,
-                          decoration: BoxDecoration(
-                            color: user_id == all_messages[index]['sender'] ? blue_color : Color.fromARGB(255, 216, 216, 216),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          margin: EdgeInsets.all(10),
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            child: Text(
-                              all_messages[index]['message'],
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: user_id == all_messages[index]['sender'] ? Color.fromARGB(255, 255, 255, 255) : Color.fromARGB(255, 0, 0, 0)
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                itemCount: all_messages.length,
-              ),
-            );
-}
-}
-

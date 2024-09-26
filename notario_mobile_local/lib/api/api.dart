@@ -3,18 +3,19 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:notario_mobile/login/connexion_page.dart';
 import 'package:http/http.dart';
+import 'package:notario_mobile/models/utilisateur_create_rdv.dart';
+import 'package:notario_mobile/models/utilisateur_message.dart';
 import '../utils/constants/contants_url.dart';
+
 
 var user_id = 0;
 var receiver_id = 0;
-
 var firstName = '';
 var phone = '';
 var LastName = '';
 var email = '';
 var password = '';
 var password_confirm = '';
-
 var age = '';
 var token = '';
 dynamic rdv_list = [];
@@ -26,20 +27,18 @@ dynamic chat_with_messages = [];
 dynamic all_messages = [];
 dynamic files_list = [];
 
-Future<dynamic> api_get_planning({required String token}) async {
-  var endPoint = Uri.http(ip, '/planning/');
+Future<dynamic> api_get_planning() async {
+  var endPoint = Uri.http(ip, '/planning/get/');
+  print('yes');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token,
+      'Authorization': 'Bearer ' + TokenUser,
     });
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
-    rdv_list = json_map;
-    print("json_map");
-    print(json_map);
+
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -72,10 +71,7 @@ Future<dynamic> api_get_chats() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
     chats_list = json_map;
-    print("json_map of chats");
-    print(json_map);
     return await json_map;
   } catch (e) {
     throw (e.toString());
@@ -98,7 +94,6 @@ List<dynamic> create_chat_list(List chats_list) {
 }
 
 Future<dynamic> api_get_chat(chatId) async {
-  print(chatId);
   var endPoint = Uri.http(ip, '/chat/$chatId');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
@@ -108,7 +103,6 @@ Future<dynamic> api_get_chat(chatId) async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
-    print(response.statusCode);
     chat_with_messages = json_map;
     return await json_map;
   } catch (e) {
@@ -141,14 +135,29 @@ Future<num> api_add_message(
     var response = await Client().post(endPoint,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer ' + token,
+          'Authorization': 'Bearer ' + TokenUser,
         },
         body: convert.json.encode(data));
-    var json_response = response.body;
-    var decode = utf8.decode(json_response.runes.toList());
-    var json_map = json.decode(decode);
-    print(json_map);
-    print(response.statusCode);
+    return await (response.statusCode);
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_ask_rdv(
+    {required String Date, required String reason}) async {
+  var endPoint = Uri.http(ip, '/planning/ask/');
+
+  Map data = {};
+  data['available_dates'] = Date;
+  data['reason'] = reason;
+  try {
+    var response = await Client().post(endPoint,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + TokenUser,
+        },
+        body: convert.json.encode(data));
     return await (response.statusCode);
   } catch (e) {
     throw (e.toString());
@@ -184,13 +193,9 @@ Future<Map<String, dynamic>> api_get_notary() async {
       var json_response = response.body;
       var decode = utf8.decode(json_response.runes.toList());
       var json_map = json.decode(decode);
-      print("here is the status code");
-      print(response.statusCode);
-      print(json_map);
       return json_map;
     } else if (response.statusCode == 404) {
       print('You do not have a notary: ${response.statusCode}');
-    //showNoNotaryPopup(context);
       throw Exception('You do not have a notary');
     } else {
       print(
@@ -200,5 +205,179 @@ Future<Map<String, dynamic>> api_get_notary() async {
   } catch (e) {
     print('Error occurred: $e');
     throw e;
+  }
+}
+
+Future<dynamic> api_get_articles() async {
+  var endPoint = Uri.http(ip, '/articles/get/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+    return await json_map;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<List<dynamic>> api_get_notaires() async {
+  var endPoint = Uri.http(ip, '/clients/get-notaries/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_list = json.decode(decode) as List;
+    return json_list;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_link_notary({required dynamic notary_id}) async {
+  var endPoint = Uri.http(ip, '/clients/invite/');
+  Map data = {};
+  data['email'] = notary_id;
+  try {
+    var response = await Client().post(endPoint,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + TokenUser,
+        },
+        body: convert.json.encode(data));
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+    return await (response.statusCode);
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_get_invite_requests() async {
+  var endPoint = Uri.http(ip, '/clients/get-invite/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+    return await json_map;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<List<String>> api_get_chat_id() async {
+  var endPoint = Uri.http(ip, '/chat/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+
+    List<String> chatIds = [];
+    for (var chat in json_map) {
+      chatIds.add(chat['id'].toString());
+    }
+
+    return chatIds;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<List<dynamic>> api_get_chat_with_notaire(
+    {required dynamic idChat}) async {
+  var endPoint = Uri.http(ip, '/chat/$idChat');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+    return await json_map;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<void> apiDissociateNotary() async {
+  var endPoint = Uri.http(ip, '/clients/dissociate/');
+  try {
+    var response = await Client().delete(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    if (response.statusCode == 200) {
+      print("Dissociation réussie.");
+    } else {
+      print("Erreur lors de la dissociation : ${response.body}");
+    }
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_get_requests() async {
+  var endPoint = Uri.http(ip, '/clients/get-requests/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+    return await json_map;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_acceptNotary({required int id}) async {
+  var endPoint = Uri.http(ip, '/clients/accept-request/');
+  Map data = {};
+  data['notary_id'] = id;
+  try {
+    var response = await Client().post(endPoint,
+        headers: <String, String> {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + TokenUser,
+        },
+        body: convert.json.encode(data));
+    return await (response.statusCode);
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_rejectNotary({required int id}) async {
+  var endPoint = Uri.http(ip, '/clients/refuse-request/');
+  Map data = {};
+  data['notary'] = id;
+  try {
+    var response = await Client().delete(endPoint,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + TokenUser,
+        },
+        body: convert.json.encode(data));
+    return await (response.statusCode);
+  } catch (e) {
+    throw (e.toString());
   }
 }

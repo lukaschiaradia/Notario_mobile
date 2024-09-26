@@ -1,13 +1,35 @@
-import 'package:flutter/gestures.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'main_page/delayed_animation.dart';
 import 'main.dart';
 import 'register/name_page.dart';
 import 'login/connexion_page.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+triggerNotification() {
+  AwesomeNotifications().createNotification(
+      content: NotificationContent(
+          id: 10,
+          channelKey: 'alerts',
+          title: 'notifaction de test',
+          body: 'Simple button'));
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  @override
+  void initState() {
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,6 +41,8 @@ class WelcomePage extends StatelessWidget {
             horizontal: 30,
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               DelayedAnimation(
                 delay: 200,
@@ -38,6 +62,7 @@ class WelcomePage extends StatelessWidget {
                   child: Image.asset('images/man.png', scale: 1.5),
                 ),
               ),
+              SizedBox(height: 40),
               DelayedAnimation(
                 delay: 500,
                 child: Container(
@@ -51,8 +76,11 @@ class WelcomePage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
                       ),
+                      shadowColor: Colors.blue.withOpacity(0.5),
+                      elevation: 5,
                     ),
                     onPressed: () {
+                      //triggerNotification();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => NamePage()),
@@ -62,32 +90,30 @@ class WelcomePage extends StatelessWidget {
                       "S'inscrire",
                       textScaleFactor: 1.5,
                       style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+                        color: Colors.white,
+                        fontSize: 20,
                       ),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 20),
               DelayedAnimation(
                 delay: 500,
-                child: RichText(
-                  text: TextSpan(
-                    text: "J'ai déjà un compte",
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ConnexionPage()),
+                    );
+                  },
+                  child: Text(
+                    "J'ai déjà un compte",
                     style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
+                      color: Colors.grey[700],
+                      fontSize: 18,
+                      decoration: TextDecoration.underline,
                     ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ConnexionPage(),
-                          ),
-                        );
-                      },
                   ),
                 ),
               ),
