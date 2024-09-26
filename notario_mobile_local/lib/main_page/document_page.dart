@@ -7,7 +7,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
 
 
@@ -72,7 +71,7 @@ class FileItemWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MyPdfViewer(pdfUrl: fileData.url),
+            builder: (context) => MyDocxViewer(docxUrl: fileData.url),
           ),
         );
       },
@@ -181,43 +180,43 @@ class FileItemWidget extends StatelessWidget {
   }
 }
 
-class MyPdfViewer extends StatefulWidget {
-  final String pdfUrl;
+class MyDocxViewer extends StatefulWidget {
+  final String docxUrl;
 
-  MyPdfViewer({required this.pdfUrl});
+  MyDocxViewer({required this.docxUrl});
 
   @override
-  _MyPdfViewerState createState() => _MyPdfViewerState();
+  _MyDocxViewerState createState() => _MyDocxViewerState();
 }
 
-class _MyPdfViewerState extends State<MyPdfViewer> {
+class _MyDocxViewerState extends State<MyDocxViewer> {
   late String _localPath;
-  late String _localPdfUrl;
+  late String _localDocxUrl;
 
   @override
   void initState() {
     super.initState();
-    _initPdf();
+    _initDocx();
   }
 
-  Future<void> _initPdf() async {
-    final filename = widget.pdfUrl.split('/').last;
+  Future<void> _initDocx() async {
+    final filename = widget.docxUrl.split('/').last;
     final dir = await getApplicationDocumentsDirectory();
     _localPath = dir.path;
-    _localPdfUrl = '$_localPath/$filename';
+    _localDocxUrl = '$_localPath/$filename';
 
     final File file = File('$_localPath/$filename');
     final bool fileExists = await file.exists();
     if (!fileExists) {
-      final http.Response response = await http.get(Uri.parse(widget.pdfUrl));
+      final http.Response response = await http.get(Uri.parse(widget.docxUrl));
       await file.writeAsBytes(response.bodyBytes);
     }
     setState(() {});
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
-    final filename = widget.pdfUrl.split('/').last;
+    final filename = widget.docxUrl.split('/').last;
 
     return Scaffold(
       appBar: AppBar(
@@ -226,15 +225,15 @@ class _MyPdfViewerState extends State<MyPdfViewer> {
           IconButton(
             icon: Icon(Icons.download),
             onPressed: () {
-              _downloadPDF(context, widget.pdfUrl, filename);
+              _downloadDOCX(context, widget.docxUrl, filename);
             },
           ),
         ],
       ),
-      body: _localPdfUrl.isEmpty
+      body: _localDocxUrl.isEmpty
           ? Center(child: CircularProgressIndicator())
           : PDFView(
-              filePath: _localPdfUrl,
+              filePath: _localDocxUrl,
               autoSpacing: true,
               enableSwipe: true,
               pageSnap: true,
@@ -248,37 +247,35 @@ class _MyPdfViewerState extends State<MyPdfViewer> {
             ),
     );
   }
-}
 
-Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) async {
-  final url = Uri.parse(pdfUrl);
-  if (!url.isAbsolute || (url.scheme != 'http' && url.scheme != 'https')) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('URL invalide'),
-      ),
-    );
-    return;
-  }
+  Future<void> _downloadDOCX(BuildContext context, String docxUrl, String name) async {
+    final url = Uri.parse(docxUrl);
+    if (!url.isAbsolute || (url.scheme != 'http' && url.scheme != 'https')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('URL invalide'),
+        ),
+      );
+      return;
+    }
 
-  final response = await http.get(url);
+    final response = await http.get(url);
 
-  if (response.statusCode == 200) {
-    if (await _requestPermission()) {
-      final Directory? externalDirectory = await getExternalStorageDirectory();
+    if (response.statusCode == 200) {
+      final Directory? directory = await getApplicationDocumentsDirectory();
       
-      if (externalDirectory != null) {
-        final String pdfDirectoryPath = '${externalDirectory.path}/PDFs';
-        final Directory pdfDirectory = Directory(pdfDirectoryPath);
+      if (directory != null) {
+        final String docxDirectoryPath = '${directory.path}/Notario_Documents';
+        final Directory docxDirectory = Directory(docxDirectoryPath);
 
-        await pdfDirectory.create(recursive: true);
+        await docxDirectory.create(recursive: true);
 
-        final File file = File('${pdfDirectory.path}/$name.pdf');
+        final File file = File('${docxDirectory.path}/$name.docx');
         await file.writeAsBytes(response.bodyBytes);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('PDF téléchargé avec succès'),
+            content: Text('Document téléchargé avec succès'),
           ),
         );
       } else {
@@ -291,33 +288,11 @@ Future<void> _downloadPDF(BuildContext context, String pdfUrl, String name) asyn
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Permission d\'accès au stockage externe refusée'),
+          content: Text('Échec du téléchargement du Document'),
         ),
       );
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Échec du téléchargement du PDF'),
-      ),
-    );
   }
-}
-
-Future<bool> _requestPermission() async {
-  if (Platform.isAndroid && (await Permission.manageExternalStorage.isGranted)) {
-    return true;
-  } else if (Platform.isAndroid && (await Permission.manageExternalStorage.request().isGranted)) {
-    return true;
-  } else {
-    final status = await Permission.storage.request();
-    if (status.isGranted) {
-      return true;
-    } else if (status.isPermanentlyDenied) {
-      openAppSettings();
-    }
-  }
-  return false;
 }
 
 class FileListWidget extends StatelessWidget {
@@ -341,7 +316,6 @@ class FileListWidget extends StatelessWidget {
     );
   }
 }
-
 
 
 class DocumentPage extends StatefulWidget {
