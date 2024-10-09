@@ -11,6 +11,7 @@ import '../main.dart';
 import '../main_page/document_page.dart';
 import '../api/api_auth.dart';
 import '../api/api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConnexionPage extends StatelessWidget {
   final connectionControler = ConnectionControler(apiAuth: ApiAuth());
@@ -59,76 +60,18 @@ class ConnexionPage extends StatelessWidget {
               onPressed: () async {
                 var value = await connectionControler.connection();
                 if (value.statusCode == successCode) {
-                  if ( stateUser == "NEW") {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Première connexion'),
-                          content: Text('Voulez-vous lancer le tutoriel ?'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('Oui'),
-                              onPressed: () {
-                                Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => TutorialScreen()),
-                              );
-                              },
-                            ),
-                            TextButton(
-                              child: Text('Non'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                if (typeUser == "User") {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => FaqPage()),
-                                  );
-                                } else if (typeUser == "Client") {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => DocumentPage()),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    if (typeUser == "User") {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FaqPage()),
-                    );
-                  } else if (typeUser == "Client") {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => DocumentPage()),
-                    );
+                  final stayLoggedIn = connectionControler.stayLoggedIn;
+                  if (stayLoggedIn) {
+                    await _saveStayLoggedInPreference();
                   }
-                }
+                  
+                  if (stateUser == "NEW") {
+                    _showFirstTimeUserDialog(context);
+                  } else {
+                    _navigateBasedOnUserType(context);
+                  }
                 } else {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Erreur"),
-                        content:
-                            Text("L'email ou le mot de passe est incorrect."),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text("OK"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  alertConnectionFail(context);
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -152,13 +95,64 @@ class ConnexionPage extends StatelessWidget {
     );
   }
 
+  Future<void> _saveStayLoggedInPreference() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('stayLoggedIn', true);
+    await prefs.setString('email', connectionControler.email);
+    await prefs.setString('password', connectionControler.password);
+  }
+
+  void _navigateBasedOnUserType(BuildContext context) {
+    if (typeUser == "User") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => FaqPage()),
+      );
+    } else if (typeUser == "Client") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DocumentPage()),
+      );
+    }
+  }
+
+  void _showFirstTimeUserDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Première connexion'),
+          content: Text('Voulez-vous lancer le tutoriel ?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Oui'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TutorialScreen()),
+                );
+              },
+            ),
+            TextButton(
+              child: Text('Non'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _navigateBasedOnUserType(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> alertConnectionFail(BuildContext context) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Mail ou Mot de passe incorrect'),
-          content: Text("Le mail ou le mot de passe indiqué est incorrect"),
+          title: Text('Erreur'),
+          content: Text("Le mail ou le mot de passe indiqué est incorrect."),
           actions: [
             TextButton(
               onPressed: () {
@@ -173,6 +167,7 @@ class ConnexionPage extends StatelessWidget {
   }
 }
 
+
 class ConnexionForm extends StatefulWidget {
   const ConnexionForm({required this.connectionControler});
   final ConnectionControler connectionControler;
@@ -182,6 +177,29 @@ class ConnexionForm extends StatefulWidget {
 
 class _ConnexionFormState extends State<ConnexionForm> {
   var _obscureText2 = true;
+  bool _stayLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStayLoggedInPreference();
+  }
+
+  Future<void> _loadStayLoggedInPreference() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? stayLoggedIn = prefs.getBool('stayLoggedIn');
+    if (stayLoggedIn != null && stayLoggedIn) {
+      String? savedEmail = prefs.getString('email');
+      String? savedPassword = prefs.getString('password');
+      if (savedEmail != null && savedPassword != null) {
+        widget.connectionControler.changeEmail(savedEmail);
+        widget.connectionControler.changePassword(savedPassword);
+        setState(() {
+          _stayLoggedIn = true;
+        });
+      }
+    }
+  }
 
   void _showPasswordResetDialog(BuildContext context) {
     showDialog(
@@ -241,7 +259,7 @@ class _ConnexionFormState extends State<ConnexionForm> {
           DelayedAnimation(
             delay: 300,
             child: Container(
-              margin: EdgeInsets.only(top: 0, bottom: 130),
+              margin: EdgeInsets.only(top: 0, bottom: 30),
               child: TextField(
                 obscureText: _obscureText2,
                 decoration: InputDecoration(
@@ -265,6 +283,17 @@ class _ConnexionFormState extends State<ConnexionForm> {
                     widget.connectionControler.changePassword(value),
               ),
             ),
+          ),
+          CheckboxListTile(
+            title: Text("Rester connecté"),
+            value: _stayLoggedIn,
+            onChanged: (newValue) {
+              setState(() {
+                _stayLoggedIn = newValue!;
+                widget.connectionControler.stayLoggedIn = newValue;
+              });
+            },
+            controlAffinity: ListTileControlAffinity.leading,
           ),
           SizedBox(height: 10),
           Align(

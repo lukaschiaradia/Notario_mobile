@@ -31,5 +31,7 @@ Politique de confidentialité - Notario
   
     Si vous avez des questions ou des suggestions concernant ma politique de confidentialité, n'hésitez pas à me contacter à l'adresse suivante : notario.team@gmail.com
   
+  Avertissement : Cette application n'est pas affiliée ni autorisée par un gouvernement. Les services notariaux sont fournis par des notaires indépendants.
+
 Ce document est non modifiable.
 ''';
