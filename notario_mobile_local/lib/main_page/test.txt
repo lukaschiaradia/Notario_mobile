@@ -1,0 +1,45 @@
+  Future<void> _downloadDOCX(BuildContext context, String docxUrl, String name) async {
+    final url = Uri.parse(docxUrl);
+    if (!url.isAbsolute || (url.scheme != 'http' && url.scheme != 'https')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('URL invalide'),
+        ),
+      );
+      return;
+    }
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Directory? directory = await getApplicationDocumentsDirectory();
+      
+      if (directory != null) {
+        final String docxDirectoryPath = '${directory.path}/Notario_Documents';
+        final Directory docxDirectory = Directory(docxDirectoryPath);
+
+        await docxDirectory.create(recursive: true);
+
+        final File file = File('${docxDirectory.path}/$name.docx');
+        await file.writeAsBytes(response.bodyBytes);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Document téléchargé avec succès'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Impossible d\'obtenir le répertoire de stockage externe'),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Échec du téléchargement du Document'),
+        ),
+      );
+    }
+  }

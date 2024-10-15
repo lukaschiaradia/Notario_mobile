@@ -5,10 +5,8 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:notario_mobile/models/utilisateur_login.dart';
 import 'package:notario_mobile/models/utilisateur_delete.dart';
-import 'package:notario_mobile/models/utilisateur_modif.dart';
 import 'package:notario_mobile/models/utilisateur_register.dart';
-import 'package:notario_mobile/utils/constants/contants_url.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 var json_info = {};
 
@@ -16,7 +14,7 @@ class ApiAuth {
   const ApiAuth();
 
   Future<Response> apiLogin(
-      {required UtilisateurLogin utilisateurLogin}) async {
+    {required UtilisateurLogin utilisateurLogin}) async {
     var endPoint = Uri.http(ip, accountsLogin);
     Map data = utilisateurLogin.toData();
     json_info = data;
@@ -26,16 +24,31 @@ class ApiAuth {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: convert.json.encode(data));
+
       final Map<String, dynamic> responseData = jsonDecode(response.body);
-      typeUser = responseData['user']['type'];
-      Map<String, dynamic> jsonResponse = convert.json.decode(response.body);
-      String token = jsonResponse['token'];
-      stateUser = jsonResponse['user']['state'];
-      TokenUser = token;
-      return (response);
+
+      if (response.statusCode == 200) {
+        typeUser = responseData['user']['type'];
+        TokenUser = responseData['token'];
+        stateUser = responseData['user']['state'];
+
+        await _saveInfos(token, typeUser, stateUser);
+
+        return response;
+      } else {
+        throw Exception('Failed to log in: ${responseData['message']}');
+      }
     } catch (e) {
       throw e;
     }
+  } 
+
+  Future<void> _saveInfos(String token, String type, String state) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    await prefs.setString('type', type);
+    await prefs.setString('state', state);
+
   }
 
   Future<Response> apiRegister({

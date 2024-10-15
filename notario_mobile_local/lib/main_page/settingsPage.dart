@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:notario_mobile/main_page/tutorial.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import 'package:notario_mobile/api/api_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -22,30 +23,24 @@ class SettingsPage extends StatelessWidget {
       backgroundColor: Color(0xFF1A1B25),
       body: ListView(
         children: [
-          // Bloc Général
           _buildSectionHeader('Général'),
           _buildGeneralSettings(context),
 
-          // Bloc Compte
           _buildSectionHeader('Compte'),
           _buildAccountSettings(context),
 
-          // Bloc Support
           _buildSectionHeader('Support'),
           _buildSupportSettings(context),
 
-          // Bloc Ressources
           _buildSectionHeader('Ressources'),
           _buildResourceSettings(context),
 
-          // Ajout d'un padding en bas
           SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  // Widget pour créer un en-tête de section
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -56,7 +51,6 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  // Fonction pour construire le bloc Général
   Widget _buildGeneralSettings(BuildContext context) {
     return Column(
       children: [
@@ -76,7 +70,9 @@ class SettingsPage extends StatelessWidget {
             'Déconnexion',
             style: TextStyle(color: Colors.white),
           ),
-          onTap: () {
+          onTap: () async {
+            await _clearCredentials();
+
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => ConnexionPage()),
@@ -87,7 +83,16 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  // Fonction pour construire le bloc Compte
+  Future<void> _clearCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('stayLoggedIn');
+    await prefs.remove('email');
+    await prefs.remove('password');
+    await prefs.remove('token');
+    await prefs.remove('type');
+    await prefs.remove('state');
+  }
+
   Widget _buildAccountSettings(BuildContext context) {
     return Column(
       children: [
