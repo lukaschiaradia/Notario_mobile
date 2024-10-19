@@ -51,10 +51,19 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(keyProperties['storeFile'])
-            storePassword keyProperties['storePassword']
-            keyAlias keyProperties['keyAlias']
-            keyPassword keyProperties['keyPassword']
+            def storeFilePath = keyProperties['storeFile']
+            def storePasswordValue = keyProperties['storePassword']
+            def keyAliasValue = keyProperties['keyAlias']
+            def keyPasswordValue = keyProperties['keyPassword']
+
+            if (storeFilePath == null || storePasswordValue == null || keyAliasValue == null || keyPasswordValue == null) {
+                throw new GradleException("All key properties must be specified in key.properties")
+            }
+
+            storeFile file(storeFilePath)
+            storePassword storePasswordValue
+            keyAlias keyAliasValue
+            keyPassword keyPasswordValue
         }
     }
 
