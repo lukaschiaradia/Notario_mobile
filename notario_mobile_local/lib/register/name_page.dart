@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../main_page/delayed_animation.dart';
 import '../main.dart';
-import 'age_page.dart';
 import '../api/api.dart';
 import 'package:notario_mobile/utils/custom_progress_bar.dart';
 import 'package:notario_mobile/register/number_page.dart';

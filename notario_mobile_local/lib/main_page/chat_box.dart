@@ -49,14 +49,13 @@ class _ChatPageState extends State<ChatPage> {
     try {
       var chatData = await api_get_chat_with_notaire(idChat: chatId);
       setState(() {
-        messages.clear(); // Vider la liste des messages
+        messages.clear();
         for (var messageData in chatData) {
           messages.add(ChatMessage.fromJson(messageData));
         }
       });
     } catch (e) {
       print('Erreur lors du chargement des messages: $e');
-      // Gérer l'erreur ici
     }
   }
 
@@ -79,6 +78,17 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Future<void> _deleteMessage(int messageId) async {
+    try {
+      await api_delete_message(messageId);
+      setState(() {
+        messages.removeWhere((msg) => msg.id == messageId);
+      });
+    } catch (e) {
+      print('Erreur lors de la suppression du message: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var reversedMessages = messages.reversed.toList();
@@ -94,39 +104,51 @@ class _ChatPageState extends State<ChatPage> {
               reverse: true,
               itemCount: reversedMessages.length,
               itemBuilder: (context, index) {
-                bool isUserMessage;
+                var message = reversedMessages[index];
+                bool isUserMessage = message.sender == int.parse(myId);
+                String senderName = isUserMessage ? "Vous" : "Votre notaire";
 
-                if (reversedMessages[index].sender.toString() == myId)
-                  isUserMessage = true;
-                else
-                  isUserMessage = false;
                 return Align(
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        isUserMessage ? 'Vous' : 'Votre notaire',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isUserMessage ? Colors.red : Colors.blueGrey,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 5.0),
-                        child: ListTile(
-                          title: Text(
-                            reversedMessages[index].text,
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          subtitle: Text(
-                            DateFormat('hh:mm a')
-                                .format(reversedMessages[index].createdAt),
-                            style: TextStyle(color: Colors.grey),
+                  alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      color: isUserMessage ? Colors.green[200] : Colors.blue[200],
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          senderName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isUserMessage ? Colors.green[800] : Colors.blue[800],
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 5),
+                        Text(
+                          message.text,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              DateFormat('hh:mm a').format(message.createdAt),
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, size: 18, color: Colors.red),
+                              onPressed: () => _deleteMessage(message.id),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

@@ -34,7 +34,7 @@ dependencies:
   url_launcher: ^6.0.3
   flutter_custom_clippers: ^2.1.0
   percent_indicator: ^4.2.3
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.1
   cupertino_icons: ^1.0.2
   google_fonts: ^6.2.1
   font_awesome_flutter: ^10.3.0
@@ -42,17 +42,18 @@ dependencies:
   open_file: ^3.2.1
   intl: ^0.19.0
   http: ^1.2.1
-  syncfusion_flutter_pdfviewer: ^26.1.35
+  syncfusion_flutter_pdfviewer: ^27.1.50
   pdf: ^3.8.4
   flutter_pdfview: ^1.0.0
   flutter_cached_pdfview: ^0.4.2
-  screenshot: ^2.1.0
+  screenshot: ^3.0.0
   path_provider: ^2.0.2
   flutter_animator: ^3.2.2
   lottie: ^3.0.0
   permission_handler: ^11.3.1
   awesome_notifications: ^0.9.3+1
   fluttertoast: ^8.0.7
+  web_socket_channel: ^3.0.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
 

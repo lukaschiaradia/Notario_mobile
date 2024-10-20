@@ -7,20 +7,35 @@ const blue_color = Color(0xFF6949FF);
 
 void main() {
   AwesomeNotifications().initialize(
-      null,
-      [
-        NotificationChannel(
-            channelKey: 'alerts',
-            channelName: 'Alerts',
-            channelDescription: 'Notification tests as alerts')
-      ],
-      debug: true);
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'alerts',
+        channelName: 'Alerts',
+        channelDescription: 'Notification tests as alerts',
+        defaultColor: blue_color,
+        importance: NotificationImportance.High,
+        channelShowBadge: true,
+      ),
+      NotificationChannel(
+        channelKey: 'messages',
+        channelName: 'Messages',
+        channelDescription: 'Notifications for new messages',
+        defaultColor: Colors.orange,
+        importance: NotificationImportance.Max,
+        channelShowBadge: true,
+      ),
+    ],
+    debug: true,
+  );
+
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

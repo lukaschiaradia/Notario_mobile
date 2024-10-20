@@ -415,3 +415,36 @@ Future<dynamic> api_rejectNotary({required int id}) async {
     throw (e.toString());
   }
 }
+
+
+Future<dynamic> api_get_notifications() async {
+  var endPoint = Uri.http(ip, '/notification/get/');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    var json_response = response.body;
+    var decode = utf8.decode(json_response.runes.toList());
+    var json_map = json.decode(decode);
+    print(response.statusCode);
+    print(json_map);
+    return await json_map;
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<dynamic> api_delete_message(int messageId) async {
+  var endPoint = Uri.http(ip, 'chat/message/delete/$messageId');
+  try {
+    var response = await Client().delete(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+    print(response.statusCode);
+    return await (response.statusCode);
+  } catch (e) {
+    throw (e.toString());
+  }
+}

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:notario_mobile/api/api.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -9,27 +11,29 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   late Future<List<Notification>> _notifications;
+  late WebSocketChannel channel;
 
   @override
   void initState() {
     super.initState();
     _notifications = fetchNotifications();
-    checkForNewNotifications();
+    channel = IOWebSocketChannel.connect('ws://aled/ws/notifications/');
+
+    channel.stream.listen((message) {
+      _handleWebSocketMessage(message);
+    });
   }
 
-  Future<void> checkForNewNotifications() async {
+  // Méthode pour gérer les messages WebSocket
+  void _handleWebSocketMessage(String message) async {
     List<Notification> notifications = await fetchNotifications();
-
-    int? lastNotificationId = await getLastNotificationId();
-
-    if (notifications.isNotEmpty &&
-        notifications.last.id != lastNotificationId) {
+    if (notifications.isNotEmpty) {
       AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: notifications.last.id,
           channelKey: 'basic_channel',
           title: 'Nouvelle demande de notaire',
-          body: 'Un notaire nommé ${notifications.last.title} demande à se lier.',
+          body: 'Un notaire nommé ${notifications.last.userName} demande à se lier.',
         ),
       );
 
@@ -46,29 +50,37 @@ class _NotificationPageState extends State<NotificationPage> {
 
   Future<List<Notification>> fetchNotifications() async {
     try {
-      var responseRequests = await api_get_requests();
+      var response = await api_get_requests();
       List<Notification> notifications = [];
-
-      print('Response Requests: $responseRequests');
-
-      for (var notif in responseRequests) {
-        print('Processing Notification: $notif');
+      for (var notif in response) {
         notifications.add(Notification.fromMap(notif));
       }
-
-      var responseNewNotifications = await api_get_notifications();
-      print('Response New Notifications: $responseNewNotifications');
-
-      for (var notif in responseNewNotifications) {
-        print('Processing New Notification: $notif');
-        notifications.add(Notification.fromMap(notif));
-      }
-
       return notifications;
     } catch (e) {
-      print('Error fetching notifications: $e');
       throw Exception('Erreur lors de la récupération des notifications : $e');
     }
+  }
+
+  void acceptNotary(int id) {
+    api_acceptNotary(id: id);
+    print("Notaire $id accepté");
+    setState(() {
+      _notifications = fetchNotifications();
+    });
+  }
+
+  void rejectNotary(int id) {
+    api_rejectNotary(id: id);
+    print("Notaire $id refusé");
+    setState(() {
+      _notifications = fetchNotifications();
+    });
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
   }
 
   @override
@@ -95,8 +107,28 @@ class _NotificationPageState extends State<NotificationPage> {
                 return Card(
                   margin: EdgeInsets.all(10),
                   child: ListTile(
-                    title: Text(notification.title),
-                    subtitle: Text(notification.content),
+                    title: Text(notification.userName),
+                    subtitle: Text(notification.email),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => acceptNotary(notification.id),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
+                          child: Text('Accepter'),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () => rejectNotary(notification.id),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: Text('Refuser'),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -110,26 +142,20 @@ class _NotificationPageState extends State<NotificationPage> {
 
 class Notification {
   final int id;
-  final String title;
-  final String content;
-  final String type;
-  final DateTime createdAt;
+  final String userName;
+  final String email;
 
   Notification({
     required this.id,
-    required this.title,
-    required this.content,
-    required this.type,
-    required this.createdAt,
+    required this.userName,
+    required this.email,
   });
 
   factory Notification.fromMap(Map<String, dynamic> map) {
     return Notification(
-      id: map['id'] ?? 0,
-      title: map['title'] ?? 'No title',
-      content: map['content'] ?? 'No content',
-      type: map['type'] ?? 'UNKNOWN',
-      createdAt: DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now(),
+      id: map['id'],
+      userName: map['user_name'],
+      email: map['email'],
     );
   }
 }
