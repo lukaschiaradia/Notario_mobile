@@ -12,7 +12,7 @@ const filesGet = '/files/list/';
 //localhost
 //const ip = '127.0.0.1:8000';
 //prod
-const ip = '20.111.31.171:8000';
+const ip = '92.113.25.24:8000';
 String TokenUser = '';
 String myId = '';
 String typeUser = '';
