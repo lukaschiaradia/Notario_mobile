@@ -121,17 +121,17 @@ class ConnexionPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color(0xFF351EA4),  // Fond bleu-violet de l'alerte
+          backgroundColor: Color(0xFF351EA4),
           title: Text(
             'Première connexion',
             style: TextStyle(
-              color: Colors.white, // Titre en blanc pour le contraste
+              color: Colors.white,
             ),
           ),
           content: Text(
             'Voulez-vous lancer le tutoriel ?',
             style: TextStyle(
-              color: Colors.white, // Texte en blanc pour un bon contraste
+              color: Colors.white,
             ),
           ),
           actions: <Widget>[
@@ -139,7 +139,7 @@ class ConnexionPage extends StatelessWidget {
               child: Text(
                 'Oui',
                 style: TextStyle(
-                  color: Colors.white, // Bouton "Oui" en blanc
+                  color: Colors.white,
                 ),
               ),
               onPressed: () {
@@ -153,7 +153,7 @@ class ConnexionPage extends StatelessWidget {
               child: Text(
                 'Non',
                 style: TextStyle(
-                  color: Colors.white, // Bouton "Non" en blanc
+                  color: Colors.white,
                 ),
               ),
               onPressed: () {
