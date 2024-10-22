@@ -74,25 +74,59 @@ class _PlanningState extends State<Planning> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text("Demande d'événement"),
+                    backgroundColor: Color(0xFF351EA4),  // Fond bleu-violet de l'alerte
+                    title: Text(
+                      "Demande d'événement",
+                      style: TextStyle(
+                        color: Colors.white, // Titre en blanc pour un bon contraste
+                      ),
+                    ),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
                           TextFormField(
+                            style: TextStyle(color: Colors.white), // Texte des champs en blanc
                             onChanged: (value) {
                               date = value;
                             },
                             decoration: InputDecoration(
                               hintText: 'Quand voulez vous un rendez-vous',
+                              hintStyle: TextStyle(
+                                color: Colors.white70, // Texte indicatif en blanc clair
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white, // Bordure blanche quand non sélectionné
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white, // Bordure blanche quand sélectionné
+                                ),
+                              ),
                             ),
                           ),
+                          SizedBox(height: 16), // Espacement entre les champs
                           TextFormField(
+                            style: TextStyle(color: Colors.white), // Texte des champs en blanc
                             onChanged: (value) {
                               reason = value;
                             },
                             decoration: InputDecoration(
-                              hintText:
-                                  'Expliquez pourquoi vous voulez un rendez-vous',
+                              hintText: 'Expliquez pourquoi vous voulez un rendez-vous',
+                              hintStyle: TextStyle(
+                                color: Colors.white70, // Texte indicatif en blanc clair
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white, // Bordure blanche
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white, // Bordure blanche
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -100,7 +134,12 @@ class _PlanningState extends State<Planning> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('Envoyer'),
+                        child: Text(
+                          'Envoyer',
+                          style: TextStyle(
+                            color: Colors.white, // Texte des boutons en blanc
+                          ),
+                        ),
                         onPressed: () {
                           api_ask_rdv(Date: date, reason: reason);
                           Navigator.of(context).pop();
@@ -108,12 +147,27 @@ class _PlanningState extends State<Planning> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Confirmation'),
+                                backgroundColor: Color(0xFF351EA4), // Fond bleu-violet pour la confirmation
+                                title: Text(
+                                  'Confirmation',
+                                  style: TextStyle(
+                                    color: Colors.white, // Texte en blanc pour un bon contraste
+                                  ),
+                                ),
                                 content: Text(
-                                    'Votre demande a été soumise avec succès.'),
+                                  'Votre demande a été soumise avec succès.',
+                                  style: TextStyle(
+                                    color: Colors.white, // Texte en blanc
+                                  ),
+                                ),
                                 actions: <Widget>[
                                   TextButton(
-                                    child: Text('OK'),
+                                    child: Text(
+                                      'OK',
+                                      style: TextStyle(
+                                        color: Colors.white, // Texte du bouton en blanc
+                                      ),
+                                    ),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
@@ -128,6 +182,7 @@ class _PlanningState extends State<Planning> {
                   );
                 },
               );
+
             },
           ),
         ],
