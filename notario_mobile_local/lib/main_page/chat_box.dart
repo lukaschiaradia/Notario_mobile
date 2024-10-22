@@ -32,6 +32,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<int> _initNotary() async {
     var notary = await api_get_notary();
+    print(notary['user_id']);
     return notary['user_id'];
   }
 
@@ -109,12 +110,16 @@ class _ChatPageState extends State<ChatPage> {
                 String senderName = isUserMessage ? "Vous" : "Votre notaire";
 
                 return Align(
-                  alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: isUserMessage
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+                    margin:
+                        EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                      color: isUserMessage ? Colors.green[200] : Colors.blue[200],
+                      color:
+                          isUserMessage ? Colors.green[200] : Colors.blue[200],
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Column(
@@ -124,7 +129,9 @@ class _ChatPageState extends State<ChatPage> {
                           senderName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: isUserMessage ? Colors.green[800] : Colors.blue[800],
+                            color: isUserMessage
+                                ? Colors.green[800]
+                                : Colors.blue[800],
                           ),
                         ),
                         SizedBox(height: 5),
@@ -139,10 +146,12 @@ class _ChatPageState extends State<ChatPage> {
                           children: [
                             Text(
                               DateFormat('hh:mm a').format(message.createdAt),
-                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12),
                             ),
                             IconButton(
-                              icon: Icon(Icons.delete, size: 18, color: Colors.red),
+                              icon: Icon(Icons.delete,
+                                  size: 18, color: Colors.red),
                               onPressed: () => _deleteMessage(message.id),
                             ),
                           ],

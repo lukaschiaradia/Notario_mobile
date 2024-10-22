@@ -52,14 +52,14 @@ class _WelcomePageState extends State<WelcomePage> {
                     bottom: 40,
                   ),
                   height: 150,
-                  child: Image.asset('images/notario.png'),
+                  child: Image.asset('images/notario-min.png'),
                 ),
               ),
               DelayedAnimation(
                 delay: 220,
                 child: Container(
                   height: 300,
-                  child: Image.asset('images/man.png', scale: 1.5),
+                  child: Image.asset('images/man-min.png', scale: 1.5),
                 ),
               ),
               SizedBox(height: 40),

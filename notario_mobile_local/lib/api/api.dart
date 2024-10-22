@@ -198,11 +198,13 @@ Future<Map<String, dynamic>> api_get_notary() async {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + TokenUser,
     });
+    print('En-têtes: ${response.request?.headers}');
+    print('Token utilisé: Bearer $TokenUser');
+
     if (response.statusCode == 200) {
       var json_response = response.body;
       var decode = utf8.decode(json_response.runes.toList());
       var json_map = json.decode(decode);
-      print(json_map);
       return json_map;
     } else if (response.statusCode == 404) {
       print('You do not have a notary: ${response.statusCode}');
@@ -297,13 +299,14 @@ Future<dynamic> api_get_invite_requests() async {
 }
 
 Future<List<String>> api_get_chat_id() async {
-  var endPoint = Uri.http(ip, '/chat/');
+  var endPoint = Uri.http(ip, '/chat/get/all');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + TokenUser,
+      'Authorization': 'Bearer' + TokenUser,
     });
     var json_response = response.body;
+    print(response.headers);
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
     print(response.statusCode);
@@ -325,7 +328,7 @@ Future<List<String>> api_get_chat_id() async {
 
 Future<List<dynamic>> api_get_chat_with_notaire(
     {required dynamic idChat}) async {
-  var endPoint = Uri.http(ip, '/chat/$idChat');
+  var endPoint = Uri.http(ip, '/chat/get/$idChat');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -384,7 +387,7 @@ Future<dynamic> api_acceptNotary({required int id}) async {
   print(data['id']);
   try {
     var response = await Client().post(endPoint,
-        headers: <String, String> {
+        headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer ' + TokenUser,
         },
@@ -415,7 +418,6 @@ Future<dynamic> api_rejectNotary({required int id}) async {
     throw (e.toString());
   }
 }
-
 
 Future<dynamic> api_get_notifications() async {
   var endPoint = Uri.http(ip, '/notification/get/');

@@ -28,7 +28,7 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
         BottomNavigationBarItem(
           icon: ImageIcon(
             size: 40,
-            AssetImage("images/folder-white.png"),
+            AssetImage("images/folder-white-min.png"),
             color: Color.fromARGB(255, 0, 0, 0),
           ),
           label: 'Documents',
@@ -36,7 +36,7 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
         BottomNavigationBarItem(
           icon: ImageIcon(
             size: 40,
-            AssetImage("images/planning-white.png"),
+            AssetImage("images/planning-white-min.png"),
             color: Color.fromARGB(255, 0, 0, 0),
           ),
           label: 'Agenda',
@@ -44,7 +44,7 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
         BottomNavigationBarItem(
           icon: ImageIcon(
             size: 40,
-            AssetImage("images/tchat.png"),
+            AssetImage("images/tchat-min.png"),
             color: Color.fromARGB(255, 0, 0, 0),
           ),
           label: 'FAQ',
@@ -52,7 +52,7 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
         BottomNavigationBarItem(
           icon: ImageIcon(
             size: 40,
-            AssetImage("images/profil-white.png"),
+            AssetImage("images/profil-white-min.png"),
             color: Color.fromARGB(255, 0, 0, 0),
           ),
           label: 'Profil',
