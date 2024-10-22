@@ -121,11 +121,27 @@ class ConnexionPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Première connexion'),
-          content: Text('Voulez-vous lancer le tutoriel ?'),
+          backgroundColor: Color(0xFF351EA4),  // Fond bleu-violet de l'alerte
+          title: Text(
+            'Première connexion',
+            style: TextStyle(
+              color: Colors.white, // Titre en blanc pour le contraste
+            ),
+          ),
+          content: Text(
+            'Voulez-vous lancer le tutoriel ?',
+            style: TextStyle(
+              color: Colors.white, // Texte en blanc pour un bon contraste
+            ),
+          ),
           actions: <Widget>[
             TextButton(
-              child: Text('Oui'),
+              child: Text(
+                'Oui',
+                style: TextStyle(
+                  color: Colors.white, // Bouton "Oui" en blanc
+                ),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -134,7 +150,12 @@ class ConnexionPage extends StatelessWidget {
               },
             ),
             TextButton(
-              child: Text('Non'),
+              child: Text(
+                'Non',
+                style: TextStyle(
+                  color: Colors.white, // Bouton "Non" en blanc
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 _navigateBasedOnUserType(context);
