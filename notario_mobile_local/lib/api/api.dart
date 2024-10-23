@@ -1,12 +1,12 @@
 import 'dart:convert' as convert;
 import 'dart:convert';
 import 'dart:io';
+import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/login/connexion_page.dart';
 import 'package:http/http.dart';
 import 'package:notario_mobile/models/utilisateur_create_rdv.dart';
 import 'package:notario_mobile/models/utilisateur_message.dart';
 import '../utils/constants/contants_url.dart';
-
 
 var user_id = 0;
 var receiver_id = 0;
@@ -125,22 +125,34 @@ List<dynamic> create_messages_list(List chat_with_messages) {
   return messages;
 }
 
-Future<num> api_add_message(
-    {required int receiver, required String message}) async {
-  var endPoint = Uri.http(ip, '/chat/add/');
-  Map data = {};
-  data['receiver'] = receiver;
-  data['text'] = message;
+Future<void> api_add_message(AddMessage message) async {
+  var endPoint = Uri.http(ip, '/chat/message/add/');
+
   try {
-    var response = await Client().post(endPoint,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer ' + TokenUser,
-        },
-        body: convert.json.encode(data));
-    return await (response.statusCode);
+    final response = await Client().post(
+      endPoint,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + '$TokenUser',
+      },
+      body: json.encode(message.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      // Message envoyé avec succès
+      print('Message envoyé avec succès: ${response.body}');
+    } else if (response.statusCode == 401) {
+      // Utilisateur non valide
+      print('Utilisateur non valide : ${response.body}');
+    } else if (response.statusCode == 404) {
+      // Utilisateur non trouvé
+      print('Utilisateur non trouvé : ${response.body}');
+    } else {
+      // Autres erreurs
+      print('Erreur lors de l\'envoi du message: ${response.statusCode}');
+    }
   } catch (e) {
-    throw (e.toString());
+    print('Erreur de connexion: $e');
   }
 }
 
@@ -276,24 +288,67 @@ Future<dynamic> api_get_invite_requests() async {
   }
 }
 
-Future<List<String>> api_get_chat_id() async {
-  var endPoint = Uri.http(ip, '/chat/');
+Future<String> api_get_chat_id() async {
+  var endPoint = Uri.http(ip, '/chat/get/all/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + TokenUser,
     });
+
+    // Décodage du corps de la réponse
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
 
-    List<String> chatIds = [];
-    for (var chat in json_map) {
-      chatIds.add(chat['id'].toString());
-    }
+    print(json_map); // Affiche la réponse JSON complète pour vérification
 
-    return chatIds;
+    // Vérifier si la clé 'data' existe et contient une liste
+    if (json_map.containsKey('data')) {
+      List<dynamic> chatsData =
+          json_map['data']; // Récupération de la liste des chats
+
+      // Extraire le premier 'uid' trouvé
+      if (chatsData.isNotEmpty) {
+        String chatId =
+            chatsData[0]['uid'].toString(); // Récupère le premier UID
+        print('chat id = $chatId');
+        return chatId;
+      } else {
+        print('Erreur: liste "data" vide');
+        return '';
+      }
+    } else {
+      // Si la clé 'data' n'existe pas
+      print('Erreur: clé "data" non trouvée dans la réponse');
+      return '';
+    }
   } catch (e) {
+    print('Erreur lors du chargement de l\'identifiant du chat: $e');
+    throw (e.toString());
+  }
+}
+
+Future<Map<String, dynamic>> api_get_chat_details(String uid) async {
+  var endPoint = Uri.http(ip, '/chat/get/$uid');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+
+    if (response.statusCode == 200) {
+      var json_response = response.body;
+      var json_map = json.decode(json_response);
+      print('Détails du chat pour UID $uid: $json_map');
+      print(json_map['sender']);
+      return json_map;
+    } else {
+      print('Erreur: statut ${response.statusCode} pour UID $uid');
+      throw Exception('Erreur lors du chargement des détails du chat');
+    }
+  } catch (e) {
+    print('Erreur lors de la récupération des détails du chat: $e');
     throw (e.toString());
   }
 }
@@ -354,7 +409,7 @@ Future<dynamic> api_acceptNotary({required int id}) async {
   data['notary_id'] = id;
   try {
     var response = await Client().post(endPoint,
-        headers: <String, String> {
+        headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer ' + TokenUser,
         },

@@ -239,12 +239,12 @@ class _ProfilState extends State<Profil> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onTap: () {
-                    if (typeUser == "Client") {
+                    //if (typeUser == "Client") {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ChatPage()),
                       );
-                    } else if (typeUser == "User") {
+                   /*} else if (typeUser == "User") {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -263,7 +263,7 @@ class _ProfilState extends State<Profil> {
                           );
                         },
                       );
-                    }
+                    }*/
                   }),
               ListTile(
                 leading: Icon(Icons.settings, color: Colors.white),

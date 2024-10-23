@@ -1,39 +1,47 @@
-class Message {
-  final String sender;
+class AddMessage {
+  final String receiver;
   final String text;
-  final DateTime time;
+  final int? replyTo;
 
-  Message({required this.sender, required this.text, required this.time});
+  AddMessage({
+    required this.receiver,
+    required this.text,
+    this.replyTo,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'receiver': receiver,
+      'text': text,
+      'reply_to': replyTo,
+    };
+  }
 }
 
+
 class ChatMessage {
-  final int id;
-  final bool read;
-  final String text;
-  final DateTime createdAt;
-  final int sender;
-  final int receiver;
-  final int chat;
+  final String id; // ID du message
+  final String sender; // ID de l'expéditeur
+  final String receiver; // ID du destinataire
+  late final String text; // Contenu du message
+  final DateTime createdAt; // Date de création
 
   ChatMessage({
     required this.id,
-    required this.read,
-    required this.text,
-    required this.createdAt,
     required this.sender,
     required this.receiver,
-    required this.chat,
+    required this.text,
+    required this.createdAt,
   });
 
+  // Fonction pour créer un ChatMessage à partir d'un JSON
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
-      id: json['id'],
-      read: json['read'],
-      text: json['text'],
-      createdAt: DateTime.parse(json['created_at']),
+      id: json['uid'], // Assurez-vous que cela correspond à votre structure
       sender: json['sender'],
       receiver: json['receiver'],
-      chat: json['chat'],
+      text: json['text'],
+      createdAt: DateTime.parse(json['created_at']), // Assurez-vous que le format est correct
     );
   }
 }
