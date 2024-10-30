@@ -123,47 +123,39 @@ String _parseDocumentXml(String xmlString) {
   StringBuffer buffer = StringBuffer();
 
   for (var paragraph in paragraphs) {
-    // Traiter le contenu du paragraphe
     List<TextSpan> spans = [];
     for (var run in paragraph.findAllElements('w:r')) {
       String runText = '';
       TextStyle textStyle = TextStyle();
 
-      // Extraire le texte
       for (var textElement in run.findAllElements('w:t')) {
         runText += textElement.text;
       }
 
-      // Extraire le style si nécessaire
       final rPr = run.findElements('w:rPr').firstOrNull;
       if (rPr != null) {
-        // Extraire la couleur
         final color = rPr.findElements('w:color').firstOrNull?.getAttribute('w:val');
         if (color != null) {
           textStyle = textStyle.copyWith(color: Color(int.parse('0xFF$color')));
         }
 
-        // Extraire la taille de la police
         final sz = rPr.findElements('w:sz').firstOrNull?.getAttribute('w:val');
         if (sz != null) {
-          textStyle = textStyle.copyWith(fontSize: double.parse(sz) / 2); // Ajustez la taille
+          textStyle = textStyle.copyWith(fontSize: double.parse(sz) / 2);
         }
 
-        // Ajouter d'autres styles comme gras, italique, etc. si nécessaire
       }
 
-      // Ajouter le TextSpan avec le texte et le style
       spans.add(TextSpan(text: runText, style: textStyle));
     }
 
-    // Ajouter le texte formaté à notre buffer ou retourner la liste de spans
     buffer.writeln();
     spans.forEach((span) {
-      buffer.write(span.text); // Exemple d'ajout de texte formaté
+      buffer.write(span.text);
     });
   }
 
-  return buffer.toString().trim(); // Retourner le texte formaté
+  return buffer.toString().trim();
 }
 
 
@@ -266,7 +258,7 @@ String _parseDocumentXml(String xmlString) {
             child: Align(
               alignment: Alignment.centerRight,
               child: FaIcon(
-                FontAwesomeIcons.fileWord, // Icône Word
+                FontAwesomeIcons.fileWord,
                 color: Colors.white,
                 size: 50.0,
               ),
@@ -384,14 +376,13 @@ class DocumentViewPage extends StatelessWidget {
       String base64Data = jsonResponse['file']['data'];
       List<int> bytes = base64Decode(base64Data);
 
-      // Obtenir le répertoire de téléchargements
       final Directory? directory = await getExternalStorageDirectory();
       if (directory != null) {
-        final String downloadsPath = '${directory.path}/Download'; // Chemin vers le dossier "Téléchargements"
+        final String downloadsPath = '${directory.path}/Téléchargements';
         final Directory downloadsDirectory = Directory(downloadsPath);
 
         await downloadsDirectory.create(recursive: true);
-        final File file = File('$downloadsPath/$name.docx'); // Nom du fichier
+        final File file = File('$downloadsPath/$name.docx');
 
         await file.writeAsBytes(bytes);
 
