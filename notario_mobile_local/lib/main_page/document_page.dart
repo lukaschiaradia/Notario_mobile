@@ -322,7 +322,6 @@ class _DocumentPageState extends State<DocumentPage> {
               style: TextStyle(
                   fontSize: 30,
                   color: Color(0Xff6949FF),
-                  decoration: TextDecoration.underline,
                   fontWeight: FontWeight.bold)),
         ),
       ),

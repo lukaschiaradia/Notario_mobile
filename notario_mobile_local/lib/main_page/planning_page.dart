@@ -62,7 +62,6 @@ class _PlanningState extends State<Planning> {
               style: TextStyle(
                   fontSize: 30,
                   color: Color(0Xff6949FF),
-                  decoration: TextDecoration.underline,
                   fontWeight: FontWeight.bold)),
         ),
         actions: <Widget>[
