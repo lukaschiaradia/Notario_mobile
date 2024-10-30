@@ -218,6 +218,7 @@ Future<dynamic> api_get_articles() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
+    print(json_map);
     return await json_map;
   } catch (e) {
     throw (e.toString());
