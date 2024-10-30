@@ -113,6 +113,8 @@ class ConnexionPage extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => DocumentPage()),
       );
+    } else {
+      alertConnectionNotaire(context);
     }
   }
 
@@ -174,6 +176,26 @@ class ConnexionPage extends StatelessWidget {
         return AlertDialog(
           title: Text('Erreur'),
           content: Text("Le mail ou le mot de passe indiqué est incorrect."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> alertConnectionNotaire(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Erreur'),
+          content: Text("Impossible de se connecter avec un compte notaire."),
           actions: [
             TextButton(
               onPressed: () {
