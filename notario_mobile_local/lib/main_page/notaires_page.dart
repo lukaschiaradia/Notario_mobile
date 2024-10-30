@@ -86,6 +86,39 @@ class NotairesPageState extends State<Notaires> with SingleTickerProviderStateMi
     }
   }
 
+  void _showConfirmationDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Column(
+          mainAxisSize: MainAxisSize.min, // Ajuste la taille de la colonne
+          children: [
+            Center(child: Text("Êtes-vous sûr de vouloir vous dissocier de votre notaire ?")),
+            SizedBox(height: 10), // Espacement entre le titre et le contenu
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Ferme la boîte de dialogue
+              _dissociateNotary(context); // Appel à la fonction de dissociation
+            },
+            child: Text("Oui"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Ferme la boîte de dialogue
+            },
+            child: Text("Non"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
   void navigateToLiaisonNotairePage(BuildContext context) async {
     List<dynamic> notaires = await api_get_notaires();
     Navigator.push(
@@ -156,7 +189,7 @@ class NotairesPageState extends State<Notaires> with SingleTickerProviderStateMi
                         if (typeUser == "User") {
                           _showSnackbar("Vous n'avez pas encore de notaire affilié.");
                         } else {
-                          _dissociateNotary(context);
+                          _showConfirmationDialog(context); // Appel à la méthode pour afficher la boîte de dialogue
                         }
                       }, typeUser == "User"),
                     ),

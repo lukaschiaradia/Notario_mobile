@@ -61,6 +61,7 @@ class _ProfilState extends State<Profil> {
         profil_photo = '';
       else
         profil_photo = user['user']['photo'];
+        print(profil_photo);
       user['user']['id'];
     });
 
