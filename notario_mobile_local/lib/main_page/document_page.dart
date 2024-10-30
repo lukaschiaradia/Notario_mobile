@@ -69,36 +69,28 @@ class FileItemWidget extends StatelessWidget {
   FileItemWidget(this.fileData);
 
   Future<void> _viewFile(BuildContext context, String token) async {
-  // Créez un répertoire pour stocker le fichier
   final directory = await getTemporaryDirectory();
   final filePath = '${directory.path}/${fileData.name}';
   
-  // Télécharger le fichier avec le token d'authentification
   var response = await http.get(
     Uri.parse(fileData.url),
     headers: <String, String>{
-      'Authorization': 'Bearer $token', // Incluez le token ici
+      'Authorization': 'Bearer $token',
     },
   );
 
   if (response.statusCode == 200) {
-    // Supposons que le contenu soit un JSON comme vous l'avez indiqué
     final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
     
-    // Récupérer le contenu du fichier à partir du JSON
     final base64Data = jsonResponse['file']['data'];
 
-    // Décodez le contenu
     final bytes = base64.decode(base64Data);
     
-    // Créer un fichier à partir des bytes
     File file = File(filePath);
     await file.writeAsBytes(bytes);
 
-    // Lire le fichier docx et extraire le texte
     final docContent = await _extractDocxContent(filePath);
     
-    // Naviguer vers la nouvelle page pour afficher le contenu
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -106,7 +98,6 @@ class FileItemWidget extends StatelessWidget {
       ),
     );
   } else {
-    // Gérer l'erreur de téléchargement
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Erreur de téléchargement du fichier : ${response.statusCode}'),
     ));
@@ -114,16 +105,12 @@ class FileItemWidget extends StatelessWidget {
 }
 
 Future<String> _extractDocxContent(String filePath) async {
-  // Lire le fichier DOCX
   final bytes = await File(filePath).readAsBytes();
-  // Décompresser le fichier DOCX
   final archive = ZipDecoder().decodeBytes(bytes);
   
-  // Rechercher le fichier document.xml
   for (final file in archive) {
     if (file.name == 'word/document.xml') {
       final xmlString = utf8.decode(file.content as List<int>);
-      // Extraire le texte du XML avec mise en forme
       return _parseDocumentXml(xmlString);
     }
   }
@@ -379,61 +366,55 @@ class DocumentViewPage extends StatelessWidget {
 
   Future<void> downloadFile(BuildContext context, String docxUrl, String name) async {
     final url = Uri.parse(docxUrl);
-  if (!url.isAbsolute || (url.scheme != 'http' && url.scheme != 'https')) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('URL invalide'),
-      ),
-    );
-    return;
-  }
-
-  // Ajoutez le token d'authentification ici
-  final response = await http.get(url, headers: {
-    'Authorization': 'Bearer $TokenUser',
-  });
-
-  if (response.statusCode == 200) {
-    // Décodage de la réponse JSON
-    Map<String, dynamic> jsonResponse = json.decode(response.body);
-    String base64Data = jsonResponse['file']['data']; // Récupérer les données encodées
-
-    // Décoder les données Base64
-    List<int> bytes = base64Decode(base64Data);
-
-    // Obtenir le répertoire de stockage
-    final Directory? directory = await getApplicationDocumentsDirectory();
-    if (directory != null) {
-      final String docxDirectoryPath = '${directory.path}/Notario_Documents';
-      final Directory docxDirectory = Directory(docxDirectoryPath);
-
-      // Créez le répertoire si ce n'est pas déjà fait
-      await docxDirectory.create(recursive: true);
-      final File file = File('${docxDirectory.path}/procuration.docx'); // Ou utilisez un nom dynamique
-
-      // Écrire les données dans le fichier
-      await file.writeAsBytes(bytes);
-
+    if (!url.isAbsolute || (url.scheme != 'http' && url.scheme != 'https')) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Document téléchargé avec succès : ${file.path}'),
+          content: Text('URL invalide'),
         ),
       );
+      return;
+    }
+
+    final response = await http.get(url, headers: {
+      'Authorization': 'Bearer $TokenUser',
+    });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      String base64Data = jsonResponse['file']['data'];
+      List<int> bytes = base64Decode(base64Data);
+
+      // Obtenir le répertoire de téléchargements
+      final Directory? directory = await getExternalStorageDirectory();
+      if (directory != null) {
+        final String downloadsPath = '${directory.path}/Download'; // Chemin vers le dossier "Téléchargements"
+        final Directory downloadsDirectory = Directory(downloadsPath);
+
+        await downloadsDirectory.create(recursive: true);
+        final File file = File('$downloadsPath/$name.docx'); // Nom du fichier
+
+        await file.writeAsBytes(bytes);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Document téléchargé avec succès : ${file.path}'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Impossible d\'obtenir le répertoire de téléchargements'),
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Impossible d\'obtenir le répertoire de stockage externe'),
+          content: Text('Échec du téléchargement du Document, statut: ${response.statusCode}'),
         ),
       );
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Échec du téléchargement du Document, statut: ${response.statusCode}'),
-      ),
-    );
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -442,9 +423,9 @@ class DocumentViewPage extends StatelessWidget {
         title: Text("Contenu du Document"),
         actions: [
           IconButton(
-            icon: Icon(Icons.download), // Icône de téléchargement
+            icon: Icon(Icons.download),
             onPressed: () {
-              downloadFile(context, documentUrl, documentName); // Appeler la méthode de téléchargement
+              downloadFile(context, documentUrl, documentName);
             },
           ),
         ],
@@ -453,9 +434,10 @@ class DocumentViewPage extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         child: Text(
           documentContent,
-          style: TextStyle(fontSize: 16.0), // Vous pouvez ajuster la taille de la police ici
+          style: TextStyle(fontSize: 16.0),
         ),
       ),
     );
   }
 }
+
