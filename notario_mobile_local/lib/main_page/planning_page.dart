@@ -32,7 +32,7 @@ class Planning extends StatefulWidget {
 }
 
 class _PlanningState extends State<Planning> {
-  bool showPastAppointments = false; // État pour afficher ou non les rendez-vous passés
+  bool showPastAppointments = false;
   List rdvList = create_planning_list(rdv_list);
 
   bool isPastAppointment(String date) {
@@ -42,7 +42,6 @@ class _PlanningState extends State<Planning> {
 
   @override
   Widget build(BuildContext context) {
-    // Filtrer les rendez-vous en fonction de l'état de showPastAppointments
     List filteredAppointments = rdvList.where((appointment) {
       if (showPastAppointments) {
         return !isPastAppointment(appointment['date']);
