@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'notaires_page.dart';
 
 
 class LiaisonNotairePage extends StatefulWidget {
@@ -70,6 +71,10 @@ class _LiaisonNotairePageState extends State<LiaisonNotairePage> {
                             textColor: Colors.white,
                             fontSize: 16.0);
                         typeUser = 'Client';
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Notaires()),
+                        );
                       },
                       child: Text('Lier'),
                       style: ElevatedButton.styleFrom(
