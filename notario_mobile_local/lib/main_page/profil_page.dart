@@ -21,16 +21,6 @@ var profil_photo = '';
 var profil_firstName_notary = '';
 var profil_lastName_notary = '';
 
-void navigateToLiaisonNotairePage(BuildContext context) async {
-  List<dynamic> notaires = await api_get_notaires();
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => LiaisonNotairePage(notaires: notaires),
-    ),
-  );
-}
-
 void get_user_infos() async {
   var user = await getUserInfo();
   profil_phone = user['user']['phone'];
@@ -71,6 +61,7 @@ class _ProfilState extends State<Profil> {
         profil_photo = '';
       else
         profil_photo = user['user']['photo'];
+        print(profil_photo);
       user['user']['id'];
     });
 
@@ -79,33 +70,6 @@ class _ProfilState extends State<Profil> {
       profil_firstName_notary = notary['first_name'];
       profil_lastName_notary = notary['last_name'];
     });
-  }
-
-  Future<void> _dissociateNotary(BuildContext context) async {
-    try {
-      await apiDissociateNotary();
-      setState(() {
-        profil_firstName_notary = '';
-        profil_lastName_notary = '';
-      });
-      Fluttertoast.showToast(
-          msg: "Vous avez été dissocié du notaire.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.grey,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } catch (e) {
-      Fluttertoast.showToast(
-          msg: "Erreur lors de la dissociation : $e",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
   }
 
   @override
@@ -125,45 +89,6 @@ class _ProfilState extends State<Profil> {
                   width: 100,
                   height: 100,
                 ),
-              ),
-              ListTile(
-                title: Text(
-                  'Lier avec un notaire',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  if (typeUser == "User")
-                    navigateToLiaisonNotairePage(context);
-                  else if (typeUser == "Client") {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Accès refusé'),
-                          content: Text(
-                              'Vous êtes déjà lié avec un notaire. Vous ne pouvez pas vous lier avec un autre.'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-               ListTile(
-                title: Text(
-                  'Dissocier',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  _dissociateNotary(context);
-                },
               ),
                ListTile(
                 title: Text(
@@ -234,38 +159,6 @@ class _ProfilState extends State<Profil> {
                 },
               ),
               ListTile(
-                  title: Text(
-                    'Message',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    if (typeUser == "Client") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ChatPage()),
-                      );
-                    } else if (typeUser == "User") {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Accès refusé'),
-                            content: Text(
-                                'Vous devez être lié avec un notaire pour accéder à la messagerie.'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  }),
-              ListTile(
                 leading: Icon(Icons.settings, color: Colors.white),
                 title: Text(
                   'Paramètres',
@@ -297,7 +190,6 @@ class _ProfilState extends State<Profil> {
             style: TextStyle(
               color: Colors.white,
               fontSize: 30,
-              decoration: TextDecoration.underline,
               fontWeight: FontWeight.bold,
             ),
           ),

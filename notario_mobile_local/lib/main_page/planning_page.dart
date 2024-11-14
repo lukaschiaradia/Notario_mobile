@@ -32,7 +32,7 @@ class Planning extends StatefulWidget {
 }
 
 class _PlanningState extends State<Planning> {
-  bool showPastAppointments = false; // État pour afficher ou non les rendez-vous passés
+  bool showPastAppointments = false;
   List rdvList = create_planning_list(rdv_list);
 
   bool isPastAppointment(String date) {
@@ -42,7 +42,6 @@ class _PlanningState extends State<Planning> {
 
   @override
   Widget build(BuildContext context) {
-    // Filtrer les rendez-vous en fonction de l'état de showPastAppointments
     List filteredAppointments = rdvList.where((appointment) {
       if (showPastAppointments) {
         return !isPastAppointment(appointment['date']);
@@ -63,7 +62,6 @@ class _PlanningState extends State<Planning> {
               style: TextStyle(
                   fontSize: 30,
                   color: Color(0Xff6949FF),
-                  decoration: TextDecoration.underline,
                   fontWeight: FontWeight.bold)),
         ),
         actions: <Widget>[
@@ -74,25 +72,59 @@ class _PlanningState extends State<Planning> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text("Demande d'événement"),
+                    backgroundColor: Color(0xFF351EA4),
+                    title: Text(
+                      "Demande d'événement",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
                             onChanged: (value) {
                               date = value;
                             },
                             decoration: InputDecoration(
                               hintText: 'Quand voulez vous un rendez-vous',
+                              hintStyle: TextStyle(
+                                color: Colors.white70,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ),
+                          SizedBox(height: 16),
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
                             onChanged: (value) {
                               reason = value;
                             },
                             decoration: InputDecoration(
-                              hintText:
-                                  'Expliquez pourquoi vous voulez un rendez-vous',
+                              hintText: 'Expliquez pourquoi vous voulez un rendez-vous',
+                              hintStyle: TextStyle(
+                                color: Colors.white70,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -100,7 +132,12 @@ class _PlanningState extends State<Planning> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('Envoyer'),
+                        child: Text(
+                          'Envoyer',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                         onPressed: () {
                           api_ask_rdv(Date: date, reason: reason);
                           Navigator.of(context).pop();
@@ -108,12 +145,27 @@ class _PlanningState extends State<Planning> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Confirmation'),
+                                backgroundColor: Color(0xFF351EA4),
+                                title: Text(
+                                  'Confirmation',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
                                 content: Text(
-                                    'Votre demande a été soumise avec succès.'),
+                                  'Votre demande a été soumise avec succès.',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
                                 actions: <Widget>[
                                   TextButton(
-                                    child: Text('OK'),
+                                    child: Text(
+                                      'OK',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
@@ -174,16 +226,10 @@ class rdvCard extends StatefulWidget {
 }
 
 class _rdvCardState extends State<rdvCard> {
-  bool isFav = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          isFav = !isFav;
-        });
-      },
       child: Container(
         margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -250,15 +296,6 @@ class _rdvCardState extends State<rdvCard> {
                         color: Colors.white,
                       ),
                     ),
-                    if (isFav)
-                      FadeInUp(
-                        child: Lottie.asset(
-                          './images/fav_lottie.json',
-                          repeat: false,
-                          height: 60,
-                          width: 60,
-                        ),
-                      ),
                   ],
                 ),
               ),

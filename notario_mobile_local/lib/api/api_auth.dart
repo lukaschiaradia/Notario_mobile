@@ -157,3 +157,34 @@ Future<dynamic> apiForgotPassword({required String email}) async {
     throw (e.toString());
   }
 }
+
+Future<dynamic> apiDeleteMessage({required String messageUid}) async {
+  // Remplacer 'ip' par l'adresse de ton API.
+  var endPoint = Uri.http(ip, 'chat/message/delete/$messageUid');
+  
+  try {
+    var response = await Client().delete(
+      endPoint,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ' + TokenUser,
+      },
+    );
+
+    // Vérification du statut de la réponse
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body);
+      return jsonResponse; // Message supprimé
+    } else if (response.statusCode == 401) {
+      throw Exception('Invalid user');
+    } else if (response.statusCode == 403) {
+      throw Exception('You don\'t have permission to delete this message');
+    } else if (response.statusCode == 404) {
+      throw Exception('Message not found');
+    } else {
+      throw Exception('Failed to delete message');
+    }
+  } catch (e) {
+    throw Exception(e.toString());
+  }
+}

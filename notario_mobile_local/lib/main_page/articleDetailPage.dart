@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:notario_mobile/models/utilisateur_article.dart';
 import '../utils/constants/contants_url.dart';
 
-
 class ArticleDetailPage extends StatelessWidget {
   final Article articleData;
 
@@ -20,16 +19,16 @@ class ArticleDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           if (articleData.image != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                'http://' + ip + articleData.image!,
-                fit: BoxFit.cover,
-                width: 200,
-                height: 200,
+            if (articleData.image != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
+                  'http://' + ip + articleData.image!,
+                  fit: BoxFit.cover,
+                  width: 200,
+                  height: 200,
+                ),
               ),
-            ),
             SizedBox(height: 20),
             Text(
               articleData.title,
@@ -41,7 +40,7 @@ class ArticleDetailPage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'By ${articleData.author['first_name']} ${articleData.author['last_name']}',
+              'By ${articleData.author.firstName} ${articleData.author.lastName}',
               style: TextStyle(
                 fontSize: 16,
                 fontStyle: FontStyle.italic,

@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:notario_mobile/api/api.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import '../utils/constants/contants_url.dart';
 
 var profil_phone = '';
 var profil_firstName = '';
 var profil_lastName = '';
 var profil_adresse = '';
 var profil_email = '';
-
-void get_notary_infos() async {
-    var notary = await api_get_notary();
-    profil_phone = notary['phone'];
-    profil_adresse = notary['address'];
-    profil_firstName = notary['first_name'];
-    profil_lastName = notary['last_name'];
-    profil_email = notary['email'];
-}
+var profil_photo = '';
 
 class InfoNotairePage extends StatefulWidget {
   @override
@@ -36,6 +29,45 @@ class _InfoNotairePageState extends State<InfoNotairePage> {
     return notary;
   }
 
+  void _contactNotary() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Contacter le notaire"),
+          actions: [
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _sendEmail();
+                },
+                child: Text("Mail"),
+              ),
+            ),
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Annuler"),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _sendEmail() async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: profil_email,
+      query: Uri.encodeQueryComponent('Bonjour,'),
+    );
+    await launch(emailLaunchUri.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +76,7 @@ class _InfoNotairePageState extends State<InfoNotairePage> {
         backgroundColor: Colors.blueGrey,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<Map<String, dynamic>>(
           future: _notaryInfoFuture,
           builder: (context, snapshot) {
@@ -62,66 +94,64 @@ class _InfoNotairePageState extends State<InfoNotairePage> {
               );
             } else {
               var notary = snapshot.data!;
-              return ListView(
-                children: <Widget>[
-                  Card(
-                    color: Colors.blue[50],
-                    elevation: 5,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Icon(Icons.person, color: Colors.white),
-                        backgroundColor: Colors.blue,
-                      ),
-                      title: Text('Prénom'),
-                      subtitle: Text(notary['first_name'] ?? ''),
+              profil_photo = notary['photo'] ?? '';
+              profil_firstName = notary['first_name'] ?? '';
+              profil_lastName = notary['last_name'] ?? '';
+              profil_email = notary['email'] ?? '';
+              profil_phone = notary['phone'] ?? '';
+              profil_adresse = notary['address'] ?? '';
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20),
+                  CircleAvatar(
+                    radius: 80,
+                    backgroundImage: profil_photo.isEmpty
+                        ? AssetImage('images/noicon.jpg')
+                        : NetworkImage('http://' + ip + profil_photo) as ImageProvider,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    profil_firstName + ' ' + profil_lastName,
+                    style: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Card(
-                    color: Colors.green[50],
-                    elevation: 5,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Icon(Icons.person, color: Colors.white),
-                        backgroundColor: Colors.green,
-                      ),
-                      title: Text('Nom de famille'),
-                      subtitle: Text(notary['last_name'] ?? ''),
-                    ),
-                  ),
-                  Card(
-                    color: Colors.red[50],
-                    elevation: 5,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Icon(Icons.phone, color: Colors.white),
-                        backgroundColor: Colors.red,
-                      ),
-                      title: Text('Téléphone'),
-                      subtitle: Text(notary['phone'] ?? ''),
-                    ),
-                  ),
-                  Card(
-                    color: Colors.purple[50],
-                    elevation: 5,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Icon(Icons.email, color: Colors.white),
-                        backgroundColor: Colors.purple,
-                      ),
-                      title: Text('Email'),
-                      subtitle: Text(notary['email'] ?? ''),
-                    ),
-                  ),
-                  Card(
-                    color: Colors.orange[50],
-                    elevation: 5,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Icon(Icons.home, color: Colors.white),
-                        backgroundColor: Colors.orange,
-                      ),
-                      title: Text('Adresse'),
-                      subtitle: Text(notary['address'] ?? ''),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ProfileInfoItem(
+                          title: 'Email',
+                          value: profil_email,
+                        ),
+                        Divider(),
+                        ProfileInfoItem(
+                          title: 'Téléphone',
+                          value: profil_phone,
+                        ),
+                        Divider(),
+                        ProfileInfoItem(
+                          title: 'Adresse',
+                          value: profil_adresse,
+                        ),
+                        SizedBox(height: 30),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: _contactNotary,
+                            child: Text('Contacter'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueGrey,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -129,6 +159,42 @@ class _InfoNotairePageState extends State<InfoNotairePage> {
             }
           },
         ),
+      ),
+    );
+  }
+}
+
+class ProfileInfoItem extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const ProfileInfoItem({
+    Key? key,
+    required this.title,
+    required this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.end,
+            ),
+          ),
+        ],
       ),
     );
   }

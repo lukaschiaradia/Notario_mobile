@@ -1,16 +1,33 @@
+class Author {
+  final String firstName;
+  final String lastName;
+
+  Author({
+    required this.firstName,
+    required this.lastName,
+  });
+
+  factory Author.fromJson(Map<String, dynamic> json) {
+    return Author(
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+    );
+  }
+}
+
 class Article {
-  final int id;
+  final int? id;
   final String title;
   final String description;
   final String content;
   final String createdAt;
   final String updatedAt;
   final String? image;
-  final Map<String, dynamic> author;
+  final Author author;
   final List<dynamic> comments;
 
   Article({
-    required this.id,
+    this.id,
     required this.title,
     required this.description,
     required this.content,
@@ -23,15 +40,15 @@ class Article {
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      content: json['content'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      id: json['id'] as int?,
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      content: json['content'] ?? '',
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
       image: json['image'],
-      author: json['author'],
-      comments: json['comments'],
+      author: Author.fromJson(json['author'] ?? {}),
+      comments: json['comments'] ?? [],
     );
   }
 }

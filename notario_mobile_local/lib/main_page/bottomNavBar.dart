@@ -3,6 +3,7 @@ import 'profil_page.dart';
 import 'document_page.dart';
 import 'planning_page.dart';
 import 'faq_page.dart';
+import 'notaires_page.dart';
 import '../api/api.dart';
 import '../utils/constants/contants_url.dart';
 
@@ -21,9 +22,9 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       currentIndex: _currentIndex,
-      unselectedItemColor: Colors.white.withOpacity(0.6), // Couleur pour les éléments non sélectionnés
-      selectedItemColor: Color(0xFF351EA4), // Couleur pour l'élément sélectionné
-      backgroundColor: Color(0xFF1A1B25), // Couleur de fond de la barre
+      unselectedItemColor: Colors.white.withOpacity(0.6),
+      selectedItemColor: Color(0xFF351EA4),
+      backgroundColor: Color(0xFF1A1B25),
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: ImageIcon(
@@ -89,7 +90,7 @@ class _ButtonNavBarState extends State<ButtonNavBar> {
           } else if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Profil()),
+              MaterialPageRoute(builder: (context) => Notaires()),
             );
           } else if (index == 3) {
             faq_list = Future(() => api_get_questions());

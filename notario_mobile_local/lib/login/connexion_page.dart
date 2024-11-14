@@ -113,6 +113,8 @@ class ConnexionPage extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => DocumentPage()),
       );
+    } else {
+      alertConnectionNotaire(context);
     }
   }
 
@@ -121,11 +123,27 @@ class ConnexionPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Première connexion'),
-          content: Text('Voulez-vous lancer le tutoriel ?'),
+          backgroundColor: Color(0xFF351EA4),
+          title: Text(
+            'Première connexion',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          content: Text(
+            'Voulez-vous lancer le tutoriel ?',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
           actions: <Widget>[
             TextButton(
-              child: Text('Oui'),
+              child: Text(
+                'Oui',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -134,7 +152,12 @@ class ConnexionPage extends StatelessWidget {
               },
             ),
             TextButton(
-              child: Text('Non'),
+              child: Text(
+                'Non',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 _navigateBasedOnUserType(context);
@@ -153,6 +176,26 @@ class ConnexionPage extends StatelessWidget {
         return AlertDialog(
           title: Text('Erreur'),
           content: Text("Le mail ou le mot de passe indiqué est incorrect."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> alertConnectionNotaire(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Erreur'),
+          content: Text("Impossible de se connecter avec un compte notaire."),
           actions: [
             TextButton(
               onPressed: () {
