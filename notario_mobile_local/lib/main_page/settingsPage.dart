@@ -157,7 +157,7 @@ class SettingsPage extends StatelessWidget {
         style: TextStyle(color: Colors.white),
       ),
       onTap: () {
-        _launchURL('http://20.111.31.171:3000');
+        _launchURL('http://92.113.25.24/');
       },
     );
   }
