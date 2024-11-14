@@ -226,16 +226,10 @@ class rdvCard extends StatefulWidget {
 }
 
 class _rdvCardState extends State<rdvCard> {
-  bool isFav = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          isFav = !isFav;
-        });
-      },
       child: Container(
         margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -302,15 +296,6 @@ class _rdvCardState extends State<rdvCard> {
                         color: Colors.white,
                       ),
                     ),
-                    if (isFav)
-                      FadeInUp(
-                        child: Lottie.asset(
-                          './images/fav_lottie.json',
-                          repeat: false,
-                          height: 60,
-                          width: 60,
-                        ),
-                      ),
                   ],
                 ),
               ),
