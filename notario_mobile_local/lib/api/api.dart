@@ -2,6 +2,7 @@ import 'dart:convert' as convert;
 import 'dart:convert';
 import 'dart:io';
 import 'package:notario_mobile/login/connexion_page.dart';
+import 'package:notario_mobile/api/api_auth.dart';
 import 'package:http/http.dart';
 import 'package:notario_mobile/models/utilisateur_create_rdv.dart';
 import 'package:notario_mobile/models/utilisateur_message.dart';
@@ -125,22 +126,76 @@ List<dynamic> create_messages_list(List chat_with_messages) {
   return messages;
 }
 
-Future<num> api_add_message(
-    {required int receiver, required String message}) async {
-  var endPoint = Uri.http(ip, '/chat/add/');
-  Map data = {};
-  data['receiver'] = receiver;
-  data['text'] = message;
+Future<void> api_add_message(AddMessage message) async {
+  var endPoint = Uri.http(ip, '/chat/message/add/');
+
   try {
-    var response = await Client().post(endPoint,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer ' + TokenUser,
-        },
-        body: convert.json.encode(data));
-    return await (response.statusCode);
+    final response = await Client().post(
+      endPoint,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + '$TokenUser',
+      },
+      body: json.encode(message.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      // Message envoyé avec succès
+      print('Message envoyé avec succès: ${response.body}');
+    } else if (response.statusCode == 401) {
+      // Utilisateur non valide
+      print('Utilisateur non valide : ${response.body}');
+    } else if (response.statusCode == 404) {
+      // Utilisateur non trouvé
+      print('Utilisateur non trouvé : ${response.body}');
+    } else {
+      // Autres erreurs
+      print('Erreur lors de l\'envoi du message: ${response.statusCode}');
+    }
   } catch (e) {
-    throw (e.toString());
+    print('Erreur de connexion: $e');
+  }
+}
+
+Future<void> api_update_message(String messageUid, String newText) async {
+  var endPoint = Uri.http(ip, 'chat/message/update/$messageUid');
+  print(endPoint);
+
+  // Création du corps de la requête avec le texte du message mis à jour
+  var body = json.encode({
+    'text': newText, // Le texte modifié du message
+  });
+
+  try {
+    // Envoi de la requête PUT pour modifier le message
+    final response = await Client().put(
+      endPoint,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + '$TokenUser', // Authentification avec token
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      // Si la mise à jour est réussie
+      print('Message mis à jour avec succès: ${response.body}');
+    } else if (response.statusCode == 401) {
+      // Si l'utilisateur n'est pas authentifié
+      print('Utilisateur non valide : ${response.body}');
+    } else if (response.statusCode == 403) {
+      // Si l'utilisateur n'a pas la permission de modifier ce message
+      print('Vous n\'avez pas la permission de modifier ce message : ${response.body}');
+    } else if (response.statusCode == 404) {
+      // Si le message n'a pas été trouvé
+      print('Message non trouvé : ${response.body}');
+    } else {
+      // Autres erreurs
+      print('Erreur lors de la modification du message: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Si une erreur de connexion se produit
+    print('Erreur de connexion: $e');
   }
 }
 
@@ -278,44 +333,88 @@ Future<dynamic> api_get_invite_requests() async {
   }
 }
 
-Future<List<String>> api_get_chat_id() async {
-  var endPoint = Uri.http(ip, '/chat/');
+Future<String> api_get_chat_id() async {
+  var endPoint = Uri.http(ip, '/chat/get/all/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + TokenUser,
     });
-    var json_response = response.body;
-    var decode = utf8.decode(json_response.runes.toList());
-    var json_map = json.decode(decode);
 
-    List<String> chatIds = [];
-    for (var chat in json_map) {
-      chatIds.add(chat['id'].toString());
+    // Décodage du corps de la réponse en UTF-8
+    var decodedResponse = utf8.decode(response.bodyBytes); // Correction ici
+    var json_map = json.decode(decodedResponse);
+
+    print(json_map);
+
+    if (json_map.containsKey('data')) {
+      List<dynamic> chatsData = json_map['data'];
+
+      if (chatsData.isNotEmpty) {
+        String chatId = chatsData[0]['uid'].toString();
+        print('chat id = $chatId');
+        return chatId;
+      } else {
+        print('Erreur: liste "data" vide');
+        return '';
+      }
+    } else {
+      print('Erreur: clé "data" non trouvée dans la réponse');
+      return '';
     }
-
-    return chatIds;
   } catch (e) {
+    print('Erreur lors du chargement de l\'identifiant du chat: $e');
     throw (e.toString());
   }
 }
 
-Future<List<dynamic>> api_get_chat_with_notaire(
-    {required dynamic idChat}) async {
+
+Future<Map<String, dynamic>> api_get_chat_details(String uid) async {
+  var endPoint = Uri.http(ip, '/chat/get/$uid');
+  try {
+    var response = await Client().get(endPoint, headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TokenUser,
+    });
+
+    if (response.statusCode == 200) {
+      var decodedResponse = utf8.decode(response.bodyBytes); // Décodage UTF-8
+      try {
+        var json_map = json.decode(decodedResponse); // Validation JSON
+        print('Détails du chat pour UID $uid: $json_map');
+        return json_map;
+      } catch (e) {
+        print('Erreur de décodage JSON: ${e.toString()}');
+        throw Exception('La réponse n\'est pas un JSON valide');
+      }
+    } else {
+      print('Erreur: statut ${response.statusCode} pour UID $uid');
+      throw Exception('Erreur lors du chargement des détails du chat');
+    }
+  } catch (e) {
+    print('Erreur lors de la récupération des détails du chat: $e');
+    throw (e.toString());
+  }
+}
+
+
+
+Future<List<dynamic>> api_get_chat_with_notaire({required dynamic idChat}) async {
   var endPoint = Uri.http(ip, '/chat/$idChat');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + TokenUser,
     });
-    var json_response = response.body;
-    var decode = utf8.decode(json_response.runes.toList());
-    var json_map = json.decode(decode);
-    return await json_map;
+
+    var decodedResponse = utf8.decode(response.bodyBytes); // Correction ici
+    var json_map = json.decode(decodedResponse);
+    return json_map;
   } catch (e) {
     throw (e.toString());
   }
 }
+
 
 Future<void> apiDissociateNotary() async {
   var endPoint = Uri.http(ip, '/clients/dissociate/');
