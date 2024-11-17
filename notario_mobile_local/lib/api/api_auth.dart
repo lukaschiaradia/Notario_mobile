@@ -160,7 +160,7 @@ Future<dynamic> apiForgotPassword({required String email}) async {
 Future<dynamic> apiDeleteMessage({required String messageUid}) async {
   // Remplacer 'ip' par l'adresse de ton API.
   var endPoint = Uri.http(ip, 'chat/message/delete/$messageUid');
-  
+
   try {
     var response = await Client().delete(
       endPoint,
@@ -185,5 +185,36 @@ Future<dynamic> apiDeleteMessage({required String messageUid}) async {
     }
   } catch (e) {
     throw Exception(e.toString());
+  }
+}
+
+Future<dynamic> apiUpdateMessage({
+  required String messageUid,
+  required String newText,
+}) async {
+  var endPoint = Uri.http(ip, '/chat/message/update/$messageUid');
+  try {
+    print(TokenUser);
+    print(messageUid);
+    print(newText);
+    var response = await Client().patch(
+      endPoint,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ' + TokenUser,
+      },
+      body: jsonEncode(<String, String>{
+        'text': newText,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          'Erreur lors de la modification du message: ${response.body}');
+    }
+  } catch (e) {
+    throw Exception('Erreur lors de la connexion: $e');
   }
 }

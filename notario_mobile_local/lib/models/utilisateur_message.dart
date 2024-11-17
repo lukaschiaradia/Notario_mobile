@@ -20,11 +20,11 @@ class AddMessage {
 
 
 class ChatMessage {
-  final String id; // ID du message
-  final String sender; // ID de l'expéditeur
-  final String receiver; // ID du destinataire
-  late final String text; // Contenu du message
-  final DateTime createdAt; // Date de création
+  final String id; // Gardez ceci comme final, car l'ID ne devrait pas changer
+  final String sender; // Idem, l'expéditeur ne change pas
+  final String receiver; // Idem pour le destinataire
+  String text;  // Supprimez `final` pour rendre cette propriété mutable
+  final DateTime createdAt;
 
   ChatMessage({
     required this.id,
@@ -34,14 +34,15 @@ class ChatMessage {
     required this.createdAt,
   });
 
-  // Fonction pour créer un ChatMessage à partir d'un JSON
+  // Factory pour créer un ChatMessage à partir d'un JSON
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
-      id: json['uid'], // Assurez-vous que cela correspond à votre structure
+      id: json['uid'],
       sender: json['sender'],
       receiver: json['receiver'],
       text: json['text'],
-      createdAt: DateTime.parse(json['created_at']), // Assurez-vous que le format est correct
+      createdAt: DateTime.parse(json['created_at']),
     );
   }
 }
+

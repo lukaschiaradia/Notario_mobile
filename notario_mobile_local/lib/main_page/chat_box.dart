@@ -111,6 +111,9 @@ class _ChatPageState extends State<ChatPage> {
               child: Text("Sauvegarder"),
               onPressed: () {
                 // Logique de mise à jour du message
+                print(message.id);
+                apiUpdateMessage(
+                    messageUid: message.id, newText: editController.text);
                 setState(() {
                   message.text = editController.text;
                   // Ajouter la logique pour sauvegarder la modification
