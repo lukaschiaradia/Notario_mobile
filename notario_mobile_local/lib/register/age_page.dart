@@ -60,7 +60,7 @@ class AgePage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    if (age == null || age!.isEmpty) {
+                    if (age.isEmpty) {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -79,7 +79,7 @@ class AgePage extends StatelessWidget {
                         },
                       );
                     } else {
-                      int? ageValue = int.tryParse(age!);
+                      int? ageValue = int.tryParse(age);
                       if (ageValue != null &&
                           ageValue >= 18 &&
                           ageValue <= 100) {

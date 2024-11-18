@@ -4,7 +4,6 @@ import '../utils/constants/contants_url.dart';
 import 'info_notaire.dart';
 import 'package:notario_mobile/main_page/chat_box.dart';
 import 'package:notario_mobile/main_page/liaisonNotairePage.dart';
-import 'package:notario_mobile/api/api_auth.dart';
 import '../api/api.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

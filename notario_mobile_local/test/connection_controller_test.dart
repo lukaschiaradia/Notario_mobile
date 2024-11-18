@@ -1,8 +1,6 @@
-import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/src/response.dart';
-import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/login/connection_controler.dart';
 import 'package:notario_mobile/models/utilisateur_login.dart';

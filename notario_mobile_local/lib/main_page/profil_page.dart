@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/main_page/articlePage.dart';
-import 'package:notario_mobile/main_page/chat_box.dart';
-import 'package:notario_mobile/main_page/liaisonNotairePage.dart';
 import 'package:notario_mobile/main_page/page_notification.dart';
 import 'package:notario_mobile/main_page/settingsPage.dart';
 import 'package:notario_mobile/utils/constants/contants_url.dart';

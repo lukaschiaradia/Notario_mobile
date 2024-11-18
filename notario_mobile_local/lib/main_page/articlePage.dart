@@ -3,7 +3,6 @@ import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/main_page/articleDetailPage.dart';
 import 'package:notario_mobile/models/utilisateur_article.dart';
 import '../utils/constants/contants_url.dart';
-import 'package:flutter/material.dart';
 
 Future<List<Article>> fetchArticles() async {
   dynamic result = await api_get_articles();

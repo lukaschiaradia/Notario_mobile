@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'bottomNavBar.dart';
 import '../api/api.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_animator/flutter_animator.dart';
-import 'package:lottie/lottie.dart';
 
 
 var date;

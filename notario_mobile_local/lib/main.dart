@@ -5,7 +5,6 @@ import 'package:notario_mobile/main_page/profil_page.dart';
 import 'welcome_page.dart';
 import 'login/connection_controler.dart';
 import 'api/api_auth.dart';
-import 'main_page/faq_page.dart';
 
 const blue_color = Color(0xFF6949FF);
 

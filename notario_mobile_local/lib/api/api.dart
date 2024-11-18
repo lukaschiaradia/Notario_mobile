@@ -1,10 +1,6 @@
 import 'dart:convert' as convert;
 import 'dart:convert';
-import 'dart:io';
-import 'package:notario_mobile/login/connexion_page.dart';
-import 'package:notario_mobile/api/api_auth.dart';
 import 'package:http/http.dart';
-import 'package:notario_mobile/models/utilisateur_create_rdv.dart';
 import 'package:notario_mobile/models/utilisateur_message.dart';
 import '../utils/constants/contants_url.dart';
 

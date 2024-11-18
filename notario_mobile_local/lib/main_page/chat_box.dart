@@ -4,9 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:notario_mobile/api/api.dart';
 import 'package:notario_mobile/api/api_auth.dart';
 import 'package:notario_mobile/models/utilisateur_message.dart';
-import 'package:notario_mobile/utils/constants/contants_url.dart';
 
-import 'package:notario_mobile/models/utilisateur_message.dart';
 
 class ChatPage extends StatefulWidget {
   @override

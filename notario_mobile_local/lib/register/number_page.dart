@@ -73,7 +73,7 @@ class NumberPage extends StatelessWidget {
                         String phonePattern = r'^\+\d{1,3}\d{9,14}$';
                         RegExp regExp = new RegExp(phonePattern);
 
-                        if (phone == null || phone!.isEmpty) {
+                        if (phone.isEmpty) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -92,7 +92,7 @@ class NumberPage extends StatelessWidget {
                               );
                             },
                           );
-                        } else if (!regExp.hasMatch(phone!)) {
+                        } else if (!regExp.hasMatch(phone)) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {

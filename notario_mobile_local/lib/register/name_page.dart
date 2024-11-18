@@ -69,10 +69,8 @@ class NamePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        if (LastName == null ||
-                            LastName!.isEmpty ||
-                            firstName == null ||
-                            firstName!.isEmpty) {
+                        if (LastName.isEmpty ||
+                            firstName.isEmpty) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {

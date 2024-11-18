@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../main.dart';
 import 'bottomNavBar.dart';
 import '../api/api.dart';
 
