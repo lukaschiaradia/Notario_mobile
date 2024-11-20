@@ -56,6 +56,7 @@ Future<dynamic> api_get_questions() async {
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
     rdv_list = json_map;
+    print(json_map);
     return await json_map;
   } catch (e) {
     throw (e.toString());

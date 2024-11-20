@@ -6,20 +6,26 @@ import '../api/api.dart';
 
 
 Future<List<dynamic>> get_faq_list() async {
-  var questionsAndAnswers = await api_get_questions();
   try {
-    return questionsAndAnswers.map((item) {
-      return {
-        'question': item['title'],
-        'answer': item['description'],
-        'category': item['category'],
-      };
-    }).toList();
+    var response = await api_get_questions(); // Appel API
+    if (response is Map && response.containsKey('data') && response['data'] is List) {
+      return (response['data'] as List).map((item) {
+        return {
+          'title': item['title'], // Question
+          'description': item['description'], // Réponse
+          'category': item['category'], // Catégorie
+        };
+      }).toList();
+    } else {
+      print('Erreur : Format inattendu des données reçues.');
+      return [];
+    }
   } catch (e) {
     print('Erreur lors de la récupération des questions et réponses : $e');
     return [];
   }
 }
+
 
 class FaqPage extends StatefulWidget {
   @override
@@ -43,23 +49,17 @@ class _FaqPageState extends State<FaqPage> {
   }
 
   Future<void> _initializePage() async {
-    try {
-      var fetchedQuestionsAndAnswers = await api_get_questions();
-      setState(() {
-        questionsAndAnswers.addAll(fetchedQuestionsAndAnswers.map((item) {
-          return {
-            'question': item['title'],
-            'answer': item['description'],
-            'category': item['category'],
-          };
-        }).toList());
-        searchQuestionsByInput(searchTextController.text);
-      });
-    } catch (e) {
-      print('Erreur lors de la récupération des questions et réponses : $e');
-      return;
-    }
+  try {
+    var fetchedQuestionsAndAnswers = await get_faq_list(); // Appel à la méthode corrigée
+    setState(() {
+      questionsAndAnswers.addAll(fetchedQuestionsAndAnswers); // Ajout des données récupérées
+      searchQuestionsByInput(searchTextController.text); // Filtrer selon la recherche
+    });
+  } catch (e) {
+    print('Erreur lors de l\'initialisation de la page : $e');
   }
+}
+
 
   void searchQuestionsByInput(String input) {
     setState(() {
