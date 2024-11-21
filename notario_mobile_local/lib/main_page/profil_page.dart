@@ -8,7 +8,7 @@ import 'bottomNavBar.dart';
 import 'info_notaire.dart';
 import '../api/api.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 
 var profil_phone = '';
 var profil_firstName = '';
@@ -59,7 +59,7 @@ class _ProfilState extends State<Profil> {
         profil_photo = '';
       else
         profil_photo = user['user']['photo'];
-        print(profil_photo);
+      print(profil_photo);
       user['user']['id'];
     });
 
@@ -88,17 +88,16 @@ class _ProfilState extends State<Profil> {
                   height: 100,
                 ),
               ),
-               ListTile(
+              ListTile(
                 title: Text(
                   'Notification',
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () {
-                   Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NotificationPage()),
-                      );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationPage()),
+                  );
                 },
               ),
               ListTile(
@@ -169,6 +168,18 @@ class _ProfilState extends State<Profil> {
                       builder: (context) => SettingsPage(),
                     ),
                   );
+                },
+              ),
+              ListTile(
+                leading:
+                    Icon(Icons.warning, color: Colors.white),
+                title: Text(
+                  'Signaler un bug',
+                  style: TextStyle(color: Colors.white),
+                ),
+                tileColor: Colors.red,
+                onTap: () {
+                  _showBugReportDialog(context);
                 },
               ),
             ],
@@ -273,7 +284,132 @@ class _ProfilState extends State<Profil> {
   }
 }
 
+void _showBugReportDialog(BuildContext context) {
+  List<String> bugTypes = [
+    "Erreur d'affichage\n",
+    "Problème de connexion\n",
+    "Plantage de l'application\n",
+    "Autre\n"
+  ];
+  List<bool> selectedBugs = List<bool>.filled(bugTypes.length, false);
+  String additionalInfo = ""; // Pour stocker le texte saisi dans "Autre"
 
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Color(0xFF1A1B25),
+        title: Text(
+          'Signaler un bug',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...bugTypes.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    String bug = entry.value;
+                    return CheckboxListTile(
+                      title: Text(
+                        bug,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      value: selectedBugs[index],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          selectedBugs[index] = value ?? false;
+                        });
+                      },
+                      activeColor: Color(0xFF351EA4),
+                      checkColor: Colors.white,
+                    );
+                  }).toList(),
+                  if (selectedBugs[3])
+                    TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          additionalInfo = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Décrivez le problème",
+                        labelStyle: TextStyle(color: Colors.grey),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(
+              'Annuler',
+              style: TextStyle(color: Color(0xFF351EA4)),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text(
+              'Envoyer',
+              style: TextStyle(color: Color(0xFF351EA4)),
+            ),
+            onPressed: () {
+              List<String> selectedBugTypes = [];
+              for (int i = 0; i < bugTypes.length; i++) {
+                if (selectedBugs[i]) {
+                  selectedBugTypes.add(bugTypes[i]);
+                }
+              }
+              if (selectedBugs[3] && additionalInfo.isNotEmpty) {
+                selectedBugTypes.add("Autre : $additionalInfo");
+              }
+
+              if (selectedBugTypes.isNotEmpty) {
+                _sendBugReport(selectedBugTypes);
+              }
+              Navigator.of(context).pop();
+              Fluttertoast.showToast(
+                msg: 'Rapport de bug envoyé avec succès.',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Color(0xFF1A1B25),
+                textColor: Colors.white,
+                fontSize: 16.0,
+              );
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _sendBugReport(List<String> bugTypes) {
+  String subject = "Rapport de bug";
+  String body = "Types de bugs signalés :\n\n" + bugTypes.join("\n\n");
+  String email = "votreboitemail@gmail.com";
+
+  Uri emailUri = Uri(
+    scheme: 'mailto',
+    path: email,
+    query: {
+      'subject': Uri.encodeComponent(subject),
+      'body': Uri.encodeComponent(body),
+    }.entries.map((e) => '${e.key}=${e.value}').join('&'),
+  );
+
+  launchUrl(emailUri);
+}
 
 class ProfileInfoItem extends StatelessWidget {
   final String title;

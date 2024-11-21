@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 const accountsRegister = '/accounts/register/';
 const accountsLogin = '/accounts/login/';
 const accountsModifs = '/accounts/update/';
@@ -17,3 +19,14 @@ String TokenUser = '';
 String myId = '';
 String typeUser = '';
 String stateUser = '';
+bool isDarkMode = false;
+
+
+class AppColors {
+  static const primaryColor = Color(0xFF351EA4);
+  static const backgroundDark = Color(0xFF1A1B25);
+}
+
+class AppTextStyles {
+  static const titleStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+}

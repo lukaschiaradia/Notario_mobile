@@ -36,28 +36,39 @@ void main() async {
 class MyApp extends StatelessWidget {
   final ConnectionControler connectionControler;
 
+  // On crée un ValueNotifier pour gérer le thème
+  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
+
   const MyApp({super.key, required this.connectionControler});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Notario',
-      debugShowCheckedModeBanner: false,
-      home: FutureBuilder(
-        future: connectionControler.loadCredentials(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text("Erreur de chargement : ${snapshot.error}"));
-          }
-          if (connectionControler.stayLoggedIn) {
-            return Profil();
-          }
-          return WelcomePage();
-        },
-      ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, ThemeMode currentMode, child) {
+        return MaterialApp(
+          title: 'Notario',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData.light(), // Thème clair par défaut
+          darkTheme: ThemeData.dark(), // Thème sombre
+          themeMode: currentMode, // Utilisation du mode choisi
+          home: FutureBuilder(
+            future: connectionControler.loadCredentials(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text("Erreur de chargement : ${snapshot.error}"));
+              }
+              if (connectionControler.stayLoggedIn) {
+                return Profil();
+              }
+              return WelcomePage();
+            },
+          ),
+        );
+      },
     );
   }
 }
