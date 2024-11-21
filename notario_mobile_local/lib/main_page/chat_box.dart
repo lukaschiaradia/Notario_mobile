@@ -52,14 +52,15 @@ class _ChatPageState extends State<ChatPage> {
       // Extraire les messages de la réponse
       List<dynamic> messagesData = chatDetails['data'];
       setState(() {
-        messages = messagesData
-            .map((messageData) => ChatMessage.fromJson(messageData))
-            .toList()
-            .reversed
-            .toList(); // Inverser les messages pour afficher les plus récents en bas
+  messages = messagesData
+      .map((messageData) => ChatMessage.fromJson(messageData))
+      .where((message) => message.sender != null) // Filtrer les messages avec un expéditeur nul
+      .toList()
+      .reversed
+      .toList(); 
+  _scrollToBottom();
+});
 
-        _scrollToBottom(); // Faire défiler automatiquement après le chargement
-      });
     } catch (e) {
       print('Erreur lors du chargement du chat: $e');
     }
