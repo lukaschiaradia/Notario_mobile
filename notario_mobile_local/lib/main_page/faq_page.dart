@@ -4,28 +4,21 @@ import '../main.dart';
 import 'bottomNavBar.dart';
 import '../api/api.dart';
 
-
 Future<List<dynamic>> get_faq_list() async {
+  var questionsAndAnswers = await api_get_questions();
   try {
-    var response = await api_get_questions(); // Appel API
-    if (response is Map && response.containsKey('data') && response['data'] is List) {
-      return (response['data'] as List).map((item) {
-        return {
-          'title': item['title'], // Question
-          'description': item['description'], // Réponse
-          'category': item['category'], // Catégorie
-        };
-      }).toList();
-    } else {
-      print('Erreur : Format inattendu des données reçues.');
-      return [];
-    }
+    return questionsAndAnswers.map((item) {
+      return {
+        'question': item['title'],
+        'answer': item['description'],
+        'category': item['category'],
+      };
+    }).toList();
   } catch (e) {
     print('Erreur lors de la récupération des questions et réponses : $e');
     return [];
   }
 }
-
 
 class FaqPage extends StatefulWidget {
   @override
@@ -34,100 +27,72 @@ class FaqPage extends StatefulWidget {
 
 class _FaqPageState extends State<FaqPage> {
   final TextEditingController searchTextController = TextEditingController();
+  String categorySelectorController = 'Toutes les catégories';
   final List<dynamic> questionsAndAnswers = [];
-  List<dynamic> questionsAndAnswersToShow = [];
+  final List<dynamic> questionsAndAnswersToShow = [];
 
-  final List<String> categories = ["ACCOUNT", "DOCUMENT", "MEETING", "CHAT", "ARTICLE", "AUTRES"];
-  final List<String> categoriesName = ["Compte", "Documents", "Rendez-vous", "Chat", "Article", "Autres questions"];
-  late Map<String, bool> categoryFilterStates; // Etat local pour les cases à cocher dans le dialogue
+  final List<dynamic> categories = ["ACCOUNT", "DOCUMENT", "MEETING", "ARTICLE", "CHAT", "AUTRES"];
+  final List<dynamic> categoriesName = ["Compte", "Documents", "Rendez-vous", "Article", "Chat", "Autres questions"];
 
   @override
   void initState() {
     super.initState();
-    categoryFilterStates = {for (var cat in categories) cat: true}; // Initialiser toutes les catégories comme sélectionnées
     _initializePage();
   }
 
   Future<void> _initializePage() async {
-  try {
-    var fetchedQuestionsAndAnswers = await get_faq_list(); // Appel à la méthode corrigée
-    setState(() {
-      questionsAndAnswers.addAll(fetchedQuestionsAndAnswers); // Ajout des données récupérées
-      searchQuestionsByInput(searchTextController.text); // Filtrer selon la recherche
-    });
-  } catch (e) {
-    print('Erreur lors de l\'initialisation de la page : $e');
-  }
-}
-
-
-  void searchQuestionsByInput(String input) {
-    setState(() {
-      questionsAndAnswersToShow.clear();
-      if (input.isEmpty) {
-        questionsAndAnswersToShow.addAll(questionsAndAnswers.where((item) =>
-            categoryFilterStates[item['category']] == true));
-      } else {
-        for (var item in questionsAndAnswers) {
-          String question = item['question'];
-          String answer = item['answer'];
-          if ((question.toLowerCase().contains(input.toLowerCase()) ||
-              answer.toLowerCase().contains(input.toLowerCase())) &&
-              categoryFilterStates[item['category']] == true) {
-            questionsAndAnswersToShow.add(item);
-          }
-        }
-      }
-    });
-  }
-
-  void showFilterDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text('Selectionner les catégories à afficher'),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: categories.map((category) {
-                    return CheckboxListTile(
-                      title: Text(categoriesName[categories.indexOf(category)]),
-                      value: categoryFilterStates[category],
-                      onChanged: (bool? selected) {
-                        setState(() {
-                          categoryFilterStates[category] = selected ?? false;
-                          searchQuestionsByInput(searchTextController.text);
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Appliquer'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+    try {
+      var fetchedQuestionsAndAnswers = await api_get_questions();
+      setState(() {
+        questionsAndAnswersToShow.addAll(fetchedQuestionsAndAnswers.map((item) {
+          return {
+            'question': item['title'],
+            'answer': item['description'],
+            'category': item['category'],
+          };
+        }).toList());
+        questionsAndAnswers.addAll(fetchedQuestionsAndAnswers.map((item) {
+          return {
+            'question': item['title'],
+            'answer': item['description'],
+            'category': item['category'],
+          };
+        }).toList());
+      });
+    } catch (e) {
+      print('Erreur lors de la récupération des questions et réponses : $e');
+      return;
+    }
   }
 
   List<String> categoryThatHaveQuestions() {
     final List<String> categoriesThatHaveQuestions = [];
-    for (var category in categories) {
-      if (questionsAndAnswersToShow.any((item) => item['category'] == category)) {
-        categoriesThatHaveQuestions.add(category);
-      }
+    for (var i = 0; i < categories.length; i++) {
+        bool present = false;
+        for (var j = 0; j < questionsAndAnswersToShow.length; j++) {
+          if (questionsAndAnswersToShow[j]['category'] == categories[i]) {
+            present = true;
+            break;
+          }
+        }
+        if (present) {
+          categoriesThatHaveQuestions.add(categories[i]);
+        }
     }
     return categoriesThatHaveQuestions;
+  }
+
+  void filterQuestions() {
+    questionsAndAnswersToShow.clear();
+    if (categorySelectorController == 'Toutes les catégories') {
+      questionsAndAnswersToShow.addAll(questionsAndAnswers);
+    } else {
+      questionsAndAnswersToShow.addAll(questionsAndAnswers.where((item) => item['category'] == categorySelectorController).toList());
+    }
+    if (searchTextController.text.isNotEmpty) {
+      questionsAndAnswersToShow.removeWhere((item) => !item['question'].toLowerCase().contains(searchTextController.text.toLowerCase()));
+    }
+    setState(() {});
   }
 
   @override
@@ -136,99 +101,137 @@ class _FaqPageState extends State<FaqPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Color(0Xff6949FF)),
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         elevation: 0,
         centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.filter_list),
-            onPressed: showFilterDialog,
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Container(
           color: Colors.white,
-          child: Column(
+          height: 1512,
+          width: double.infinity,
+          child: Stack(
             children: [
-              Container(
-                height: 300,
-                width: double.infinity,
-                color: Color(0xFF351EA4),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                      child: Text(
-                        'Questions / Réponses',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(25, 25, 0, 0),
-                      child: Text(
-                        'Recherchez ici les réponses aux questions fréquentes des utilisateurs',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(25),
-                      child: TextField(
-                        controller: searchTextController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(45)),
-                            borderSide: BorderSide.none,
+              Column(
+                children: [
+                  Container(
+                    height: 300,
+                    width: double.infinity,
+                    color: blue_color,
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                          child: Text(
+                            'Questions / Réponses',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          hintText: "Ex: Mot de passe oublié",
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              searchQuestionsByInput(searchTextController.text);
-                              FocusScope.of(context).unfocus();
+                        ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(25, 25, 0, 0),
+                          child: Text(
+                            'Recherchez ici les réponses aux questions fréquentes des utilisateurs',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        Container (
+                          padding: EdgeInsets.all(25),
+                          child: TextField(
+                            controller: searchTextController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(45)),
+                                  borderSide: BorderSide.none),
+                              hintText:
+                                  "Ex: Mot de passe oublié",
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  filterQuestions();
+                                  FocusScope.of(context).unfocus();
+                                },
+                                child: Icon(Icons.search),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: DropdownButton<String>(
+                            value: categorySelectorController,
+                            icon: Icon(Icons.arrow_drop_down),
+                            iconSize: 24,
+                            elevation: 16,
+                            dropdownColor: Colors.white,
+                            underline: Container(
+                              height: 0,
+                              color: Colors.transparent,
+                            ),
+                            style: TextStyle(color: Colors.black),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                categorySelectorController = newValue!;
+                                filterQuestions();
+                              });
                             },
-                            child: Icon(Icons.search),
-                          ),
+                            items: ['Toutes les catégories', 'ACCOUNT', 'DOCUMENT', 'MEETING', 'ARTICLE', 'CHAT', 'AUTRES']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value == 'Toutes les catégories' ? value : categoriesName[categories.indexOf(value)], 
+                                style: TextStyle(color: Colors.black)),
+                              );
+                            }).toList(),
+                          ), 
                         ),
-                      ),
+                      ],
                     ),
-                    if (questionsAndAnswersToShow.isEmpty)
-                      Text(
-                        'Aucun résultat',
+                  ),
+                  if (questionsAndAnswersToShow.isEmpty)
+                    Container(
+                      padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
+                      child: Text(
+                        'Aucune question ne correspond à votre recherche',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 20,
                         ),
                       ),
-                  ],
-                ),
-              ),
-              if (questionsAndAnswersToShow.isNotEmpty)
-                Container(
-                  padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: categoryThatHaveQuestions().length,
-                    itemBuilder: (context, index) {
-                      final String categoryName = categoryThatHaveQuestions()[index];
+                    ),
+                  if (questionsAndAnswersToShow.isNotEmpty)
+                  Container(
+                    padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: categoryThatHaveQuestions().length,
+                      itemBuilder: (context, index) {
+                        final String categoryName = categoryThatHaveQuestions()[index];
 
-                      return DisplayCategory(
-                        categoryName: categoriesName[categories.indexOf(categoryName)],
-                        questionsAndAnswers: questionsAndAnswersToShow.where((item) => item['category'] == categoryName).toList(),
-                      );
-                    },
+                        return DisplayCategory(
+                          categoryName: categoriesName[categories.indexOf(categoryName)],
+                          questionsAndAnswers: questionsAndAnswersToShow.where((item) => item['category'] == categoryName).toList(),
+                        );
+                      },
+                    ),
                   ),
-                ),
+
+                ],
+              ),   
             ],
           ),
         ),
@@ -265,22 +268,22 @@ class _DisplayCategoryState extends State<DisplayCategory> {
               });
             },
             child: Row(
-              children: [
-                Text(
-                  widget.categoryName,
-                  style: TextStyle(
-                    color: Color(0xFF351EA4),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+            children: [
+              Text(
+                widget.categoryName,
+                style: TextStyle(
+                  color: blue_color,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
-                SizedBox(width: 5),
-                Icon(
-                  isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                  color: Color(0xFF351EA4),
-                ),
-              ],
-            ),
+              ),
+              SizedBox(width: 5),
+              Icon(
+                isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                color: blue_color,
+              ),
+            ],
+          ),
           ),
           SizedBox(height: 10),
           if (isExpanded)
@@ -293,6 +296,7 @@ class _DisplayCategoryState extends State<DisplayCategory> {
   }
 }
 
+
 class DisplayQuestionsAndAnswers extends StatefulWidget {
   final List<dynamic> questionsAndAnswers;
 
@@ -303,7 +307,8 @@ class DisplayQuestionsAndAnswers extends StatefulWidget {
       _DisplayQuestionsAndAnswersState();
 }
 
-class _DisplayQuestionsAndAnswersState extends State<DisplayQuestionsAndAnswers> {
+class _DisplayQuestionsAndAnswersState
+    extends State<DisplayQuestionsAndAnswers> {
   late List<bool> isExpanded;
 
   @override
