@@ -108,16 +108,14 @@ class _FaqPageState extends State<FaqPage> {
       body: SingleChildScrollView(
         child: Container(
           color: Colors.white,
-          height: 1512,
           width: double.infinity,
           child: Stack(
             children: [
               Column(
                 children: [
                   Container(
-                    height: 300,
                     width: double.infinity,
-                    color: blue_color,
+                    color: Color(0xFF351EA4),
                     child: Column(
                       children: [
                         Container(
@@ -199,6 +197,7 @@ class _FaqPageState extends State<FaqPage> {
                             }).toList(),
                           ), 
                         ),
+                        SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -272,7 +271,7 @@ class _DisplayCategoryState extends State<DisplayCategory> {
               Text(
                 widget.categoryName,
                 style: TextStyle(
-                  color: blue_color,
+                  color: Color(0xFF351EA4),
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -280,7 +279,7 @@ class _DisplayCategoryState extends State<DisplayCategory> {
               SizedBox(width: 5),
               Icon(
                 isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                color: blue_color,
+                color: Color(0xFF351EA4),
               ),
             ],
           ),
