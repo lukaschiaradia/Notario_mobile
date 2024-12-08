@@ -58,19 +58,23 @@ class ConnexionPage extends StatelessWidget {
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () async {
-                var value = await connectionControler.connection();
-                if (value.statusCode == successCode) {
-                  final stayLoggedIn = connectionControler.stayLoggedIn;
-                  if (stayLoggedIn) {
-                    await _saveStayLoggedInPreference();
-                  }
-                  
-                  if (stateUser == "NEW") {
-                    _showFirstTimeUserDialog(context);
+                try {
+                  var value = await connectionControler.connection();
+                  if (value.statusCode == successCode) {
+                    final stayLoggedIn = connectionControler.stayLoggedIn;
+                    if (stayLoggedIn) {
+                      await _saveStayLoggedInPreference();
+                    }
+
+                    if (stateUser == "NEW") {
+                      _showFirstTimeUserDialog(context);
+                    } else {
+                      _navigateBasedOnUserType(context);
+                    }
                   } else {
-                    _navigateBasedOnUserType(context);
+                    alertConnectionFail(context);
                   }
-                } else {
+                } catch (e) {
                   alertConnectionFail(context);
                 }
               },
