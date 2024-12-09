@@ -285,18 +285,30 @@ Future<dynamic> api_get_articles() async {
 Future<List<dynamic>> api_get_notaires() async {
   var endPoint = Uri.http(ip, '/clients/get-notaries/');
   try {
-    var response = await Client().get(endPoint, headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + TokenUser,
-    });
-    var json_response = response.body;
-    var decode = utf8.decode(json_response.runes.toList());
-    var json_list = json.decode(decode) as List;
-    return json_list;
-  } catch (e) {
-    throw (e.toString());
+    var response = await Client().get(
+      endPoint,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + TokenUser,
+      },
+    );
+    var decode = utf8.decode(response.bodyBytes);
+    var json_response = json.decode(decode);
+
+    // Extract the "data" key
+    if (json_response is Map && json_response.containsKey('data')) {
+      var notaires = json_response['data'] as List<dynamic>;
+      return notaires;
+    } else {
+      throw 'Unexpected JSON structure: $json_response';
+    }
+  } catch (e, stackTrace) {
+    print('Error in api_get_notaires: $e');
+    print('Stack trace: $stackTrace');
+    throw e;
   }
 }
+
 
 Future<dynamic> api_link_notary({required dynamic notary_id}) async {
   var endPoint = Uri.http(ip, '/clients/invite/');
