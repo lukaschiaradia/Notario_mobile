@@ -132,9 +132,9 @@ class _ProfilState extends State<Profil> {
                   style: TextStyle(color: Colors.white),
                 ),
                 onTap: () {
-                  if (typeUser == "User")
+                  //if (typeUser == "User")
                     navigateToLiaisonNotairePage(context);
-                  else if (typeUser == "Client") {
+                  /*else if (typeUser == "Client") {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -153,7 +153,7 @@ class _ProfilState extends State<Profil> {
                         );
                       },
                     );
-                  }
+                  }*/
                 },
               ),
                ListTile(

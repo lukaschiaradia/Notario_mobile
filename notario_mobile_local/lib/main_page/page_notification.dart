@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:notario_mobile/api/api.dart';
 
 
+import 'package:flutter/material.dart';
+
 class NotificationPage extends StatefulWidget {
   @override
   _NotificationPageState createState() => _NotificationPageState();
@@ -18,18 +20,18 @@ class _NotificationPageState extends State<NotificationPage> {
 
   Future<List<Notification>> fetchNotifications() async {
     try {
-      var response = await api_get_requests();
-      List<Notification> notifications = [];
-      for (var notif in response) {
-        notifications.add(Notification.fromMap(notif));
-      }
+      var response = await api_get_requests(); // Appel à l'API.
+      List<dynamic> data = response['data']; // Accès à la clé 'data'.
+      List<Notification> notifications = data.map((notif) {
+        return Notification.fromMap(notif);
+      }).toList();
       return notifications;
     } catch (e) {
       throw Exception('Erreur lors de la récupération des notifications : $e');
     }
   }
 
-  void acceptNotary(int id) {
+  void acceptNotary(String id) { // 'id' est maintenant une chaîne.
     api_acceptNotary(id: id);
     print("Notaire $id accepté");
     setState(() {
@@ -37,7 +39,7 @@ class _NotificationPageState extends State<NotificationPage> {
     });
   }
 
-  void rejectNotary(int id) {
+  void rejectNotary(String id) { // 'id' est maintenant une chaîne.
     api_rejectNotary(id: id);
     print("Notaire $id refusé");
     setState(() {
@@ -103,7 +105,7 @@ class _NotificationPageState extends State<NotificationPage> {
 }
 
 class Notification {
-  final int id;
+  final String id; // Type mis à jour pour correspondre à la réponse API.
   final String userName;
   final String email;
 
@@ -116,8 +118,8 @@ class Notification {
   factory Notification.fromMap(Map<String, dynamic> map) {
     return Notification(
       id: map['id'],
-      userName: map['user_name'],
-      email: map['email'],
+      userName: map['user_name'] ?? 'Inconnu',
+      email: map['email'] ?? 'Non spécifié',
     );
   }
 }

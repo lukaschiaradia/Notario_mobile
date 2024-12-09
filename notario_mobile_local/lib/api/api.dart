@@ -241,14 +241,20 @@ Future<List<dynamic>> api_get_notaires() async {
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + TokenUser,
+      'Authorization': 'Bearer $TokenUser',
     });
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
-    var json_list = json.decode(decode) as List;
-    return json_list;
+    var json_data = json.decode(decode);
+
+    if (json_data is Map<String, dynamic> && json_data.containsKey('data')) {
+      return json_data['data'] as List<dynamic>;
+    } else {
+      throw Exception('Unexpected JSON structure: no "data" field found');
+    }
   } catch (e) {
-    throw (e.toString());
+    print('Error decoding response: $e');
+    throw Exception('Failed to fetch notaires');
   }
 }
 
@@ -382,6 +388,7 @@ Future<void> apiDissociateNotary() async {
     } else {
       print("Erreur lors de la dissociation : ${response.body}");
     }
+    print(TokenUser);
   } catch (e) {
     throw (e.toString());
   }
@@ -397,13 +404,14 @@ Future<dynamic> api_get_requests() async {
     var json_response = response.body;
     var decode = utf8.decode(json_response.runes.toList());
     var json_map = json.decode(decode);
+    print(json_map);
     return await json_map;
   } catch (e) {
     throw (e.toString());
   }
 }
 
-Future<dynamic> api_acceptNotary({required int id}) async {
+Future<dynamic> api_acceptNotary({required String id}) async {
   var endPoint = Uri.http(ip, '/clients/accept-request/');
   Map data = {};
   data['notary_id'] = id;
@@ -420,7 +428,7 @@ Future<dynamic> api_acceptNotary({required int id}) async {
   }
 }
 
-Future<dynamic> api_rejectNotary({required int id}) async {
+Future<dynamic> api_rejectNotary({required String id}) async {
   var endPoint = Uri.http(ip, '/clients/refuse-request/');
   Map data = {};
   data['notary'] = id;

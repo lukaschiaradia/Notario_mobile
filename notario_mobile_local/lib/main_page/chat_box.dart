@@ -18,6 +18,7 @@ class _ChatPageState extends State<ChatPage> {
   List<ChatMessage> messages = [];
   late Future<String> chatUidFuture;
   late Future<String> notaryIdFuture;
+  Timer? _refreshTimer; // Timer pour recharger les messages
 
   String myId = ''; // ID de l'utilisateur
 
@@ -28,6 +29,18 @@ class _ChatPageState extends State<ChatPage> {
     _initMyId();
     chatUidFuture = api_get_chat_id();
     _loadChat();
+
+    // Lancer un timer qui recharge le chat toutes les 2 secondes
+    _refreshTimer = Timer.periodic(Duration(seconds: 2), (timer) {
+      _loadChat();
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel(); // Annuler le timer pour éviter les fuites de mémoire
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<String> _initNotary() async {
@@ -52,15 +65,14 @@ class _ChatPageState extends State<ChatPage> {
       // Extraire les messages de la réponse
       List<dynamic> messagesData = chatDetails['data'];
       setState(() {
-  messages = messagesData
-      .map((messageData) => ChatMessage.fromJson(messageData))
-      .where((message) => message.sender != null) // Filtrer les messages avec un expéditeur nul
-      .toList()
-      .reversed
-      .toList(); 
-  _scrollToBottom();
-});
-
+        messages = messagesData
+            .map((messageData) => ChatMessage.fromJson(messageData))
+            .where((message) => message.sender != null) // Filtrer les messages avec un expéditeur nul
+            .toList()
+            .reversed
+            .toList(); 
+        _scrollToBottom();
+      });
     } catch (e) {
       print('Erreur lors du chargement du chat: $e');
     }
@@ -87,8 +99,7 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  // Fonction pour éditer un message
-  void _editMessage(ChatMessage message) {
+ void _editMessage(ChatMessage message) {
     // Exemple d'implémentation : afficher une boîte de dialogue pour modifier le message
     showDialog(
       context: context,
@@ -128,7 +139,6 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  // Fonction pour supprimer un message
   void _deleteMessage(ChatMessage message) async {
     try {
       // Appel de la fonction de suppression avec l'UID du message
