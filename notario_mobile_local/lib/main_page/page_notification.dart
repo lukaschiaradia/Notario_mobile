@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notario_mobile/api/api.dart';
-
+import '../utils/constants/contants_url.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -18,31 +18,41 @@ class _NotificationPageState extends State<NotificationPage> {
 
   Future<List<Notification>> fetchNotifications() async {
     try {
-      var response = await api_get_requests();
-      List<Notification> notifications = [];
-      for (var notif in response) {
-        notifications.add(Notification.fromMap(notif));
-      }
+      var response = await api_get_requests(); // Appel à l'API.
+      List<dynamic> data = response['data']; // Accès à la clé 'data'.
+      List<Notification> notifications = data.map((notif) {
+        return Notification.fromMap(notif);
+      }).toList();
       return notifications;
     } catch (e) {
       throw Exception('Erreur lors de la récupération des notifications : $e');
     }
   }
 
-  void acceptNotary(int id) {
+  void acceptNotary(String id) { 
     api_acceptNotary(id: id);
-    print("Notaire $id accepté");
     setState(() {
-      _notifications = fetchNotifications();
+      // Supprimer la notification après acceptation
+      _notifications = _notifications.then(
+        (notifications) => notifications.where((notif) => notif.id != id).toList(),
+      );
     });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Invitation acceptée')),
+    );
   }
 
-  void rejectNotary(int id) {
+  void rejectNotary(String id) { 
     api_rejectNotary(id: id);
-    print("Notaire $id refusé");
     setState(() {
-      _notifications = fetchNotifications();
+      // Supprimer la notification après refus
+      _notifications = _notifications.then(
+        (notifications) => notifications.where((notif) => notif.id != id).toList(),
+      );
     });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Invitation refusée')),
+    );
   }
 
   @override
@@ -60,7 +70,19 @@ class _NotificationPageState extends State<NotificationPage> {
             return Center(
                 child: Text('Erreur lors du chargement des notifications'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Aucune notification'));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.notifications_off, size: 50, color: Colors.grey),
+                  SizedBox(height: 10),
+                  Text(
+                    'Aucune notification',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,
@@ -75,12 +97,16 @@ class _NotificationPageState extends State<NotificationPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton(
-                          onPressed: () => acceptNotary(notification.id),
+                          onPressed: () {
+                            typeUser = 'Client';
+                            acceptNotary(notification.id);
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                           ),
                           child: Text('Accepter'),
                         ),
+
                         SizedBox(width: 10),
                         ElevatedButton(
                           onPressed: () => rejectNotary(notification.id),
@@ -103,7 +129,7 @@ class _NotificationPageState extends State<NotificationPage> {
 }
 
 class Notification {
-  final int id;
+  final String id; 
   final String userName;
   final String email;
 
@@ -116,8 +142,8 @@ class Notification {
   factory Notification.fromMap(Map<String, dynamic> map) {
     return Notification(
       id: map['id'],
-      userName: map['user_name'],
-      email: map['email'],
+      userName: map['user_name'] ?? 'Inconnu',
+      email: map['email'] ?? 'Non spécifié',
     );
   }
 }

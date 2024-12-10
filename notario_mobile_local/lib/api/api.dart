@@ -462,7 +462,7 @@ Future<dynamic> api_get_requests() async {
   }
 }
 
-Future<dynamic> api_acceptNotary({required int id}) async {
+Future<dynamic> api_acceptNotary({required String id}) async {
   var endPoint = Uri.http(ip, '/clients/accept-request/');
   Map data = {};
   data['notary_id'] = id;
@@ -479,7 +479,7 @@ Future<dynamic> api_acceptNotary({required int id}) async {
   }
 }
 
-Future<dynamic> api_rejectNotary({required int id}) async {
+Future<dynamic> api_rejectNotary({required String id}) async {
   var endPoint = Uri.http(ip, '/clients/refuse-request/');
   Map data = {};
   data['notary'] = id;
