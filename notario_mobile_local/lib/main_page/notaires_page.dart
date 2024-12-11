@@ -103,6 +103,14 @@ class NotairesPageState extends State<Notaires> with SingleTickerProviderStateMi
             onPressed: () {
               Navigator.of(context).pop();
               _dissociateNotary(context);
+              typeUser = "User";
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Vous n'êtes plus affilié avec ce notaire"),
+                  duration: Duration(seconds: 3),
+                ),
+              );
             },
             child: Text("Oui"),
           ),

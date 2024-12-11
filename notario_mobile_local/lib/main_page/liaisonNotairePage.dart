@@ -111,15 +111,12 @@ class _LiaisonNotairePageState extends State<LiaisonNotairePage> {
                     trailing: ElevatedButton(
                       onPressed: () {
                         api_link_notary(notary_id: notaire['email']);
-                        Fluttertoast.showToast(
-                            msg:
-                                '${notaire['first_name']} ${notaire['last_name']} a été lié.',
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.grey,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Vous êtes maintenant affilié avec ce notaire"),
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
                         typeUser = 'Client';
                         Navigator.push(
                           context,
