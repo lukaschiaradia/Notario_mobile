@@ -107,6 +107,7 @@ class ConnexionPage extends StatelessWidget {
   }
 
   void _navigateBasedOnUserType(BuildContext context) {
+    print(typeUser);
     if (typeUser == "User") {
       Navigator.push(
         context,

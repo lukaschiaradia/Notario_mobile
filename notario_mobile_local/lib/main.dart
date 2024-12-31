@@ -28,7 +28,6 @@ void main() async {
 
   ApiAuth apiAuth = ApiAuth();
   ConnectionControler connectionControler = ConnectionControler(apiAuth: apiAuth);
-  
   await connectionControler.loadCredentials();
 
   runApp(MyApp(connectionControler: connectionControler));

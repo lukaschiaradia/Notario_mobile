@@ -29,7 +29,7 @@ dynamic all_messages = [];
 dynamic files_list = [];
 
 Future<dynamic> api_get_planning() async {
-  var endPoint = Uri.http(ip, '/planning/get/');
+  var endPoint = Uri.https(ip, '/planning/get/');
   print('yes');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
@@ -47,7 +47,7 @@ Future<dynamic> api_get_planning() async {
 }
 
 Future<dynamic> api_get_questions() async {
-  var endPoint = Uri.http(ip, '/faq/');
+  var endPoint = Uri.https(ip, '/faq/');
   try {
     List<dynamic> questionsList = [];
     var response = await Client().get(endPoint, headers: <String, String>{
@@ -64,7 +64,7 @@ Future<dynamic> api_get_questions() async {
 }
 
 Future<dynamic> api_get_chats() async {
-  var endPoint = Uri.http(ip, '/chat/');
+  var endPoint = Uri.https(ip, '/chat/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ List<dynamic> create_chat_list(List chats_list) {
 }
 
 Future<dynamic> api_get_chat(chatId) async {
-  var endPoint = Uri.http(ip, '/chat/$chatId');
+  var endPoint = Uri.https(ip, '/chat/$chatId');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ List<dynamic> create_messages_list(List chat_with_messages) {
 }
 
 Future<void> api_add_message(AddMessage message) async {
-  var endPoint = Uri.http(ip, '/chat/message/add/');
+  var endPoint = Uri.https(ip, '/chat/message/add/');
 
   try {
     final response = await Client().post(
@@ -159,7 +159,7 @@ Future<void> api_add_message(AddMessage message) async {
 }
 
 Future<void> api_update_message(String messageUid, String newText) async {
-  var endPoint = Uri.http(ip, 'chat/message/update/$messageUid');
+  var endPoint = Uri.https(ip, 'chat/message/update/$messageUid');
   print(endPoint);
 
   // Création du corps de la requête avec le texte du message mis à jour
@@ -202,7 +202,7 @@ Future<void> api_update_message(String messageUid, String newText) async {
 
 Future<dynamic> api_ask_rdv(
     {required String Date, required String reason}) async {
-  var endPoint = Uri.http(ip, '/planning/ask/');
+  var endPoint = Uri.https(ip, '/planning/ask/');
 
   Map data = {};
   data['available_dates'] = Date;
@@ -221,7 +221,7 @@ Future<dynamic> api_ask_rdv(
 }
 
 Future<dynamic> api_get_files({required String token}) async {
-  var endPoint = Uri.http(ip, '/files/list/');
+  var endPoint = Uri.https(ip, '/files/list/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -239,7 +239,7 @@ Future<dynamic> api_get_files({required String token}) async {
 }
 
 Future<Map<String, dynamic>> api_get_notary() async {
-  var endPoint = Uri.http(ip, '/clients/get-notary/');
+  var endPoint = Uri.https(ip, '/clients/get-notary/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -266,7 +266,7 @@ Future<Map<String, dynamic>> api_get_notary() async {
 }
 
 Future<dynamic> api_get_articles() async {
-  var endPoint = Uri.http(ip, '/articles/get/');
+  var endPoint = Uri.https(ip, '/articles/get/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -283,7 +283,7 @@ Future<dynamic> api_get_articles() async {
 }
 
 Future<List<dynamic>> api_get_notaires() async {
-  var endPoint = Uri.http(ip, '/clients/get-notaries/');
+  var endPoint = Uri.https(ip, '/clients/get-notaries/');
   try {
     var response = await Client().get(
       endPoint,
@@ -311,7 +311,7 @@ Future<List<dynamic>> api_get_notaires() async {
 
 
 Future<dynamic> api_link_notary({required dynamic notary_id}) async {
-  var endPoint = Uri.http(ip, '/clients/invite/');
+  var endPoint = Uri.https(ip, '/clients/invite/');
   Map data = {};
   data['email'] = notary_id;
   try {
@@ -331,7 +331,7 @@ Future<dynamic> api_link_notary({required dynamic notary_id}) async {
 }
 
 Future<dynamic> api_get_invite_requests() async {
-  var endPoint = Uri.http(ip, '/clients/get-invite/');
+  var endPoint = Uri.https(ip, '/clients/get-invite/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -347,7 +347,7 @@ Future<dynamic> api_get_invite_requests() async {
 }
 
 Future<String> api_get_chat_id() async {
-  var endPoint = Uri.http(ip, '/chat/get/all/');
+  var endPoint = Uri.https(ip, '/chat/get/all/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -383,7 +383,7 @@ Future<String> api_get_chat_id() async {
 
 
 Future<Map<String, dynamic>> api_get_chat_details(String uid) async {
-  var endPoint = Uri.http(ip, '/chat/get/$uid');
+  var endPoint = Uri.https(ip, '/chat/get/$uid');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -413,7 +413,7 @@ Future<Map<String, dynamic>> api_get_chat_details(String uid) async {
 
 
 Future<List<dynamic>> api_get_chat_with_notaire({required dynamic idChat}) async {
-  var endPoint = Uri.http(ip, '/chat/$idChat');
+  var endPoint = Uri.https(ip, '/chat/$idChat');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -430,7 +430,7 @@ Future<List<dynamic>> api_get_chat_with_notaire({required dynamic idChat}) async
 
 
 Future<void> apiDissociateNotary() async {
-  var endPoint = Uri.http(ip, '/clients/dissociate/');
+  var endPoint = Uri.https(ip, '/clients/dissociate/');
   try {
     var response = await Client().delete(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -447,7 +447,7 @@ Future<void> apiDissociateNotary() async {
 }
 
 Future<dynamic> api_get_requests() async {
-  var endPoint = Uri.http(ip, '/clients/get-requests/');
+  var endPoint = Uri.https(ip, '/clients/get-requests/');
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
       'Content-Type': 'application/json',
@@ -463,7 +463,7 @@ Future<dynamic> api_get_requests() async {
 }
 
 Future<dynamic> api_acceptNotary({required String id}) async {
-  var endPoint = Uri.http(ip, '/clients/accept-request/');
+  var endPoint = Uri.https(ip, '/clients/accept-request/');
   Map data = {};
   data['notary_id'] = id;
   try {
@@ -480,7 +480,7 @@ Future<dynamic> api_acceptNotary({required String id}) async {
 }
 
 Future<dynamic> api_rejectNotary({required String id}) async {
-  var endPoint = Uri.http(ip, '/clients/refuse-request/');
+  var endPoint = Uri.https(ip, '/clients/refuse-request/');
   Map data = {};
   data['notary'] = id;
   try {

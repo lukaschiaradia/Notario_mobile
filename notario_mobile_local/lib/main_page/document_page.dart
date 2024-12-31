@@ -15,7 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FileData {
   final String name;
-  final String url;
+  String url;
   final bool signedClient;
   final bool signedNotary;
   final DateTime updatedAt;
@@ -49,7 +49,7 @@ Future<List<FileData>> fetchFiles() async {
 
         fileList.add(FileData(
           name: name,
-          url: 'http://' + url,
+          url: 'https://' + url,
           signedClient: signedClient,
           signedNotary: signedNotary,
           updatedAt: updatedAt,
@@ -71,6 +71,11 @@ class FileItemWidget extends StatelessWidget {
   Future<void> _viewFile(BuildContext context, String token) async {
   final directory = await getTemporaryDirectory();
   final filePath = '${directory.path}/${fileData.name}';
+  fileData.url = fileData.url.replaceFirst("http://", "https://");
+  print(fileData.url);
+
+
+
   
   var response = await http.get(
     Uri.parse(fileData.url),
@@ -99,7 +104,7 @@ class FileItemWidget extends StatelessWidget {
     );
   } else {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Erreur de téléchargement du fichier : ${response.statusCode}'),
+      content: Text('Erreur : ${response.statusCode}, ${response.body}'),
     ));
   }
 }

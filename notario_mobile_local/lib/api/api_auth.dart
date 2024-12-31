@@ -15,7 +15,8 @@ class ApiAuth {
 
   Future<Response> apiLogin(
     {required UtilisateurLogin utilisateurLogin}) async {
-    var endPoint = Uri.http(ip, accountsLogin);
+    var endPoint = Uri.https(ip, accountsLogin);
+    print(endPoint);
     Map data = utilisateurLogin.toData();
     json_info = data;
     try {
@@ -54,7 +55,7 @@ class ApiAuth {
   Future<Response> apiRegister({
     required UtilisateurRegister utilisateurRegister,
   }) async {
-    var endPoint = Uri.http(ip, accountsRegister);
+    var endPoint = Uri.https(ip, accountsRegister);
     Map data = utilisateurRegister.toData();
     if (!utilisateurRegister.passwordIsConfirm)
       throw Exception('password incorect');
@@ -76,7 +77,7 @@ class ApiAuth {
     required String email,
     required int age,
   }) async {
-    var endPoint = Uri.http(ip, accountsModifs);
+    var endPoint = Uri.https(ip, accountsModifs);
     Map data = {
       'first_name': first_name,
       'last_name': last_name,
@@ -99,7 +100,7 @@ class ApiAuth {
 }
 
 Future<Map<String, dynamic>> getUserInfo() async {
-  var endPoint = Uri.http(ip, '/accounts/user/');
+  var endPoint = Uri.https(ip, '/accounts/user/');
 
   try {
     var response = await Client().get(endPoint, headers: <String, String>{
@@ -124,7 +125,7 @@ Future<Map<String, dynamic>> getUserInfo() async {
 Future<Response> apiDelete({
   required UtilisateurDelete accountsDeleteId,
 }) async {
-  var endPoint = Uri.http(ip, deleteClient.toString());
+  var endPoint = Uri.https(ip, deleteClient.toString());
   try {
     var response = await Client().delete(
       endPoint,
@@ -141,7 +142,7 @@ Future<Response> apiDelete({
 }
 
 Future<dynamic> apiForgotPassword({required String email}) async {
-  var endPoint = Uri.http(ip, 'accounts/forgotten/');
+  var endPoint = Uri.https(ip, 'accounts/forgotten/');
   try {
     var response = await Client().post(
       endPoint,
@@ -160,7 +161,7 @@ Future<dynamic> apiForgotPassword({required String email}) async {
 
 Future<dynamic> apiDeleteMessage({required String messageUid}) async {
   // Remplacer 'ip' par l'adresse de ton API.
-  var endPoint = Uri.http(ip, 'chat/message/delete/$messageUid');
+  var endPoint = Uri.https(ip, 'chat/message/delete/$messageUid');
   
   try {
     var response = await Client().delete(
